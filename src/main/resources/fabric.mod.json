@@ -1,0 +1,17 @@
+{
+  "id": "modid",
+  "name": "Example Mod",
+  "description": "This is an example description! Tell everyone what your mod is about!",
+  "version": "${version}",
+  "side": "server",
+  "initializers": [
+    "fr.arthurbambou.fblink.FBLink"
+  ],
+  "requires": {
+    "fabric": "*"
+  },
+  "mixins": {
+    "client": "fblink.client.json",
+    "common": "fblink.common.json"
+  }
+}
