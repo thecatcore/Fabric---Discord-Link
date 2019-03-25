@@ -27,6 +27,10 @@ public class FBLink implements DedicatedServerModInitializer {
 		discordBot = new DiscordBot(configManager.init(), configManager.config);
 	}
 
+	public static DiscordBot getDiscordBot() {
+		return discordBot;
+	}
+
 	protected class ConfigManager {
 		private File CONFIG_PATH = FabricLoader.INSTANCE.getConfigDirectory();
 
@@ -80,6 +84,6 @@ public class FBLink implements DedicatedServerModInitializer {
 
 	public class Config {
 		private String token = "";
-		public String discordToMinecraft = "[%s] %s";
+		public String discordToMinecraft = "[%player] %message";
 	}
 }

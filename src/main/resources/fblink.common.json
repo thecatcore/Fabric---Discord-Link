@@ -3,6 +3,7 @@
   "package": "fr.arthurbambou.fblink.mixin",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
+    "MixinChatMessageS2CPacket"
   ],
   "injectors": {
     "defaultRequire": 1

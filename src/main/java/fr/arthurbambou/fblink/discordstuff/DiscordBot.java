@@ -21,7 +21,9 @@ public class DiscordBot {
 
     private FBLink.Config config;
     private long channelID = 559063516510683151L;
-    private MinecraftServer minecraftServer;
+    private MessageCreateEvent messageCreateEvent;
+    private boolean hasReceivedaMessage;
+    private DiscordApi api;
 
     public DiscordBot(String token, FBLink.Config config) {
         if (token == null) {
@@ -34,27 +36,42 @@ public class DiscordBot {
         }
         this.config = config;
 
-        DiscordApi api = new DiscordApiBuilder().setToken(token).login().join();
+        this.api = new DiscordApiBuilder().setToken(token).login().join();
 
-        api.addMessageCreateListener((event -> {
-            System.out.println(event.getMessageAuthor().getDisplayName() + ":" + event.getMessage().toString());
-            this.minecraftServer.getPlayerManager().getPlayerList().forEach((serverPlayerEntity -> {
-                serverPlayerEntity.sendChatMessage(new StringTextComponent(
-                        this.config.discordToMinecraft.substring(0,3).replace("%s",event.getMessageAuthor().getDisplayName()) +
-                                this.config.discordToMinecraft.substring(4,6).replace("%s",event.getMessage().toString())), ChatMessageType.CHAT);
-            }));
+        this.api.addMessageCreateListener((event -> {
+            if (event.getMessageAuthor().isYourself()) return;
+            this.messageCreateEvent = event;
+            this.hasReceivedaMessage = true;
+//
+//            api.getServerTextChannelById(channelID).get().sendMessage("Message received : [" + event.getMessageAuthor().getDiscriminatedName() + "] " + event.getMessageContent());
+//            MinecraftClient.getInstance().getServer().getPlayerManager().getPlayerList().forEach((serverPlayerEntity -> {
+//                serverPlayerEntity.sendChatMessage(new StringTextComponent(
+//                        this.config.discordToMinecraft.substring(0,3).replace("%s",event.getMessageAuthor().getDisplayName()) +
+//                                this.config.discordToMinecraft.substring(4,6).replace("%s",event.getMessage().toString())), ChatMessageType.CHAT);
+//            }));
         }));
 
         ServerStartCallback.EVENT.register((minecraftServer1 -> {
-            api.getServerTextChannelById(channelID).get().sendMessage("Server Started");
+            this.api.getServerTextChannelById(channelID).get().sendMessage("Server Started");
         }));
 
         ServerStopCallback.EVENT.register((server -> {
-            api.getServerTextChannelById(channelID).get().sendMessage("Server Stoped");
+            this.api.getServerTextChannelById(channelID).get().sendMessage("Server Stoped");
         }));
 
         ServerTickCallback.EVENT.register((server -> {
-            this.minecraftServer = server;
+            if (this.hasReceivedaMessage) {
+                server.getPlayerManager().sendToAll(new StringTextComponent(
+                        this.config.discordToMinecraft
+                                .replace("%player",this.messageCreateEvent.getMessageAuthor().getDisplayName())
+                                .replace("%message",this.messageCreateEvent.getMessageContent())));
+                this.hasReceivedaMessage = false;
+            }
         }));
+    }
+
+    public void sendMessage(String string) {
+        if (string.contains("]") && string.contains("[")) return;
+        this.api.getServerTextChannelById(channelID).get().sendMessage(string);
     }
 }
