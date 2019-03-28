@@ -1,7 +1,7 @@
 {
-  "id": "modid",
-  "name": "Example Mod",
-  "description": "This is an example description! Tell everyone what your mod is about!",
+  "id": "fdlink",
+  "name": "Fabric <-> Discord Link",
+  "description": "A mod to link Minecraft and Discord chats for Fabric.",
   "version": "${version}",
   "side": "server",
   "initializers": [
@@ -11,7 +11,6 @@
     "fabric": "*"
   },
   "mixins": {
-    "client": "fblink.client.json",
     "common": "fblink.common.json"
   }
 }
