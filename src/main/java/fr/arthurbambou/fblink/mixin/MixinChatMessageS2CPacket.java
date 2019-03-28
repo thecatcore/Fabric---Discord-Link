@@ -17,10 +17,4 @@ public class MixinChatMessageS2CPacket {
     public void MixinChatMessageS2CPacket(TextComponent textComponent_1, ChatMessageType chatMessageType_1, CallbackInfo callbackInfo) {
         FBLink.getDiscordBot().sendMessage(textComponent_1.getString());
     }
-
-//    @Inject(at = @At("RETURN"), method = "sendChatMessage")
-//    public void sendChatMessage(TextComponent textComponent_1, ChatMessageType chatMessageType_1, CallbackInfo ci) {
-//        textComponent_1.getString();
-//
-//    }
 }

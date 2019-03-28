@@ -10,6 +10,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.List;
 
 public class FBLink implements DedicatedServerModInitializer {
 
@@ -20,11 +21,13 @@ public class FBLink implements DedicatedServerModInitializer {
 	public void onInitializeServer() {
 		configManager = new ConfigManager();
 		discordBot = new DiscordBot(configManager.init(), configManager.config);
+		configManager.config.token = "";
 	}
 
 	public static void regenConfig() {
 		configManager.regenConfig();
 		discordBot = new DiscordBot(configManager.init(), configManager.config);
+		configManager.config.token = "";
 	}
 
 	public static DiscordBot getDiscordBot() {
@@ -85,5 +88,7 @@ public class FBLink implements DedicatedServerModInitializer {
 	public class Config {
 		private String token = "";
 		public String discordToMinecraft = "[%player] %message";
+		public List<String> chatChannels;
+		public List<String> logChannels;
 	}
 }
