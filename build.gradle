@@ -5,8 +5,8 @@ plugins {
 	id "com.github.johnrengelman.shadow" version "4.0.3"
 }
 
-sourceCompatibility = JavaVersion.VERSION_1_8
-targetCompatibility = JavaVersion.VERSION_1_8
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
 
 archivesBaseName = project.archives_base_name
 version = project.mod_version
@@ -17,18 +17,34 @@ minecraft {
 
 configurations {
     contained {
-        transitive = false
+        transitive = true
     }
 }
 
 shadowJar {
-    configurations = [project.configurations.contained]
+	relocate 'org.javacord', 'fr.arthurbambou.repackage.org.javacord';
+	relocate 'com.fasterxml.jackson', 'fr.arthurbambou.repackage.com.fasterxml.jackson';
+	relocate 'com.neovisionaries.ws', 'fr.arthurbambou.repackage.com.neovisionaries.ws';
+	relocate 'com.neovisionaries.ws', 'fr.arthurbambou.repackage.com.neovisionaries.ws';
+	relocate 'okhttp3', 'fr.arthurbambou.repackage.okhttp3';
+	relocate 'okio', 'fr.arthurbambou.repackage.okio';
+	relocate 'org.apache.logging.log4j', 'fr.arthurbambou.repackage.org.apache.logging.log4j';
+
+	classifier = ""
+	configurations = [project.configurations.contained]
 }
 
-task remapShadowJar(type: RemapJar) {
-    jar = shadowJar.archivePath
+task sourcesJar(type: Jar) {
+	baseName = archivesBaseName
+	classifier = "sources"
+	from sourceSets.main.allSource
 }
-tasks.remapShadowJar.dependsOn tasks.shadowJar
+
+//If we're using shadow, we need to let remap know it's remapping the shadowJar
+remapJar {
+	dependsOn shadowJar
+	jar = shadowJar.archivePath
+}
 
 dependencies {
 	//to change the versions see the gradle.properties file
@@ -61,14 +77,6 @@ processResources {
 // see http://yodaconditions.net/blog/fix-for-java-file-encoding-problems-with-gradle.html
 tasks.withType(JavaCompile) {
 	options.encoding = "UTF-8"
-}
-
-// Loom will automatically attach sourcesJar to a RemapSourcesJar task and to the "build" task
-// if it is present.
-// If you remove this task, sources will not be generated.
-task sourcesJar(type: Jar, dependsOn: classes) {
-	classifier = "sources"
-	from sourceSets.main.allSource
 }
 
 jar {
