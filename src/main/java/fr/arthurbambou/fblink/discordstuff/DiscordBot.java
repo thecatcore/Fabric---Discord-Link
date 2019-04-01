@@ -25,9 +25,11 @@ public class DiscordBot {
     private boolean hasLogChannels;
     private MessageCreateEvent messageCreateEvent;
     private boolean hasReceivedaMessage;
+    private String lastMessageD;
     private DiscordApi api;
 
     public DiscordBot(String token, FBLink.Config config) {
+        this.lastMessageD = "";
         if (token == null) {
             FBLink.regenConfig();
             return;
@@ -85,54 +87,55 @@ public class DiscordBot {
 
         ServerTickCallback.EVENT.register((server -> {
             if (this.hasReceivedaMessage) {
-                server.getPlayerManager().sendToAll(new StringTextComponent(
-                        this.config.discordToMinecraft
-                                .replace("%player",this.messageCreateEvent.getMessageAuthor().getDisplayName())
-                                .replace("%message",this.messageCreateEvent.getMessageContent())));
+                this.lastMessageD = this.config.discordToMinecraft
+                        .replace("%player",this.messageCreateEvent.getMessageAuthor().getDisplayName())
+                        .replace("%message",this.messageCreateEvent.getMessageContent());
+                server.getPlayerManager().sendToAll(new StringTextComponent(this.lastMessageD));
+
                 this.hasReceivedaMessage = false;
             }
         }));
     }
 
     public void sendMessage(String string) {
-        if (string == this.config.discordToMinecraft
-                .replace("%player",this.messageCreateEvent.getMessageAuthor().getDisplayName())
-                .replace("%message",this.messageCreateEvent.getMessageContent())) return;
-        if (string.startsWith("<")) {
-            if (this.hasChatChannels)
-                for (int a = 0; a < this.config.chatChannels.size(); a++)
-                    this.api.getServerTextChannelById(this.config.chatChannels.get(a)).get().sendMessage(string);
-            if (this.hasLogChannels)
-                for (int a = 0; a < this.config.logChannels.size(); a++)
-                    this.api.getServerTextChannelById(this.config.logChannels.get(a)).get().sendMessage(string);
-        } else if (string.contains("left")) {
-            if (this.hasChatChannels)
-                for (int a = 0; a < this.config.chatChannels.size(); a++)
-                    this.api.getServerTextChannelById(this.config.chatChannels.get(a)).get().sendMessage(string);
-            if (this.hasLogChannels)
-                for (int a = 0; a < this.config.logChannels.size(); a++)
-                    this.api.getServerTextChannelById(this.config.logChannels.get(a)).get().sendMessage(string);
-        } else if (string.contains("joined")) {
-            if (this.hasChatChannels)
-                for (int a = 0; a < this.config.chatChannels.size(); a++)
-                    this.api.getServerTextChannelById(this.config.chatChannels.get(a)).get().sendMessage(string);
-            if (this.hasLogChannels)
-                for (int a = 0; a < this.config.logChannels.size(); a++)
-                    this.api.getServerTextChannelById(this.config.logChannels.get(a)).get().sendMessage(string);
-        } else if (string.contains("advancement")) {
-            if (this.hasChatChannels)
-                for (int a = 0; a < this.config.chatChannels.size(); a++)
-                    this.api.getServerTextChannelById(this.config.chatChannels.get(a)).get().sendMessage(string);
-            if (this.hasLogChannels)
-                for (int a = 0; a < this.config.logChannels.size(); a++)
-                    this.api.getServerTextChannelById(this.config.logChannels.get(a)).get().sendMessage(string);
-        } else if (string.startsWith("[")) {
-            if (this.hasChatChannels && !this.hasLogChannels)
-                for (int a = 0; a < this.config.chatChannels.size(); a++)
-                    this.api.getServerTextChannelById(this.config.chatChannels.get(a)).get().sendMessage(string);
-            if (this.hasLogChannels)
-                for (int a = 0; a < this.config.logChannels.size(); a++)
-                    this.api.getServerTextChannelById(this.config.logChannels.get(a)).get().sendMessage(string);
+        if (string.equals(this.lastMessageD)) { return; }
+        else {
+            if (string.startsWith("<")) {
+                if (this.hasChatChannels)
+                    for (int a = 0; a < this.config.chatChannels.size(); a++)
+                        this.api.getServerTextChannelById(this.config.chatChannels.get(a)).get().sendMessage(string);
+                if (this.hasLogChannels)
+                    for (int a = 0; a < this.config.logChannels.size(); a++)
+                        this.api.getServerTextChannelById(this.config.logChannels.get(a)).get().sendMessage(string);
+            } else if (string.contains("left")) {
+                if (this.hasChatChannels)
+                    for (int a = 0; a < this.config.chatChannels.size(); a++)
+                        this.api.getServerTextChannelById(this.config.chatChannels.get(a)).get().sendMessage(string);
+                if (this.hasLogChannels)
+                    for (int a = 0; a < this.config.logChannels.size(); a++)
+                        this.api.getServerTextChannelById(this.config.logChannels.get(a)).get().sendMessage(string);
+            } else if (string.contains("joined")) {
+                if (this.hasChatChannels)
+                    for (int a = 0; a < this.config.chatChannels.size(); a++)
+                        this.api.getServerTextChannelById(this.config.chatChannels.get(a)).get().sendMessage(string);
+                if (this.hasLogChannels)
+                    for (int a = 0; a < this.config.logChannels.size(); a++)
+                        this.api.getServerTextChannelById(this.config.logChannels.get(a)).get().sendMessage(string);
+            } else if (string.contains("advancement")) {
+                if (this.hasChatChannels)
+                    for (int a = 0; a < this.config.chatChannels.size(); a++)
+                        this.api.getServerTextChannelById(this.config.chatChannels.get(a)).get().sendMessage(string);
+                if (this.hasLogChannels)
+                    for (int a = 0; a < this.config.logChannels.size(); a++)
+                        this.api.getServerTextChannelById(this.config.logChannels.get(a)).get().sendMessage(string);
+            } else if (string.startsWith("[")) {
+                if (this.hasChatChannels && !this.hasLogChannels)
+                    for (int a = 0; a < this.config.chatChannels.size(); a++)
+                        this.api.getServerTextChannelById(this.config.chatChannels.get(a)).get().sendMessage(string);
+                if (this.hasLogChannels)
+                    for (int a = 0; a < this.config.logChannels.size(); a++)
+                        this.api.getServerTextChannelById(this.config.logChannels.get(a)).get().sendMessage(string);
+            }
         }
     }
 }
