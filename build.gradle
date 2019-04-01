@@ -22,13 +22,6 @@ configurations {
 }
 
 shadowJar {
-	relocate 'org.javacord', 'fr.arthurbambou.repackage.org.javacord';
-	relocate 'com.fasterxml.jackson', 'fr.arthurbambou.repackage.com.fasterxml.jackson';
-	relocate 'com.neovisionaries.ws', 'fr.arthurbambou.repackage.com.neovisionaries.ws';
-	relocate 'com.neovisionaries.ws', 'fr.arthurbambou.repackage.com.neovisionaries.ws';
-	relocate 'okhttp3', 'fr.arthurbambou.repackage.okhttp3';
-	relocate 'okio', 'fr.arthurbambou.repackage.okio';
-	relocate 'org.apache.logging.log4j', 'fr.arthurbambou.repackage.org.apache.logging.log4j';
 
 	classifier = ""
 	configurations = [project.configurations.contained]
