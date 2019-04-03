@@ -12,10 +12,14 @@ import net.minecraft.server.dedicated.MinecraftDedicatedServer;
 import net.minecraft.sortme.ChatMessageType;
 import net.minecraft.text.StringTextComponent;
 import net.minecraft.text.TextComponent;
+import net.minecraft.util.SystemUtil;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.DiscordApiBuilder;
+import org.javacord.api.entity.channel.ServerTextChannel;
 import org.javacord.api.event.message.MessageCreateEvent;
 import org.javacord.api.listener.message.MessageCreateListener;
+
+import java.util.Optional;
 
 public class DiscordBot {
 
@@ -27,6 +31,7 @@ public class DiscordBot {
     private boolean hasReceivedaMessage;
     private String lastMessageD;
     private DiscordApi api;
+    private long startTime;
 
     public DiscordBot(String token, FBLink.Config config) {
         this.lastMessageD = "";
@@ -36,6 +41,7 @@ public class DiscordBot {
         }
 
         if (token == "") {
+            System.out.println("[FDLink] Please add a bot token to the config file !");
             return;
         }
 
@@ -58,6 +64,7 @@ public class DiscordBot {
         this.api = new DiscordApiBuilder().setToken(token).login().join();
 
         this.api.addMessageCreateListener((event -> {
+            if (event.getMessageAuthor().isBotOwner() && this.config.ignoreBots) return;
             if (!hasChatChannels) return;
             if (event.getMessageAuthor().isYourself()) return;
             if (!this.config.chatChannels.contains(event.getChannel().getIdAsString())) return;
@@ -66,6 +73,7 @@ public class DiscordBot {
         }));
 
         ServerStartCallback.EVENT.register((minecraftServer1 -> {
+            startTime = minecraftServer1.getServerStartTime();
             if (this.hasChatChannels)
                 for (int a = 0; a < this.config.chatChannels.size(); a++)
                     this.api.getServerTextChannelById(this.config.chatChannels.get(a)).get().sendMessage("Server Started");
@@ -86,6 +94,14 @@ public class DiscordBot {
         }));
 
         ServerTickCallback.EVENT.register((server -> {
+            int playerNumber = server.getPlayerManager().getPlayerList().size();
+            int maxPlayer = server.getPlayerManager().getMaxPlayerCount();
+            String ip = server.getServerIp();
+            int uptimeS = (int)(SystemUtil.getMeasuringTimeMs() - this.startTime) / 1000;
+            int uptimeM = uptimeS / 60;
+            int uptimeH = uptimeM / 60;
+            uptimeM = uptimeM - (uptimeH * 60);
+            uptimeS = uptimeS - (uptimeH * 60 * 60) - (uptimeM * 60);
             if (this.hasReceivedaMessage) {
                 this.lastMessageD = this.config.discordToMinecraft
                         .replace("%player",this.messageCreateEvent.getMessageAuthor().getDisplayName())
@@ -93,6 +109,16 @@ public class DiscordBot {
                 server.getPlayerManager().sendToAll(new StringTextComponent(this.lastMessageD));
 
                 this.hasReceivedaMessage = false;
+            }
+            if (this.hasChatChannels) {
+                for (int a = 0; a < this.config.chatChannels.size(); a++) {
+                    ServerTextChannel channel = this.api.getServerTextChannelById(this.config.chatChannels.get(a)).get();
+                    String topic =
+//                            "ip : " + ip + ",\n" +
+                            "player count : " + playerNumber + "/" + maxPlayer +
+                            ",\nuptime : " + uptimeH + " h " + uptimeM + " min " + uptimeS + " second";
+                    channel.updateTopic(topic);
+                }
             }
         }));
     }
@@ -106,28 +132,36 @@ public class DiscordBot {
                         this.api.getServerTextChannelById(this.config.chatChannels.get(a)).get().sendMessage(string);
                 if (this.hasLogChannels)
                     for (int a = 0; a < this.config.logChannels.size(); a++)
-                        this.api.getServerTextChannelById(this.config.logChannels.get(a)).get().sendMessage(string);
+                        if (!this.config.chatChannels.contains(this.config.logChannels.get(a))) {
+                            this.api.getServerTextChannelById(this.config.logChannels.get(a)).get().sendMessage(string);
+                        }
             } else if (string.contains("left")) {
                 if (this.hasChatChannels)
                     for (int a = 0; a < this.config.chatChannels.size(); a++)
                         this.api.getServerTextChannelById(this.config.chatChannels.get(a)).get().sendMessage(string);
                 if (this.hasLogChannels)
                     for (int a = 0; a < this.config.logChannels.size(); a++)
-                        this.api.getServerTextChannelById(this.config.logChannels.get(a)).get().sendMessage(string);
+                        if (!this.config.chatChannels.contains(this.config.logChannels.get(a))) {
+                            this.api.getServerTextChannelById(this.config.logChannels.get(a)).get().sendMessage(string);
+                        }
             } else if (string.contains("joined")) {
                 if (this.hasChatChannels)
                     for (int a = 0; a < this.config.chatChannels.size(); a++)
                         this.api.getServerTextChannelById(this.config.chatChannels.get(a)).get().sendMessage(string);
                 if (this.hasLogChannels)
                     for (int a = 0; a < this.config.logChannels.size(); a++)
-                        this.api.getServerTextChannelById(this.config.logChannels.get(a)).get().sendMessage(string);
+                        if (!this.config.chatChannels.contains(this.config.logChannels.get(a))) {
+                            this.api.getServerTextChannelById(this.config.logChannels.get(a)).get().sendMessage(string);
+                        }
             } else if (string.contains("advancement")) {
                 if (this.hasChatChannels)
                     for (int a = 0; a < this.config.chatChannels.size(); a++)
                         this.api.getServerTextChannelById(this.config.chatChannels.get(a)).get().sendMessage(string);
                 if (this.hasLogChannels)
                     for (int a = 0; a < this.config.logChannels.size(); a++)
-                        this.api.getServerTextChannelById(this.config.logChannels.get(a)).get().sendMessage(string);
+                        if (!this.config.chatChannels.contains(this.config.logChannels.get(a))) {
+                            this.api.getServerTextChannelById(this.config.logChannels.get(a)).get().sendMessage(string);
+                        }
             } else if (string.startsWith("[")) {
                 if (this.hasChatChannels && !this.hasLogChannels)
                     for (int a = 0; a < this.config.chatChannels.size(); a++)

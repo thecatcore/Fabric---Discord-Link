@@ -10,6 +10,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class FBLink implements DedicatedServerModInitializer {
@@ -61,6 +62,9 @@ public class FBLink implements DedicatedServerModInitializer {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
+			if (instanceConfig.token != DefaultConfig.token) {
+				return instanceConfig.token;
+			}
 			return DefaultConfig.token;
 		}
 
@@ -77,7 +81,19 @@ public class FBLink implements DedicatedServerModInitializer {
 		public String loadConfig() {
 			try (FileReader fileReader = new FileReader(configFile)) {
 				config = gson.fromJson(fileReader, Config.class);
-				return config.token;
+				if (config.token == null) {
+					config.token = DefaultConfig.token;
+				}
+				if (config.chatChannels == null) {
+					config.chatChannels = DefaultConfig.chatChannels;
+				}
+				if (config.logChannels == null) {
+					config.logChannels = DefaultConfig.logChannels;
+				}
+				if (config.discordToMinecraft == null) {
+					config.discordToMinecraft = DefaultConfig.discordToMinecraft;
+				}
+				return saveConfig(config);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -88,7 +104,12 @@ public class FBLink implements DedicatedServerModInitializer {
 	public class Config {
 		private String token = "";
 		public String discordToMinecraft = "[%player] %message";
-		public List<String> chatChannels;
-		public List<String> logChannels;
+		public List<String> chatChannels = new ArrayList<String>();
+		public List<String> logChannels = new ArrayList<String>();
+		public boolean ignoreBots = true;
+
+		public boolean getIgnoreBots() {
+			return ignoreBots;
+		}
 	}
 }
