@@ -86,11 +86,11 @@ public class DiscordBot {
         ServerStopCallback.EVENT.register((server -> {
             if (this.hasChatChannels)
                 for (int a = 0; a < this.config.chatChannels.size(); a++)
-                    this.api.getServerTextChannelById(this.config.chatChannels.get(a)).get().sendMessage("Server Stoped");
+                    this.api.getServerTextChannelById(this.config.chatChannels.get(a)).get().sendMessage("Server Stopped");
 
             if (this.hasLogChannels)
                 for (int a = 0; a < this.config.logChannels.size(); a++)
-                    this.api.getServerTextChannelById(this.config.logChannels.get(a)).get().sendMessage("Server Stoped");
+                    this.api.getServerTextChannelById(this.config.logChannels.get(a)).get().sendMessage("Server Stopped");
         }));
 
         ServerTickCallback.EVENT.register((server -> {
