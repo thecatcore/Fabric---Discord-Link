@@ -93,6 +93,18 @@ public class FBLink implements DedicatedServerModInitializer {
 				if (config.discordToMinecraft == null) {
 					config.discordToMinecraft = DefaultConfig.discordToMinecraft;
 				}
+				if (config.minecraftToDiscordMessage == null) {
+					config.minecraftToDiscordMessage = DefaultConfig.minecraftToDiscordMessage;
+				}
+				if (config.minecraftToDiscordMessage.serverStarted == null) {
+					config.minecraftToDiscordMessage.serverStarted = DefaultConfig.minecraftToDiscordMessage.serverStarted;
+				}
+				if (config.minecraftToDiscordMessage.serverStarting == null) {
+					config.minecraftToDiscordMessage.serverStarting = DefaultConfig.minecraftToDiscordMessage.serverStarting;
+				}
+				if (config.minecraftToDiscordMessage.serverStopped == null) {
+					config.minecraftToDiscordMessage.serverStopped = DefaultConfig.minecraftToDiscordMessage.serverStopped;
+				}
 				return saveConfig(config);
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -107,9 +119,16 @@ public class FBLink implements DedicatedServerModInitializer {
 		public List<String> chatChannels = new ArrayList<String>();
 		public List<String> logChannels = new ArrayList<String>();
 		public boolean ignoreBots = true;
+		public MinecraftToDiscordMessage minecraftToDiscordMessage = new MinecraftToDiscordMessage();
 
 		public boolean getIgnoreBots() {
 			return ignoreBots;
+		}
+
+		public class MinecraftToDiscordMessage {
+			public String serverStarting = "Server is starting !";
+			public String serverStarted = "Server Started";
+			public String serverStopped = "Server Stopped";
 		}
 	}
 }

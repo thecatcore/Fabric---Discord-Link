@@ -4,20 +4,12 @@ import fr.arthurbambou.fblink.FBLink;
 import net.fabricmc.fabric.api.event.server.ServerStartCallback;
 import net.fabricmc.fabric.api.event.server.ServerStopCallback;
 import net.fabricmc.fabric.api.event.server.ServerTickCallback;
-import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.MinecraftClientGame;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.dedicated.MinecraftDedicatedServer;
-import net.minecraft.sortme.ChatMessageType;
 import net.minecraft.text.StringTextComponent;
-import net.minecraft.text.TextComponent;
 import net.minecraft.util.SystemUtil;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.DiscordApiBuilder;
 import org.javacord.api.entity.channel.ServerTextChannel;
 import org.javacord.api.event.message.MessageCreateEvent;
-import org.javacord.api.listener.message.MessageCreateListener;
 
 import java.util.Optional;
 
@@ -63,6 +55,14 @@ public class DiscordBot {
 
         this.api = new DiscordApiBuilder().setToken(token).login().join();
 
+        if (this.hasChatChannels)
+            for (int a = 0; a < this.config.chatChannels.size(); a++)
+                this.api.getServerTextChannelById(this.config.chatChannels.get(a)).get().sendMessage(config.minecraftToDiscordMessage.serverStarting);
+
+        if (this.hasLogChannels)
+            for (int a = 0; a < this.config.logChannels.size(); a++)
+                this.api.getServerTextChannelById(this.config.logChannels.get(a)).get().sendMessage(config.minecraftToDiscordMessage.serverStarting);
+
         this.api.addMessageCreateListener((event -> {
             if (event.getMessageAuthor().isBotOwner() && this.config.ignoreBots) return;
             if (!hasChatChannels) return;
@@ -76,21 +76,21 @@ public class DiscordBot {
             startTime = minecraftServer1.getServerStartTime();
             if (this.hasChatChannels)
                 for (int a = 0; a < this.config.chatChannels.size(); a++)
-                    this.api.getServerTextChannelById(this.config.chatChannels.get(a)).get().sendMessage("Server Started");
+                    this.api.getServerTextChannelById(this.config.chatChannels.get(a)).get().sendMessage(config.minecraftToDiscordMessage.serverStarted);
 
             if (this.hasLogChannels)
                 for (int a = 0; a < this.config.logChannels.size(); a++)
-                    this.api.getServerTextChannelById(this.config.logChannels.get(a)).get().sendMessage("Server Started");
+                    this.api.getServerTextChannelById(this.config.logChannels.get(a)).get().sendMessage(config.minecraftToDiscordMessage.serverStarted);
         }));
 
         ServerStopCallback.EVENT.register((server -> {
             if (this.hasChatChannels)
                 for (int a = 0; a < this.config.chatChannels.size(); a++)
-                    this.api.getServerTextChannelById(this.config.chatChannels.get(a)).get().sendMessage("Server Stopped");
+                    this.api.getServerTextChannelById(this.config.chatChannels.get(a)).get().sendMessage(config.minecraftToDiscordMessage.serverStopped);
 
             if (this.hasLogChannels)
                 for (int a = 0; a < this.config.logChannels.size(); a++)
-                    this.api.getServerTextChannelById(this.config.logChannels.get(a)).get().sendMessage("Server Stopped");
+                    this.api.getServerTextChannelById(this.config.logChannels.get(a)).get().sendMessage(config.minecraftToDiscordMessage.serverStopped);
         }));
 
         ServerTickCallback.EVENT.register((server -> {
