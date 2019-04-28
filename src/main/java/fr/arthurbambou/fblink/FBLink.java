@@ -5,6 +5,8 @@ import com.google.gson.GsonBuilder;
 import fr.arthurbambou.fblink.discordstuff.DiscordBot;
 import net.fabricmc.api.DedicatedServerModInitializer;
 import net.fabricmc.loader.FabricLoader;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 import java.io.FileReader;
@@ -17,6 +19,7 @@ public class FBLink implements DedicatedServerModInitializer {
 
 	private static ConfigManager configManager;
 	private static DiscordBot discordBot;
+	public static Logger LOGGER = LogManager.getLogger("FBlink");
 
 	@Override
 	public void onInitializeServer() {
@@ -120,10 +123,8 @@ public class FBLink implements DedicatedServerModInitializer {
 		public List<String> logChannels = new ArrayList<String>();
 		public boolean ignoreBots = true;
 		public MinecraftToDiscordMessage minecraftToDiscordMessage = new MinecraftToDiscordMessage();
-
-		public boolean getIgnoreBots() {
-			return ignoreBots;
-		}
+		public boolean customChannelDescription = false;
+		public boolean MCtoDiscordTag = false;
 
 		public class MinecraftToDiscordMessage {
 			public String serverStarting = "Server is starting !";

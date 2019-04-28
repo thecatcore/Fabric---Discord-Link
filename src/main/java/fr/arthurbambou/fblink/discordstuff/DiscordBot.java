@@ -1,22 +1,27 @@
 package fr.arthurbambou.fblink.discordstuff;
 
 import fr.arthurbambou.fblink.FBLink;
+import fr.arthurbambou.fblink.discordstuff.commands.PlayerList;
 import net.fabricmc.fabric.api.event.server.ServerStartCallback;
 import net.fabricmc.fabric.api.event.server.ServerStopCallback;
 import net.fabricmc.fabric.api.event.server.ServerTickCallback;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.text.StringTextComponent;
 import net.minecraft.util.SystemUtil;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.DiscordApiBuilder;
+import org.javacord.api.entity.channel.ServerChannel;
 import org.javacord.api.entity.channel.ServerTextChannel;
+import org.javacord.api.entity.server.Server;
+import org.javacord.api.entity.user.User;
 import org.javacord.api.event.message.MessageCreateEvent;
 
-import java.util.Optional;
+import java.util.Collection;
 
 public class DiscordBot {
 
     private FBLink.Config config;
-//    private long channelID = 559063516510683151L;
     private boolean hasChatChannels;
     private boolean hasLogChannels;
     private MessageCreateEvent messageCreateEvent;
@@ -24,6 +29,7 @@ public class DiscordBot {
     private String lastMessageD;
     private DiscordApi api;
     private long startTime;
+    private MinecraftServer servers;
 
     public DiscordBot(String token, FBLink.Config config) {
         this.lastMessageD = "";
@@ -70,7 +76,22 @@ public class DiscordBot {
             if (!this.config.chatChannels.contains(event.getChannel().getIdAsString())) return;
             this.messageCreateEvent = event;
             this.hasReceivedaMessage = true;
+            if (event.getMessage().toString().startsWith("!playerlist")) {
+                String playerlist = "";
+                for (PlayerEntity playerEntity : this.servers.getPlayerManager().getPlayerList()) {
+                    playerlist = playerlist + playerEntity.getName().getString() + "\n";
+                }
+                if (playerlist.endsWith("\n")) {
+                    int a = playerlist.lastIndexOf("\n");
+                    playerlist = playerlist.substring(0,a);
+                }
+                for (int a = 0; a < this.config.chatChannels.size(); a++)
+                    this.api.getServerTextChannelById(this.config.chatChannels.get(a)).get().sendMessage("Players : " + this.servers.getPlayerManager().getPlayerList().size() +
+                        "/" + this.servers.getPlayerManager().getMaxPlayerCount() + "\n\n" + playerlist);
+            }
         }));
+
+//        this.api.addMessageCreateListener(new PlayerList());
 
         ServerStartCallback.EVENT.register((minecraftServer1 -> {
             startTime = minecraftServer1.getServerStartTime();
@@ -84,6 +105,7 @@ public class DiscordBot {
         }));
 
         ServerStopCallback.EVENT.register((server -> {
+            servers = server;
             if (this.hasChatChannels)
                 for (int a = 0; a < this.config.chatChannels.size(); a++)
                     this.api.getServerTextChannelById(this.config.chatChannels.get(a)).get().sendMessage(config.minecraftToDiscordMessage.serverStopped);
@@ -91,6 +113,9 @@ public class DiscordBot {
             if (this.hasLogChannels)
                 for (int a = 0; a < this.config.logChannels.size(); a++)
                     this.api.getServerTextChannelById(this.config.logChannels.get(a)).get().sendMessage(config.minecraftToDiscordMessage.serverStopped);
+
+
+            this.api.disconnect();
         }));
 
         ServerTickCallback.EVENT.register((server -> {
@@ -110,7 +135,7 @@ public class DiscordBot {
 
                 this.hasReceivedaMessage = false;
             }
-            if (this.hasChatChannels) {
+            if (this.hasChatChannels && this.config.customChannelDescription) {
                 for (int a = 0; a < this.config.chatChannels.size(); a++) {
                     ServerTextChannel channel = this.api.getServerTextChannelById(this.config.chatChannels.get(a)).get();
                     String topic =
@@ -123,10 +148,35 @@ public class DiscordBot {
         }));
     }
 
+    public MinecraftServer getServers() {
+        return servers;
+    }
+
     public void sendMessage(String string) {
         if (string.equals(this.lastMessageD)) { return; }
         else {
             if (string.startsWith("<")) {
+//                String username = string.split(">")[0].replace("<", "");
+//                if (!this.api.getCachedUsersByName(username).isEmpty()) {
+//                    User[] users = (User[]) this.api.getCachedUsersByName(username).toArray();
+//                    string.replace(username, users[0].getMentionTag());
+//                }
+                if (this.config.MCtoDiscordTag) {
+                    for (User user : this.api.getCachedUsers()) {
+                        ServerChannel serverChannel = (ServerChannel) this.api.getServerChannels().toArray()[0];
+                        Server server = serverChannel.getServer();
+                        if (string.contains(user.getName()) || string.contains(user.getDisplayName(server))) {
+                            string = string.replace(user.getName(), user.getMentionTag());
+                            string = string.replace(user.getDisplayName(server), user.getMentionTag());
+                            break;
+                        }
+                        if (string.contains(user.getName().toLowerCase()) || string.contains(user.getDisplayName(server).toLowerCase())) {
+                            string = string.replace(user.getName().toLowerCase(), user.getMentionTag());
+                            string = string.replace(user.getDisplayName(server).toLowerCase(), user.getMentionTag());
+                            break;
+                        }
+                    }
+                }
                 if (this.hasChatChannels)
                     for (int a = 0; a < this.config.chatChannels.size(); a++)
                         this.api.getServerTextChannelById(this.config.chatChannels.get(a)).get().sendMessage(string);
