@@ -2,6 +2,7 @@ package fr.arthurbambou.fblink.discordstuff;
 
 import fr.arthurbambou.fblink.FBLink;
 import fr.arthurbambou.fblink.discordstuff.commands.PlayerList;
+import fr.arthurbambou.fblink.discordstuff.enums.EmojiTranslater;
 import net.fabricmc.fabric.api.event.server.ServerStartCallback;
 import net.fabricmc.fabric.api.event.server.ServerStopCallback;
 import net.fabricmc.fabric.api.event.server.ServerTickCallback;
@@ -29,7 +30,6 @@ public class DiscordBot {
     private String lastMessageD;
     private DiscordApi api;
     private long startTime;
-    private MinecraftServer servers;
 
     public DiscordBot(String token, FBLink.Config config) {
         this.lastMessageD = "";
@@ -76,19 +76,6 @@ public class DiscordBot {
             if (!this.config.chatChannels.contains(event.getChannel().getIdAsString())) return;
             this.messageCreateEvent = event;
             this.hasReceivedaMessage = true;
-            if (event.getMessage().toString().startsWith("!playerlist")) {
-                String playerlist = "";
-                for (PlayerEntity playerEntity : this.servers.getPlayerManager().getPlayerList()) {
-                    playerlist = playerlist + playerEntity.getName().getString() + "\n";
-                }
-                if (playerlist.endsWith("\n")) {
-                    int a = playerlist.lastIndexOf("\n");
-                    playerlist = playerlist.substring(0,a);
-                }
-                for (int a = 0; a < this.config.chatChannels.size(); a++)
-                    this.api.getServerTextChannelById(this.config.chatChannels.get(a)).get().sendMessage("Players : " + this.servers.getPlayerManager().getPlayerList().size() +
-                        "/" + this.servers.getPlayerManager().getMaxPlayerCount() + "\n\n" + playerlist);
-            }
         }));
 
 //        this.api.addMessageCreateListener(new PlayerList());
@@ -105,7 +92,6 @@ public class DiscordBot {
         }));
 
         ServerStopCallback.EVENT.register((server -> {
-            servers = server;
             if (this.hasChatChannels)
                 for (int a = 0; a < this.config.chatChannels.size(); a++)
                     this.api.getServerTextChannelById(this.config.chatChannels.get(a)).get().sendMessage(config.minecraftToDiscordMessage.serverStopped);
@@ -128,9 +114,25 @@ public class DiscordBot {
             uptimeM = uptimeM - (uptimeH * 60);
             uptimeS = uptimeS - (uptimeH * 60 * 60) - (uptimeM * 60);
             if (this.hasReceivedaMessage) {
+                if (this.messageCreateEvent.getMessageContent().startsWith("!playlist")) {
+                    String playerlist = "";
+                    for (PlayerEntity playerEntity : server.getPlayerManager().getPlayerList()) {
+                        playerlist = playerlist + playerEntity.getName().getString() + "\n";
+                    }
+                    if (playerlist.endsWith("\n")) {
+                        int a = playerlist.lastIndexOf("\n");
+                        playerlist = playerlist.substring(0,a);
+                    }
+                    this.messageCreateEvent.getChannel().sendMessage("Players : " + server.getPlayerManager().getPlayerList().size()+"/" + server.getPlayerManager().getMaxPlayerCount() + "\n\n" + playerlist);
+                }
                 this.lastMessageD = this.config.discordToMinecraft
                         .replace("%player",this.messageCreateEvent.getMessageAuthor().getDisplayName())
                         .replace("%message",this.messageCreateEvent.getMessageContent());
+
+                this.messageCreateEvent.getChannel().sendMessage(this.lastMessageD.replace(":", "d"));
+                for (EmojiTranslater emoji : EmojiTranslater.values()) {
+                    this.lastMessageD = this.lastMessageD.replace(emoji.discordID, emoji.minecraftID);
+                }
                 server.getPlayerManager().sendToAll(new StringTextComponent(this.lastMessageD));
 
                 this.hasReceivedaMessage = false;
@@ -146,10 +148,6 @@ public class DiscordBot {
                 }
             }
         }));
-    }
-
-    public MinecraftServer getServers() {
-        return servers;
     }
 
     public void sendMessage(String string) {
