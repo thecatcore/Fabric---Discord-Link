@@ -1,13 +1,11 @@
 package fr.arthurbambou.fblink.discordstuff;
 
+import com.vdurmont.emoji.EmojiParser;
 import fr.arthurbambou.fblink.FBLink;
-import fr.arthurbambou.fblink.discordstuff.commands.PlayerList;
-import fr.arthurbambou.fblink.discordstuff.enums.EmojiTranslater;
 import net.fabricmc.fabric.api.event.server.ServerStartCallback;
 import net.fabricmc.fabric.api.event.server.ServerStopCallback;
 import net.fabricmc.fabric.api.event.server.ServerTickCallback;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.text.StringTextComponent;
 import net.minecraft.util.SystemUtil;
 import org.javacord.api.DiscordApi;
@@ -17,8 +15,6 @@ import org.javacord.api.entity.channel.ServerTextChannel;
 import org.javacord.api.entity.server.Server;
 import org.javacord.api.entity.user.User;
 import org.javacord.api.event.message.MessageCreateEvent;
-
-import java.util.Collection;
 
 public class DiscordBot {
 
@@ -127,12 +123,7 @@ public class DiscordBot {
                 }
                 this.lastMessageD = this.config.discordToMinecraft
                         .replace("%player",this.messageCreateEvent.getMessageAuthor().getDisplayName())
-                        .replace("%message",this.messageCreateEvent.getMessageContent());
-
-                this.messageCreateEvent.getChannel().sendMessage(this.lastMessageD.replace(":", "d"));
-                for (EmojiTranslater emoji : EmojiTranslater.values()) {
-                    this.lastMessageD = this.lastMessageD.replace(emoji.discordID, emoji.minecraftID);
-                }
+                        .replace("%message", EmojiParser.parseToAliases(this.messageCreateEvent.getMessageContent()));
                 server.getPlayerManager().sendToAll(new StringTextComponent(this.lastMessageD));
 
                 this.hasReceivedaMessage = false;
@@ -163,25 +154,19 @@ public class DiscordBot {
                     for (User user : this.api.getCachedUsers()) {
                         ServerChannel serverChannel = (ServerChannel) this.api.getServerChannels().toArray()[0];
                         Server server = serverChannel.getServer();
-                        if (string.contains(user.getName()) || string.contains(user.getDisplayName(server))) {
-                            string = string.replace(user.getName(), user.getMentionTag());
-                            string = string.replace(user.getDisplayName(server), user.getMentionTag());
-                            break;
-                        }
-                        if (string.contains(user.getName().toLowerCase()) || string.contains(user.getDisplayName(server).toLowerCase())) {
-                            string = string.replace(user.getName().toLowerCase(), user.getMentionTag());
-                            string = string.replace(user.getDisplayName(server).toLowerCase(), user.getMentionTag());
-                            break;
-                        }
+                        string = string.replace(user.getName(), user.getMentionTag());
+                        string = string.replace(user.getDisplayName(server), user.getMentionTag());
+                        string = string.replace(user.getName().toLowerCase(), user.getMentionTag());
+                        string = string.replace(user.getDisplayName(server).toLowerCase(), user.getMentionTag());
                     }
                 }
                 if (this.hasChatChannels)
                     for (int a = 0; a < this.config.chatChannels.size(); a++)
-                        this.api.getServerTextChannelById(this.config.chatChannels.get(a)).get().sendMessage(string);
+                        this.api.getServerTextChannelById(this.config.chatChannels.get(a)).get().sendMessage(EmojiParser.parseToUnicode(string));
                 if (this.hasLogChannels)
                     for (int a = 0; a < this.config.logChannels.size(); a++)
                         if (!this.config.chatChannels.contains(this.config.logChannels.get(a))) {
-                            this.api.getServerTextChannelById(this.config.logChannels.get(a)).get().sendMessage(string);
+                            this.api.getServerTextChannelById(this.config.logChannels.get(a)).get().sendMessage(EmojiParser.parseToUnicode(string));
                         }
             } else if (string.contains("left")) {
                 if (this.hasChatChannels)
