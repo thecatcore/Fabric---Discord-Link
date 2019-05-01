@@ -202,6 +202,17 @@ public class DiscordBot {
                 if (this.hasLogChannels)
                     for (int a = 0; a < this.config.logChannels.size(); a++)
                         this.api.getServerTextChannelById(this.config.logChannels.get(a)).get().sendMessage(string);
+            } else {
+                for (String deathMethod : Lists.DEATH_LIST) {
+                    if (string.contains(deathMethod)) {
+                        if (this.hasChatChannels)
+                            for (int a = 0; a < this.config.chatChannels.size(); a++)
+                                this.api.getServerTextChannelById(this.config.chatChannels.get(a)).get().sendMessage(string);
+                        if (this.hasLogChannels)
+                            for (int a = 0; a < this.config.logChannels.size(); a++)
+                                this.api.getServerTextChannelById(this.config.logChannels.get(a)).get().sendMessage(string);
+                    }
+                }
             }
         }
     }
