@@ -51,6 +51,7 @@ dependencies {
 	compile "org.javacord:javacord:${project.javacord_version}"
     contained "org.javacord:javacord:${project.javacord_version}"
 	compile "com.vdurmont:emoji-java:4.0.0"
+	contained "com.vdurmont:emoji-java:4.0.0"
 }
 
 processResources {
