@@ -2,7 +2,7 @@ import net.fabricmc.loom.task.RemapJar
 
 plugins {
 	id 'fabric-loom' version '0.2.2-SNAPSHOT'
-	id "com.github.johnrengelman.shadow" version "4.0.3"
+	id "com.github.johnrengelman.shadow" version "5.0.0"
 }
 
 sourceCompatibility = 1.8
