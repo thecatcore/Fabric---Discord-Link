@@ -6,7 +6,7 @@ import net.fabricmc.fabric.api.event.server.ServerStartCallback;
 import net.fabricmc.fabric.api.event.server.ServerStopCallback;
 import net.fabricmc.fabric.api.event.server.ServerTickCallback;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.text.StringTextComponent;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraft.util.SystemUtil;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.DiscordApiBuilder;
@@ -15,6 +15,8 @@ import org.javacord.api.entity.channel.ServerTextChannel;
 import org.javacord.api.entity.server.Server;
 import org.javacord.api.entity.user.User;
 import org.javacord.api.event.message.MessageCreateEvent;
+
+import java.util.NoSuchElementException;
 
 public class DiscordBot {
 
@@ -55,165 +57,187 @@ public class DiscordBot {
 
         this.config = config;
 
-        this.api = new DiscordApiBuilder().setToken(token).login().join();
+        try {
+            this.api = new DiscordApiBuilder().setToken(token).login().join();
 
-        if (this.hasChatChannels)
-            for (int a = 0; a < this.config.chatChannels.size(); a++)
-                this.api.getServerTextChannelById(this.config.chatChannels.get(a)).get().sendMessage(config.minecraftToDiscordMessage.serverStarting);
+            if (this.hasChatChannels)
+                for (int a = 0; a < this.config.chatChannels.size(); a++)
+                    this.api.getServerTextChannelById(this.config.chatChannels.get(a)).get().sendMessage(config.minecraftToDiscordMessage.serverStarting);
 
-        if (this.hasLogChannels)
-            for (int a = 0; a < this.config.logChannels.size(); a++)
-                this.api.getServerTextChannelById(this.config.logChannels.get(a)).get().sendMessage(config.minecraftToDiscordMessage.serverStarting);
+            if (this.hasLogChannels)
+                for (int a = 0; a < this.config.logChannels.size(); a++)
+                    this.api.getServerTextChannelById(this.config.logChannels.get(a)).get().sendMessage(config.minecraftToDiscordMessage.serverStarting);
 
-        this.api.addMessageCreateListener((event -> {
-            if (event.getMessageAuthor().isBotOwner() && this.config.ignoreBots) return;
-            if (!hasChatChannels) return;
-            if (event.getMessageAuthor().isYourself()) return;
-            if (!this.config.chatChannels.contains(event.getChannel().getIdAsString())) return;
-            this.messageCreateEvent = event;
-            this.hasReceivedaMessage = true;
-        }));
+            this.api.addMessageCreateListener((event -> {
+                if (event.getMessageAuthor().isBotOwner() && this.config.ignoreBots) return;
+                if (!hasChatChannels) return;
+                if (event.getMessageAuthor().isYourself()) return;
+                if (!this.config.chatChannels.contains(event.getChannel().getIdAsString())) return;
+                this.messageCreateEvent = event;
+                this.hasReceivedaMessage = true;
+            }));
+        } catch (NoSuchElementException error) {
+            System.out.println(error);
+        }
 
 //        this.api.addMessageCreateListener(new PlayerList());
 
         ServerStartCallback.EVENT.register((minecraftServer1 -> {
-            startTime = minecraftServer1.getServerStartTime();
-            if (this.hasChatChannels)
-                for (int a = 0; a < this.config.chatChannels.size(); a++)
-                    this.api.getServerTextChannelById(this.config.chatChannels.get(a)).get().sendMessage(config.minecraftToDiscordMessage.serverStarted);
+            try {
+                startTime = minecraftServer1.getServerStartTime();
+                if (this.hasChatChannels)
+                    for (int a = 0; a < this.config.chatChannels.size(); a++)
+                        this.api.getServerTextChannelById(this.config.chatChannels.get(a)).get().sendMessage(config.minecraftToDiscordMessage.serverStarted);
 
-            if (this.hasLogChannels)
-                for (int a = 0; a < this.config.logChannels.size(); a++)
-                    this.api.getServerTextChannelById(this.config.logChannels.get(a)).get().sendMessage(config.minecraftToDiscordMessage.serverStarted);
+                if (this.hasLogChannels)
+                    for (int a = 0; a < this.config.logChannels.size(); a++)
+                        this.api.getServerTextChannelById(this.config.logChannels.get(a)).get().sendMessage(config.minecraftToDiscordMessage.serverStarted);
+
+            } catch (NoSuchElementException error) {
+                System.out.println(error);
+            }
         }));
 
         ServerStopCallback.EVENT.register((server -> {
-            if (this.hasChatChannels)
-                for (int a = 0; a < this.config.chatChannels.size(); a++)
-                    this.api.getServerTextChannelById(this.config.chatChannels.get(a)).get().sendMessage(config.minecraftToDiscordMessage.serverStopped);
+            try {
+                if (this.hasChatChannels)
+                    for (int a = 0; a < this.config.chatChannels.size(); a++)
+                        this.api.getServerTextChannelById(this.config.chatChannels.get(a)).get().sendMessage(config.minecraftToDiscordMessage.serverStopped);
 
-            if (this.hasLogChannels)
-                for (int a = 0; a < this.config.logChannels.size(); a++)
-                    this.api.getServerTextChannelById(this.config.logChannels.get(a)).get().sendMessage(config.minecraftToDiscordMessage.serverStopped);
+                if (this.hasLogChannels)
+                    for (int a = 0; a < this.config.logChannels.size(); a++)
+                        this.api.getServerTextChannelById(this.config.logChannels.get(a)).get().sendMessage(config.minecraftToDiscordMessage.serverStopped);
 
 
-            this.api.disconnect();
+                this.api.disconnect();
+            } catch (NoSuchElementException error) {
+                System.out.println(error);
+            }
         }));
 
         ServerTickCallback.EVENT.register((server -> {
-            int playerNumber = server.getPlayerManager().getPlayerList().size();
-            int maxPlayer = server.getPlayerManager().getMaxPlayerCount();
-            String ip = server.getServerIp();
-            int uptimeS = (int)(SystemUtil.getMeasuringTimeMs() - this.startTime) / 1000;
-            int uptimeM = uptimeS / 60;
-            int uptimeH = uptimeM / 60;
-            uptimeM = uptimeM - (uptimeH * 60);
-            uptimeS = uptimeS - (uptimeH * 60 * 60) - (uptimeM * 60);
-            if (this.hasReceivedaMessage) {
-                if (this.messageCreateEvent.getMessageContent().startsWith("!playlist")) {
-                    String playerlist = "";
-                    for (PlayerEntity playerEntity : server.getPlayerManager().getPlayerList()) {
-                        playerlist = playerlist + playerEntity.getName().getString() + "\n";
+            try {
+                int playerNumber = server.getPlayerManager().getPlayerList().size();
+                int maxPlayer = server.getPlayerManager().getMaxPlayerCount();
+                String ip = server.getServerIp();
+                int uptimeS = (int) (SystemUtil.getMeasuringTimeMs() - this.startTime) / 1000;
+                int uptimeM = uptimeS / 60;
+                int uptimeH = uptimeM / 60;
+                uptimeM = uptimeM - (uptimeH * 60);
+                uptimeS = uptimeS - (uptimeH * 60 * 60) - (uptimeM * 60);
+                if (this.hasReceivedaMessage) {
+                    if (this.messageCreateEvent.getMessageContent().startsWith("!playlist")) {
+                        String playerlist = "";
+                        for (PlayerEntity playerEntity : server.getPlayerManager().getPlayerList()) {
+                            playerlist = playerlist + playerEntity.getName().getString() + "\n";
+                        }
+                        if (playerlist.endsWith("\n")) {
+                            int a = playerlist.lastIndexOf("\n");
+                            playerlist = playerlist.substring(0, a);
+                        }
+                        this.messageCreateEvent.getChannel().sendMessage("Players : " + server.getPlayerManager().getPlayerList().size() + "/" + server.getPlayerManager().getMaxPlayerCount() + "\n\n" + playerlist);
                     }
-                    if (playerlist.endsWith("\n")) {
-                        int a = playerlist.lastIndexOf("\n");
-                        playerlist = playerlist.substring(0,a);
-                    }
-                    this.messageCreateEvent.getChannel().sendMessage("Players : " + server.getPlayerManager().getPlayerList().size()+"/" + server.getPlayerManager().getMaxPlayerCount() + "\n\n" + playerlist);
-                }
-                this.lastMessageD = this.config.discordToMinecraft
-                        .replace("%player",this.messageCreateEvent.getMessageAuthor().getDisplayName())
-                        .replace("%message", EmojiParser.parseToAliases(this.messageCreateEvent.getMessageContent()));
-                server.getPlayerManager().sendToAll(new StringTextComponent(this.lastMessageD));
+                    this.lastMessageD = this.config.discordToMinecraft
+                            .replace("%player", this.messageCreateEvent.getMessageAuthor().getDisplayName())
+                            .replace("%message", EmojiParser.parseToAliases(this.messageCreateEvent.getMessageContent()));
+                    server.getPlayerManager().sendToAll(new TextComponent(this.lastMessageD));
 
-                this.hasReceivedaMessage = false;
-            }
-            if (this.hasChatChannels && this.config.customChannelDescription) {
-                for (int a = 0; a < this.config.chatChannels.size(); a++) {
-                    ServerTextChannel channel = this.api.getServerTextChannelById(this.config.chatChannels.get(a)).get();
-                    String topic =
-//                            "ip : " + ip + ",\n" +
-                            "player count : " + playerNumber + "/" + maxPlayer +
-                            ",\nuptime : " + uptimeH + " h " + uptimeM + " min " + uptimeS + " second";
-                    channel.updateTopic(topic);
+                    this.hasReceivedaMessage = false;
                 }
+                if (this.hasChatChannels && this.config.customChannelDescription) {
+                    for (int a = 0; a < this.config.chatChannels.size(); a++) {
+                        ServerTextChannel channel = this.api.getServerTextChannelById(this.config.chatChannels.get(a)).get();
+                        String topic =
+//                            "ip : " + ip + ",\n" +
+                                "player count : " + playerNumber + "/" + maxPlayer +
+                                        ",\nuptime : " + uptimeH + " h " + uptimeM + " min " + uptimeS + " second";
+                        channel.updateTopic(topic);
+                    }
+                }
+            } catch (NoSuchElementException error) {
+                System.out.println(error);
             }
         }));
     }
 
     public void sendMessage(String string) {
-        if (string.equals(this.lastMessageD)) { return; }
-        else {
-            if (string.startsWith("<")) {
+        try {
+            if (string.equals(this.lastMessageD)) {
+                return;
+            } else {
+                if (string.startsWith("<")) {
 //                String username = string.split(">")[0].replace("<", "");
 //                if (!this.api.getCachedUsersByName(username).isEmpty()) {
 //                    User[] users = (User[]) this.api.getCachedUsersByName(username).toArray();
 //                    string.replace(username, users[0].getMentionTag());
 //                }
-                if (this.config.MCtoDiscordTag) {
-                    for (User user : this.api.getCachedUsers()) {
-                        ServerChannel serverChannel = (ServerChannel) this.api.getServerChannels().toArray()[0];
-                        Server server = serverChannel.getServer();
-                        string = string.replace(user.getName(), user.getMentionTag());
-                        string = string.replace(user.getDisplayName(server), user.getMentionTag());
-                        string = string.replace(user.getName().toLowerCase(), user.getMentionTag());
-                        string = string.replace(user.getDisplayName(server).toLowerCase(), user.getMentionTag());
+                    if (this.config.MCtoDiscordTag) {
+                        for (User user : this.api.getCachedUsers()) {
+                            ServerChannel serverChannel = (ServerChannel) this.api.getServerChannels().toArray()[0];
+                            Server server = serverChannel.getServer();
+                            string = string.replace(user.getName(), user.getMentionTag());
+                            string = string.replace(user.getDisplayName(server), user.getMentionTag());
+                            string = string.replace(user.getName().toLowerCase(), user.getMentionTag());
+                            string = string.replace(user.getDisplayName(server).toLowerCase(), user.getMentionTag());
+                        }
                     }
-                }
-                if (this.hasChatChannels)
-                    for (int a = 0; a < this.config.chatChannels.size(); a++)
-                        this.api.getServerTextChannelById(this.config.chatChannels.get(a)).get().sendMessage(EmojiParser.parseToUnicode(string));
-                if (this.hasLogChannels)
-                    for (int a = 0; a < this.config.logChannels.size(); a++)
-                        if (!this.config.chatChannels.contains(this.config.logChannels.get(a))) {
-                            this.api.getServerTextChannelById(this.config.logChannels.get(a)).get().sendMessage(EmojiParser.parseToUnicode(string));
-                        }
-            } else if (string.contains("left")) {
-                if (this.hasChatChannels)
-                    for (int a = 0; a < this.config.chatChannels.size(); a++)
-                        this.api.getServerTextChannelById(this.config.chatChannels.get(a)).get().sendMessage(string);
-                if (this.hasLogChannels)
-                    for (int a = 0; a < this.config.logChannels.size(); a++)
-                        if (!this.config.chatChannels.contains(this.config.logChannels.get(a))) {
-                            this.api.getServerTextChannelById(this.config.logChannels.get(a)).get().sendMessage(string);
-                        }
-            } else if (string.contains("joined")) {
-                if (this.hasChatChannels)
-                    for (int a = 0; a < this.config.chatChannels.size(); a++)
-                        this.api.getServerTextChannelById(this.config.chatChannels.get(a)).get().sendMessage(string);
-                if (this.hasLogChannels)
-                    for (int a = 0; a < this.config.logChannels.size(); a++)
-                        if (!this.config.chatChannels.contains(this.config.logChannels.get(a))) {
-                            this.api.getServerTextChannelById(this.config.logChannels.get(a)).get().sendMessage(string);
-                        }
-            } else if (string.contains("advancement")) {
-                if (this.hasChatChannels)
-                    for (int a = 0; a < this.config.chatChannels.size(); a++)
-                        this.api.getServerTextChannelById(this.config.chatChannels.get(a)).get().sendMessage(string);
-                if (this.hasLogChannels)
-                    for (int a = 0; a < this.config.logChannels.size(); a++)
-                        if (!this.config.chatChannels.contains(this.config.logChannels.get(a))) {
-                            this.api.getServerTextChannelById(this.config.logChannels.get(a)).get().sendMessage(string);
-                        }
-            } else if (string.startsWith("[")) {
-                if (this.hasChatChannels && !this.hasLogChannels)
-                    for (int a = 0; a < this.config.chatChannels.size(); a++)
-                        this.api.getServerTextChannelById(this.config.chatChannels.get(a)).get().sendMessage(string);
-                if (this.hasLogChannels)
-                    for (int a = 0; a < this.config.logChannels.size(); a++)
-                        this.api.getServerTextChannelById(this.config.logChannels.get(a)).get().sendMessage(string);
-            } else {
-                for (String deathMethod : Lists.DEATH_LIST) {
-                    if (string.contains(deathMethod)) {
-                        if (this.hasChatChannels)
-                            for (int a = 0; a < this.config.chatChannels.size(); a++)
-                                this.api.getServerTextChannelById(this.config.chatChannels.get(a)).get().sendMessage(string);
-                        if (this.hasLogChannels)
-                            for (int a = 0; a < this.config.logChannels.size(); a++)
+                    if (this.hasChatChannels)
+                        for (int a = 0; a < this.config.chatChannels.size(); a++)
+                            this.api.getServerTextChannelById(this.config.chatChannels.get(a)).get().sendMessage(EmojiParser.parseToUnicode(string));
+                    if (this.hasLogChannels)
+                        for (int a = 0; a < this.config.logChannels.size(); a++)
+                            if (!this.config.chatChannels.contains(this.config.logChannels.get(a))) {
+                                this.api.getServerTextChannelById(this.config.logChannels.get(a)).get().sendMessage(EmojiParser.parseToUnicode(string));
+                            }
+                } else if (string.contains("left")) {
+                    if (this.hasChatChannels)
+                        for (int a = 0; a < this.config.chatChannels.size(); a++)
+                            this.api.getServerTextChannelById(this.config.chatChannels.get(a)).get().sendMessage(string);
+                    if (this.hasLogChannels)
+                        for (int a = 0; a < this.config.logChannels.size(); a++)
+                            if (!this.config.chatChannels.contains(this.config.logChannels.get(a))) {
                                 this.api.getServerTextChannelById(this.config.logChannels.get(a)).get().sendMessage(string);
+                            }
+                } else if (string.contains("joined")) {
+                    if (this.hasChatChannels)
+                        for (int a = 0; a < this.config.chatChannels.size(); a++)
+                            this.api.getServerTextChannelById(this.config.chatChannels.get(a)).get().sendMessage(string);
+                    if (this.hasLogChannels)
+                        for (int a = 0; a < this.config.logChannels.size(); a++)
+                            if (!this.config.chatChannels.contains(this.config.logChannels.get(a))) {
+                                this.api.getServerTextChannelById(this.config.logChannels.get(a)).get().sendMessage(string);
+                            }
+                } else if (string.contains("advancement")) {
+                    if (this.hasChatChannels)
+                        for (int a = 0; a < this.config.chatChannels.size(); a++)
+                            this.api.getServerTextChannelById(this.config.chatChannels.get(a)).get().sendMessage(string);
+                    if (this.hasLogChannels)
+                        for (int a = 0; a < this.config.logChannels.size(); a++)
+                            if (!this.config.chatChannels.contains(this.config.logChannels.get(a))) {
+                                this.api.getServerTextChannelById(this.config.logChannels.get(a)).get().sendMessage(string);
+                            }
+                } else if (string.startsWith("[")) {
+                    if (this.hasChatChannels && !this.hasLogChannels)
+                        for (int a = 0; a < this.config.chatChannels.size(); a++)
+                            this.api.getServerTextChannelById(this.config.chatChannels.get(a)).get().sendMessage(string);
+                    if (this.hasLogChannels)
+                        for (int a = 0; a < this.config.logChannels.size(); a++)
+                            this.api.getServerTextChannelById(this.config.logChannels.get(a)).get().sendMessage(string);
+                } else {
+                    for (String deathMethod : Lists.DEATH_LIST) {
+                        if (string.contains(deathMethod)) {
+                            if (this.hasChatChannels)
+                                for (int a = 0; a < this.config.chatChannels.size(); a++)
+                                    this.api.getServerTextChannelById(this.config.chatChannels.get(a)).get().sendMessage(string);
+                            if (this.hasLogChannels)
+                                for (int a = 0; a < this.config.logChannels.size(); a++)
+                                    this.api.getServerTextChannelById(this.config.logChannels.get(a)).get().sendMessage(string);
+                        }
                     }
                 }
             }
+        } catch (NoSuchElementException error) {
+            System.out.println(error);
         }
     }
 }
