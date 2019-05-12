@@ -96,17 +96,20 @@ public class FBLink implements DedicatedServerModInitializer {
 				if (config.discordToMinecraft == null) {
 					config.discordToMinecraft = DefaultConfig.discordToMinecraft;
 				}
-				if (config.minecraftToDiscordMessage == null) {
-					config.minecraftToDiscordMessage = DefaultConfig.minecraftToDiscordMessage;
+				if (config.minecraftToDiscord == null) {
+					config.minecraftToDiscord = DefaultConfig.minecraftToDiscord;
 				}
-				if (config.minecraftToDiscordMessage.serverStarted == null) {
-					config.minecraftToDiscordMessage.serverStarted = DefaultConfig.minecraftToDiscordMessage.serverStarted;
+				if (config.minecraftToDiscord.messages == null) {
+					config.minecraftToDiscord.messages = DefaultConfig.minecraftToDiscord.messages;
 				}
-				if (config.minecraftToDiscordMessage.serverStarting == null) {
-					config.minecraftToDiscordMessage.serverStarting = DefaultConfig.minecraftToDiscordMessage.serverStarting;
+				if (config.minecraftToDiscord.messages.serverStarted == null) {
+					config.minecraftToDiscord.messages.serverStarted = DefaultConfig.minecraftToDiscord.messages.serverStarted;
 				}
-				if (config.minecraftToDiscordMessage.serverStopped == null) {
-					config.minecraftToDiscordMessage.serverStopped = DefaultConfig.minecraftToDiscordMessage.serverStopped;
+				if (config.minecraftToDiscord.messages.serverStarting == null) {
+					config.minecraftToDiscord.messages.serverStarting = DefaultConfig.minecraftToDiscord.messages.serverStarting;
+				}
+				if (config.minecraftToDiscord.messages.serverStopped == null) {
+					config.minecraftToDiscord.messages.serverStopped = DefaultConfig.minecraftToDiscord.messages.serverStopped;
 				}
 				return saveConfig(config);
 			} catch (IOException e) {
@@ -122,14 +125,27 @@ public class FBLink implements DedicatedServerModInitializer {
 		public List<String> chatChannels = new ArrayList<String>();
 		public List<String> logChannels = new ArrayList<String>();
 		public boolean ignoreBots = true;
-		public MinecraftToDiscordMessage minecraftToDiscordMessage = new MinecraftToDiscordMessage();
-		public boolean customChannelDescription = false;
-		public boolean MCtoDiscordTag = false;
+		public MinecraftToDiscord minecraftToDiscord = new MinecraftToDiscord();
+
+		public class MinecraftToDiscord {
+			public MinecraftToDiscordMessage messages = new MinecraftToDiscordMessage();
+			public MinecraftToDiscordBooleans booleans = new MinecraftToDiscordBooleans();
+		}
 
 		public class MinecraftToDiscordMessage {
 			public String serverStarting = "Server is starting !";
 			public String serverStarted = "Server Started";
 			public String serverStopped = "Server Stopped";
+		}
+
+		public class MinecraftToDiscordBooleans {
+			public boolean customChannelDescription = false;
+			public boolean MCtoDiscordTag = false;
+			public boolean PlayerMessages = true;
+			public boolean JoinAndLeftMessages = true;
+			public boolean AdvancementMessages = true;
+			public boolean LogMessages = true;
+			public boolean DeathMessages = true;
 		}
 	}
 }

@@ -62,11 +62,11 @@ public class DiscordBot {
 
             if (this.hasChatChannels)
                 for (int a = 0; a < this.config.chatChannels.size(); a++)
-                    this.api.getServerTextChannelById(this.config.chatChannels.get(a)).get().sendMessage(config.minecraftToDiscordMessage.serverStarting);
+                    this.api.getServerTextChannelById(this.config.chatChannels.get(a)).get().sendMessage(config.minecraftToDiscord.messages.serverStarting);
 
             if (this.hasLogChannels)
                 for (int a = 0; a < this.config.logChannels.size(); a++)
-                    this.api.getServerTextChannelById(this.config.logChannels.get(a)).get().sendMessage(config.minecraftToDiscordMessage.serverStarting);
+                    this.api.getServerTextChannelById(this.config.logChannels.get(a)).get().sendMessage(config.minecraftToDiscord.messages.serverStarting);
 
             this.api.addMessageCreateListener((event -> {
                 if (event.getMessageAuthor().isBotOwner() && this.config.ignoreBots) return;
@@ -87,11 +87,11 @@ public class DiscordBot {
                 startTime = minecraftServer1.getServerStartTime();
                 if (this.hasChatChannels)
                     for (int a = 0; a < this.config.chatChannels.size(); a++)
-                        this.api.getServerTextChannelById(this.config.chatChannels.get(a)).get().sendMessage(config.minecraftToDiscordMessage.serverStarted);
+                        this.api.getServerTextChannelById(this.config.chatChannels.get(a)).get().sendMessage(config.minecraftToDiscord.messages.serverStarted);
 
                 if (this.hasLogChannels)
                     for (int a = 0; a < this.config.logChannels.size(); a++)
-                        this.api.getServerTextChannelById(this.config.logChannels.get(a)).get().sendMessage(config.minecraftToDiscordMessage.serverStarted);
+                        this.api.getServerTextChannelById(this.config.logChannels.get(a)).get().sendMessage(config.minecraftToDiscord.messages.serverStarted);
 
             } catch (NoSuchElementException error) {
                 System.out.println(error);
@@ -102,11 +102,11 @@ public class DiscordBot {
             try {
                 if (this.hasChatChannels)
                     for (int a = 0; a < this.config.chatChannels.size(); a++)
-                        this.api.getServerTextChannelById(this.config.chatChannels.get(a)).get().sendMessage(config.minecraftToDiscordMessage.serverStopped);
+                        this.api.getServerTextChannelById(this.config.chatChannels.get(a)).get().sendMessage(config.minecraftToDiscord.messages.serverStopped);
 
                 if (this.hasLogChannels)
                     for (int a = 0; a < this.config.logChannels.size(); a++)
-                        this.api.getServerTextChannelById(this.config.logChannels.get(a)).get().sendMessage(config.minecraftToDiscordMessage.serverStopped);
+                        this.api.getServerTextChannelById(this.config.logChannels.get(a)).get().sendMessage(config.minecraftToDiscord.messages.serverStopped);
 
 
                 this.api.disconnect();
@@ -144,7 +144,7 @@ public class DiscordBot {
 
                     this.hasReceivedaMessage = false;
                 }
-                if (this.hasChatChannels && this.config.customChannelDescription) {
+                if (this.hasChatChannels && this.config.minecraftToDiscord.booleans.customChannelDescription) {
                     for (int a = 0; a < this.config.chatChannels.size(); a++) {
                         ServerTextChannel channel = this.api.getServerTextChannelById(this.config.chatChannels.get(a)).get();
                         String topic =
@@ -165,13 +165,13 @@ public class DiscordBot {
             if (string.equals(this.lastMessageD)) {
                 return;
             } else {
-                if (string.startsWith("<")) {
+                if (string.startsWith("<") && this.config.minecraftToDiscord.booleans.PlayerMessages) {
 //                String username = string.split(">")[0].replace("<", "");
 //                if (!this.api.getCachedUsersByName(username).isEmpty()) {
 //                    User[] users = (User[]) this.api.getCachedUsersByName(username).toArray();
 //                    string.replace(username, users[0].getMentionTag());
 //                }
-                    if (this.config.MCtoDiscordTag) {
+                    if (this.config.minecraftToDiscord.booleans.MCtoDiscordTag) {
                         for (User user : this.api.getCachedUsers()) {
                             ServerChannel serverChannel = (ServerChannel) this.api.getServerChannels().toArray()[0];
                             Server server = serverChannel.getServer();
@@ -189,7 +189,7 @@ public class DiscordBot {
                             if (!this.config.chatChannels.contains(this.config.logChannels.get(a))) {
                                 this.api.getServerTextChannelById(this.config.logChannels.get(a)).get().sendMessage(EmojiParser.parseToUnicode(string));
                             }
-                } else if (string.contains("left")) {
+                } else if (string.contains("left") && this.config.minecraftToDiscord.booleans.JoinAndLeftMessages) {
                     if (this.hasChatChannels)
                         for (int a = 0; a < this.config.chatChannels.size(); a++)
                             this.api.getServerTextChannelById(this.config.chatChannels.get(a)).get().sendMessage(string);
@@ -198,7 +198,7 @@ public class DiscordBot {
                             if (!this.config.chatChannels.contains(this.config.logChannels.get(a))) {
                                 this.api.getServerTextChannelById(this.config.logChannels.get(a)).get().sendMessage(string);
                             }
-                } else if (string.contains("joined")) {
+                } else if (string.contains("joined") && this.config.minecraftToDiscord.booleans.JoinAndLeftMessages) {
                     if (this.hasChatChannels)
                         for (int a = 0; a < this.config.chatChannels.size(); a++)
                             this.api.getServerTextChannelById(this.config.chatChannels.get(a)).get().sendMessage(string);
@@ -207,7 +207,7 @@ public class DiscordBot {
                             if (!this.config.chatChannels.contains(this.config.logChannels.get(a))) {
                                 this.api.getServerTextChannelById(this.config.logChannels.get(a)).get().sendMessage(string);
                             }
-                } else if (string.contains("advancement")) {
+                } else if (string.contains("advancement") && this.config.minecraftToDiscord.booleans.AdvancementMessages) {
                     if (this.hasChatChannels)
                         for (int a = 0; a < this.config.chatChannels.size(); a++)
                             this.api.getServerTextChannelById(this.config.chatChannels.get(a)).get().sendMessage(string);
@@ -216,7 +216,7 @@ public class DiscordBot {
                             if (!this.config.chatChannels.contains(this.config.logChannels.get(a))) {
                                 this.api.getServerTextChannelById(this.config.logChannels.get(a)).get().sendMessage(string);
                             }
-                } else if (string.startsWith("[")) {
+                } else if (string.startsWith("[") && this.config.minecraftToDiscord.booleans.LogMessages) {
                     if (this.hasChatChannels && !this.hasLogChannels)
                         for (int a = 0; a < this.config.chatChannels.size(); a++)
                             this.api.getServerTextChannelById(this.config.chatChannels.get(a)).get().sendMessage(string);
@@ -225,7 +225,7 @@ public class DiscordBot {
                             this.api.getServerTextChannelById(this.config.logChannels.get(a)).get().sendMessage(string);
                 } else {
                     for (String deathMethod : Lists.DEATH_LIST) {
-                        if (string.contains(deathMethod)) {
+                        if (string.contains(deathMethod) && this.config.minecraftToDiscord.booleans.DeathMessages) {
                             if (this.hasChatChannels)
                                 for (int a = 0; a < this.config.chatChannels.size(); a++)
                                     this.api.getServerTextChannelById(this.config.chatChannels.get(a)).get().sendMessage(string);
