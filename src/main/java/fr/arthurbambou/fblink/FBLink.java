@@ -4,7 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import fr.arthurbambou.fblink.discordstuff.DiscordBot;
 import net.fabricmc.api.DedicatedServerModInitializer;
-import net.fabricmc.loader.FabricLoader;
+import net.fabricmc.loader.api.FabricLoader;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -39,7 +39,7 @@ public class FBLink implements DedicatedServerModInitializer {
 	}
 
 	protected class ConfigManager {
-		private File CONFIG_PATH = FabricLoader.INSTANCE.getConfigDirectory();
+		private File CONFIG_PATH = FabricLoader.getInstance().getConfigDirectory();
 
 		private final Gson DEFAULT_GSON = new GsonBuilder().setPrettyPrinting().create();
 
