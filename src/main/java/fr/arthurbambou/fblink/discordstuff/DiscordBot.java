@@ -36,7 +36,7 @@ public class DiscordBot {
             return;
         }
 
-        if (token == "") {
+        if (token == "" || token.isEmpty()) {
             System.out.println("[FDLink] Please add a bot token to the config file !");
             return;
         }
@@ -162,79 +162,83 @@ public class DiscordBot {
 
     public void sendMessage(String string) {
         try {
-            if (string.equals(this.lastMessageD)) {
-                return;
-            } else {
-                if (string.startsWith("<") && this.config.minecraftToDiscord.booleans.PlayerMessages) {
+            try {
+                if (string.equals(this.lastMessageD)) {
+                    return;
+                } else {
+                    if (string.startsWith("<") && this.config.minecraftToDiscord.booleans.PlayerMessages) {
 //                String username = string.split(">")[0].replace("<", "");
 //                if (!this.api.getCachedUsersByName(username).isEmpty()) {
 //                    User[] users = (User[]) this.api.getCachedUsersByName(username).toArray();
 //                    string.replace(username, users[0].getMentionTag());
 //                }
-                    if (this.config.minecraftToDiscord.booleans.MCtoDiscordTag) {
-                        for (User user : this.api.getCachedUsers()) {
-                            ServerChannel serverChannel = (ServerChannel) this.api.getServerChannels().toArray()[0];
-                            Server server = serverChannel.getServer();
-                            string = string.replace(user.getName(), user.getMentionTag());
-                            string = string.replace(user.getDisplayName(server), user.getMentionTag());
-                            string = string.replace(user.getName().toLowerCase(), user.getMentionTag());
-                            string = string.replace(user.getDisplayName(server).toLowerCase(), user.getMentionTag());
+                        if (this.config.minecraftToDiscord.booleans.MCtoDiscordTag) {
+                            for (User user : this.api.getCachedUsers()) {
+                                ServerChannel serverChannel = (ServerChannel) this.api.getServerChannels().toArray()[0];
+                                Server server = serverChannel.getServer();
+                                string = string.replace(user.getName(), user.getMentionTag());
+                                string = string.replace(user.getDisplayName(server), user.getMentionTag());
+                                string = string.replace(user.getName().toLowerCase(), user.getMentionTag());
+                                string = string.replace(user.getDisplayName(server).toLowerCase(), user.getMentionTag());
+                            }
                         }
-                    }
-                    if (this.hasChatChannels)
-                        for (int a = 0; a < this.config.chatChannels.size(); a++)
-                            this.api.getServerTextChannelById(this.config.chatChannels.get(a)).get().sendMessage(EmojiParser.parseToUnicode(string));
-                    if (this.hasLogChannels)
-                        for (int a = 0; a < this.config.logChannels.size(); a++)
-                            if (!this.config.chatChannels.contains(this.config.logChannels.get(a))) {
-                                this.api.getServerTextChannelById(this.config.logChannels.get(a)).get().sendMessage(EmojiParser.parseToUnicode(string));
-                            }
-                } else if (string.contains("left") && this.config.minecraftToDiscord.booleans.JoinAndLeftMessages) {
-                    if (this.hasChatChannels)
-                        for (int a = 0; a < this.config.chatChannels.size(); a++)
-                            this.api.getServerTextChannelById(this.config.chatChannels.get(a)).get().sendMessage(string);
-                    if (this.hasLogChannels)
-                        for (int a = 0; a < this.config.logChannels.size(); a++)
-                            if (!this.config.chatChannels.contains(this.config.logChannels.get(a))) {
-                                this.api.getServerTextChannelById(this.config.logChannels.get(a)).get().sendMessage(string);
-                            }
-                } else if (string.contains("joined") && this.config.minecraftToDiscord.booleans.JoinAndLeftMessages) {
-                    if (this.hasChatChannels)
-                        for (int a = 0; a < this.config.chatChannels.size(); a++)
-                            this.api.getServerTextChannelById(this.config.chatChannels.get(a)).get().sendMessage(string);
-                    if (this.hasLogChannels)
-                        for (int a = 0; a < this.config.logChannels.size(); a++)
-                            if (!this.config.chatChannels.contains(this.config.logChannels.get(a))) {
-                                this.api.getServerTextChannelById(this.config.logChannels.get(a)).get().sendMessage(string);
-                            }
-                } else if (string.contains("advancement") && this.config.minecraftToDiscord.booleans.AdvancementMessages) {
-                    if (this.hasChatChannels)
-                        for (int a = 0; a < this.config.chatChannels.size(); a++)
-                            this.api.getServerTextChannelById(this.config.chatChannels.get(a)).get().sendMessage(string);
-                    if (this.hasLogChannels)
-                        for (int a = 0; a < this.config.logChannels.size(); a++)
-                            if (!this.config.chatChannels.contains(this.config.logChannels.get(a))) {
-                                this.api.getServerTextChannelById(this.config.logChannels.get(a)).get().sendMessage(string);
-                            }
-                } else if (string.startsWith("[") && this.config.minecraftToDiscord.booleans.LogMessages) {
-                    if (this.hasChatChannels && !this.hasLogChannels)
-                        for (int a = 0; a < this.config.chatChannels.size(); a++)
-                            this.api.getServerTextChannelById(this.config.chatChannels.get(a)).get().sendMessage(string);
-                    if (this.hasLogChannels)
-                        for (int a = 0; a < this.config.logChannels.size(); a++)
-                            this.api.getServerTextChannelById(this.config.logChannels.get(a)).get().sendMessage(string);
-                } else {
-                    for (String deathMethod : Lists.DEATH_LIST) {
-                        if (string.contains(deathMethod) && this.config.minecraftToDiscord.booleans.DeathMessages) {
-                            if (this.hasChatChannels)
-                                for (int a = 0; a < this.config.chatChannels.size(); a++)
-                                    this.api.getServerTextChannelById(this.config.chatChannels.get(a)).get().sendMessage(string);
-                            if (this.hasLogChannels)
-                                for (int a = 0; a < this.config.logChannels.size(); a++)
+                        if (this.hasChatChannels)
+                            for (int a = 0; a < this.config.chatChannels.size(); a++)
+                                this.api.getServerTextChannelById(this.config.chatChannels.get(a)).get().sendMessage(EmojiParser.parseToUnicode(string));
+                        if (this.hasLogChannels)
+                            for (int a = 0; a < this.config.logChannels.size(); a++)
+                                if (!this.config.chatChannels.contains(this.config.logChannels.get(a))) {
+                                    this.api.getServerTextChannelById(this.config.logChannels.get(a)).get().sendMessage(EmojiParser.parseToUnicode(string));
+                                }
+                    } else if (string.contains("left") && this.config.minecraftToDiscord.booleans.JoinAndLeftMessages) {
+                        if (this.hasChatChannels)
+                            for (int a = 0; a < this.config.chatChannels.size(); a++)
+                                this.api.getServerTextChannelById(this.config.chatChannels.get(a)).get().sendMessage(string);
+                        if (this.hasLogChannels)
+                            for (int a = 0; a < this.config.logChannels.size(); a++)
+                                if (!this.config.chatChannels.contains(this.config.logChannels.get(a))) {
                                     this.api.getServerTextChannelById(this.config.logChannels.get(a)).get().sendMessage(string);
+                                }
+                    } else if (string.contains("joined") && this.config.minecraftToDiscord.booleans.JoinAndLeftMessages) {
+                        if (this.hasChatChannels)
+                            for (int a = 0; a < this.config.chatChannels.size(); a++)
+                                this.api.getServerTextChannelById(this.config.chatChannels.get(a)).get().sendMessage(string);
+                        if (this.hasLogChannels)
+                            for (int a = 0; a < this.config.logChannels.size(); a++)
+                                if (!this.config.chatChannels.contains(this.config.logChannels.get(a))) {
+                                    this.api.getServerTextChannelById(this.config.logChannels.get(a)).get().sendMessage(string);
+                                }
+                    } else if (string.contains("advancement") && this.config.minecraftToDiscord.booleans.AdvancementMessages) {
+                        if (this.hasChatChannels)
+                            for (int a = 0; a < this.config.chatChannels.size(); a++)
+                                this.api.getServerTextChannelById(this.config.chatChannels.get(a)).get().sendMessage(string);
+                        if (this.hasLogChannels)
+                            for (int a = 0; a < this.config.logChannels.size(); a++)
+                                if (!this.config.chatChannels.contains(this.config.logChannels.get(a))) {
+                                    this.api.getServerTextChannelById(this.config.logChannels.get(a)).get().sendMessage(string);
+                                }
+                    } else if (string.startsWith("[") && this.config.minecraftToDiscord.booleans.LogMessages) {
+                        if (this.hasChatChannels && !this.hasLogChannels)
+                            for (int a = 0; a < this.config.chatChannels.size(); a++)
+                                this.api.getServerTextChannelById(this.config.chatChannels.get(a)).get().sendMessage(string);
+                        if (this.hasLogChannels)
+                            for (int a = 0; a < this.config.logChannels.size(); a++)
+                                this.api.getServerTextChannelById(this.config.logChannels.get(a)).get().sendMessage(string);
+                    } else {
+                        for (String deathMethod : Lists.DEATH_LIST) {
+                            if (string.contains(deathMethod) && this.config.minecraftToDiscord.booleans.DeathMessages) {
+                                if (this.hasChatChannels)
+                                    for (int a = 0; a < this.config.chatChannels.size(); a++)
+                                        this.api.getServerTextChannelById(this.config.chatChannels.get(a)).get().sendMessage(string);
+                                if (this.hasLogChannels)
+                                    for (int a = 0; a < this.config.logChannels.size(); a++)
+                                        this.api.getServerTextChannelById(this.config.logChannels.get(a)).get().sendMessage(string);
+                            }
                         }
                     }
                 }
+            } catch (NullPointerException error) {
+                System.out.println(error);
             }
         } catch (NoSuchElementException error) {
             System.out.println(error);
