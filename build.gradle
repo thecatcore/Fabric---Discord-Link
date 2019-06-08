@@ -1,8 +1,5 @@
-import net.fabricmc.loom.task.RemapJar
-
 plugins {
-	id 'fabric-loom' version '0.2.2-SNAPSHOT'
-	id "com.github.johnrengelman.shadow" version "4.0.3"
+	id 'fabric-loom' version '0.2.4-SNAPSHOT'
 }
 
 sourceCompatibility = 1.8
@@ -15,28 +12,10 @@ group = project.maven_group
 minecraft {
 }
 
-configurations {
-    contained {
-        transitive = true
-    }
-}
-
-shadowJar {
-
-	classifier = ""
-	configurations = [project.configurations.contained]
-}
-
 task sourcesJar(type: Jar) {
 	baseName = archivesBaseName
 	classifier = "sources"
 	from sourceSets.main.allSource
-}
-
-//If we're using shadow, we need to let remap know it's remapping the shadowJar
-remapJar {
-	dependsOn shadowJar
-	jar = shadowJar.archivePath
 }
 
 dependencies {
@@ -48,10 +27,13 @@ dependencies {
 	// Fabric API. This is technically optional, but you probably want it anyway.
 	modCompile "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
-	compile "org.javacord:javacord:${project.javacord_version}"
-    contained "org.javacord:javacord:${project.javacord_version}"
-	compile "com.vdurmont:emoji-java:4.0.0"
-	contained "com.vdurmont:emoji-java:4.0.0"
+	modCompile "org.javacord:javacord-api:${project.javacord_version}"
+    modCompile "org.javacord:javacord-core:${project.javacord_version}"
+	modCompile "com.vdurmont:emoji-java:4.0.0"
+
+	include "org.javacord:javacord-api:${project.javacord_version}"
+    include "org.javacord:javacord-core:${project.javacord_version}"
+	include "com.vdurmont:emoji-java:4.0.0"
 }
 
 processResources {
@@ -77,24 +59,3 @@ tasks.withType(JavaCompile) {
 jar {
 	from "LICENSE"
 }
-
-// configure the maven publication
-// publishing {
-// 	publications {
-// 		mavenJava(MavenPublication) {
-// 			// add all the jars that should be included when publishing to maven
-// 			artifact(jar) {
-// 				builtBy remapJar
-// 			}
-// 			artifact(sourcesJar) {
-// 				builtBy remapSourcesJar
-// 			}
-// 		}
-// 	}
-
-// 	// select the repositories you want to publish to
-// 	repositories {
-// 		// uncomment to publish to the local maven
-// 		// mavenLocal()
-// 	}
-// }
