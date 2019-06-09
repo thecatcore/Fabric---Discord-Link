@@ -37,17 +37,19 @@ public class DiscordBot {
         }
 
         if (token == "" || token.isEmpty()) {
-            System.out.println("[FDLink] Please add a bot token to the config file !");
+            System.out.println("[FDLink] Please add a bot token to the config file!");
             return;
         }
 
         if (config.chatChannels.size() == 0) {
+            System.out.println("[FDLink] Please add a game chat channel to the config file!");
             this.hasChatChannels = false;
         } else {
             this.hasChatChannels = true;
         }
 
         if (config.logChannels.size() == 0) {
+            System.out.println("[FDLink] Please add a log channel to the config file!");
             this.hasLogChannels = false;
         } else {
             this.hasLogChannels = true;
