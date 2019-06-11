@@ -55,32 +55,28 @@ public class DiscordBot {
             this.hasLogChannels = true;
         }
 
-        if (!hasLogChannels && !hasChatChannels) return;
+        if (!this.hasLogChannels && !this.hasChatChannels) return;
 
         this.config = config;
+        DiscordApi api = new DiscordApiBuilder().setToken(token).login().join();
+        api.addMessageCreateListener((event -> {
+            if (event.getMessageAuthor().isBotOwner() && this.config.ignoreBots) return;
+            if (!this.hasChatChannels) return;
+            if (event.getMessageAuthor().isYourself()) return;
+            if (!this.config.chatChannels.contains(event.getChannel().getIdAsString())) return;
+            this.messageCreateEvent = event;
+            this.hasReceivedaMessage = true;
+            System.out.println(event.getMessage().getReadableContent());
+        }));
+        this.api = api;
 
-        try {
-            this.api = new DiscordApiBuilder().setToken(token).login().join();
+        if (this.hasChatChannels)
+            for (int a = 0; a < this.config.chatChannels.size(); a++)
+                this.api.getServerTextChannelById(this.config.chatChannels.get(a)).get().sendMessage(this.config.minecraftToDiscord.messages.serverStarting);
 
-            if (this.hasChatChannels)
-                for (int a = 0; a < this.config.chatChannels.size(); a++)
-                    this.api.getServerTextChannelById(this.config.chatChannels.get(a)).get().sendMessage(config.minecraftToDiscord.messages.serverStarting);
-
-            if (this.hasLogChannels)
-                for (int a = 0; a < this.config.logChannels.size(); a++)
-                    this.api.getServerTextChannelById(this.config.logChannels.get(a)).get().sendMessage(config.minecraftToDiscord.messages.serverStarting);
-
-            this.api.addMessageCreateListener((event -> {
-                if (event.getMessageAuthor().isBotOwner() && this.config.ignoreBots) return;
-                if (!hasChatChannels) return;
-                if (event.getMessageAuthor().isYourself()) return;
-                if (!this.config.chatChannels.contains(event.getChannel().getIdAsString())) return;
-                this.messageCreateEvent = event;
-                this.hasReceivedaMessage = true;
-            }));
-        } catch (NoSuchElementException error) {
-            System.out.println(error);
-        }
+        if (this.hasLogChannels)
+            for (int a = 0; a < this.config.logChannels.size(); a++)
+                this.api.getServerTextChannelById(this.config.logChannels.get(a)).get().sendMessage(this.config.minecraftToDiscord.messages.serverStarting);
 
 //        this.api.addMessageCreateListener(new PlayerList());
 

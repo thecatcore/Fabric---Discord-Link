@@ -18,9 +18,6 @@
     "fabric": ">=0.3.0"
   },
   "mixins": [
-    {
-      "config": "fblink.common.json",
-      "environment": "server"
-    }
+    "fblink.mixin.json"
   ]
 }
