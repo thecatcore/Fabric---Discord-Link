@@ -60,7 +60,7 @@ public class DiscordBot {
         this.config = config;
         DiscordApi api = new DiscordApiBuilder().setToken(token).login().join();
         api.addMessageCreateListener((event -> {
-            if (event.getMessageAuthor().isBotOwner() && this.config.ignoreBots) return;
+            if (event.getMessageAuthor().isBotUser() && this.config.ignoreBots) return;
             if (!this.hasChatChannels) return;
             if (event.getMessageAuthor().isYourself()) return;
             if (!this.config.chatChannels.contains(event.getChannel().getIdAsString())) return;
