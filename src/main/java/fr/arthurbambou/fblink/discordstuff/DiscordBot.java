@@ -66,7 +66,6 @@ public class DiscordBot {
             if (!this.config.chatChannels.contains(event.getChannel().getIdAsString())) return;
             this.messageCreateEvent = event;
             this.hasReceivedaMessage = true;
-            System.out.println(event.getMessage().getReadableContent());
         }));
         this.api = api;
 
@@ -77,8 +76,6 @@ public class DiscordBot {
         if (this.hasLogChannels)
             for (int a = 0; a < this.config.logChannels.size(); a++)
                 this.api.getServerTextChannelById(this.config.logChannels.get(a)).get().sendMessage(this.config.minecraftToDiscord.messages.serverStarting);
-
-//        this.api.addMessageCreateListener(new PlayerList());
 
         ServerStartCallback.EVENT.register((minecraftServer1 -> {
             try {
@@ -146,9 +143,9 @@ public class DiscordBot {
                     for (int a = 0; a < this.config.chatChannels.size(); a++) {
                         ServerTextChannel channel = this.api.getServerTextChannelById(this.config.chatChannels.get(a)).get();
                         String topic =
-//                            "ip : " + ip + ",\n" +
                                 "player count : " + playerNumber + "/" + maxPlayer +
-                                        ",\nuptime : " + uptimeH + " h " + uptimeM + " min " + uptimeS + " second";
+                                ",\nuptime : " + uptimeH + " h " + uptimeM + 
+                                " min " + uptimeS + " second";
                         channel.updateTopic(topic);
                     }
                 }
@@ -165,11 +162,6 @@ public class DiscordBot {
                     return;
                 } else {
                     if (string.startsWith("<") && this.config.minecraftToDiscord.booleans.PlayerMessages) {
-//                String username = string.split(">")[0].replace("<", "");
-//                if (!this.api.getCachedUsersByName(username).isEmpty()) {
-//                    User[] users = (User[]) this.api.getCachedUsersByName(username).toArray();
-//                    string.replace(username, users[0].getMentionTag());
-//                }
                         if (this.config.minecraftToDiscord.booleans.MCtoDiscordTag) {
                             for (User user : this.api.getCachedUsers()) {
                                 ServerChannel serverChannel = (ServerChannel) this.api.getServerChannels().toArray()[0];
