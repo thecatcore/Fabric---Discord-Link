@@ -6,7 +6,7 @@ import net.fabricmc.fabric.api.event.server.ServerStartCallback;
 import net.fabricmc.fabric.api.event.server.ServerStopCallback;
 import net.fabricmc.fabric.api.event.server.ServerTickCallback;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.network.chat.TextComponent;
+import net.minecraft.text.LiteralText;
 import net.minecraft.util.SystemUtil;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.DiscordApiBuilder;
@@ -135,7 +135,7 @@ public class DiscordBot {
                     this.lastMessageD = this.config.discordToMinecraft
                             .replace("%player", this.messageCreateEvent.getMessageAuthor().getDisplayName())
                             .replace("%message", EmojiParser.parseToAliases(this.messageCreateEvent.getMessageContent()));
-                    server.getPlayerManager().sendToAll(new TextComponent(this.lastMessageD));
+                    server.getPlayerManager().sendToAll(new LiteralText(this.lastMessageD));
 
                     this.hasReceivedaMessage = false;
                 }
