@@ -33,7 +33,7 @@ dependencies {
 
 	include "org.javacord:javacord-api:${project.javacord_version}"
     include "org.javacord:javacord-core:${project.javacord_version}"
-	include "com.squareup.okhttp3:okhttp:3.9.1"
+	include "com.squareup.okhttp3:okhttp:4.0.0"
 	include "com.squareup.okhttp3:logging-interceptor:3.9.1"
 	include "com.fasterxml.jackson.core:jackson-databind:2.9.3"
 	include "com.fasterxml.jackson.core:jackson-annotations:2.9.0"
