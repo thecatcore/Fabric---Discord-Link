@@ -41,7 +41,7 @@ dependencies {
 	include "com.neovisionaries:nv-websocket-client:2.6"
 	include "com.squareup.okio:okio:1.13.0"
 	include "org.json:json:20170516"
-	include "org.apache.logging.log4j:log4j-api:2.11.0"
+	include "org.apache.logging.log4j:log4j-api:2.12.0"
 
 	include "com.vdurmont:emoji-java:4.0.0"
 }
