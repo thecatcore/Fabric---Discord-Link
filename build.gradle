@@ -36,7 +36,7 @@ dependencies {
 	include "com.squareup.okhttp3:okhttp:3.9.1"
 	include "com.squareup.okhttp3:logging-interceptor:3.9.1"
 	include "com.fasterxml.jackson.core:jackson-databind:2.9.3"
-	include "com.fasterxml.jackson.core:jackson-annotations:2.9.0"
+	include "com.fasterxml.jackson.core:jackson-annotations:2.10.0.pr1"
 	include "com.fasterxml.jackson.core:jackson-core:2.9.3"
 	include "com.neovisionaries:nv-websocket-client:2.6"
 	include "com.squareup.okio:okio:1.13.0"
