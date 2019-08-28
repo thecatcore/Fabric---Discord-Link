@@ -29,7 +29,7 @@ dependencies {
 
 	modCompile "org.javacord:javacord-api:${project.javacord_version}"
     modCompile "org.javacord:javacord-core:${project.javacord_version}"
-	modCompile "com.vdurmont:emoji-java:4.0.0"
+	modCompile "com.vdurmont:emoji-java:5.1.0"
 
 	include "org.javacord:javacord-api:${project.javacord_version}"
     include "org.javacord:javacord-core:${project.javacord_version}"
