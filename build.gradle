@@ -39,7 +39,7 @@ dependencies {
 	include "com.fasterxml.jackson.core:jackson-annotations:2.9.0"
 	include "com.fasterxml.jackson.core:jackson-core:2.9.3"
 	include "com.neovisionaries:nv-websocket-client:2.6"
-	include "com.squareup.okio:okio:1.13.0"
+	include "com.squareup.okio:okio:2.4.1"
 	include "org.json:json:20170516"
 	include "org.apache.logging.log4j:log4j-api:2.11.0"
 
