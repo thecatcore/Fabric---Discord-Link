@@ -6,7 +6,11 @@ import net.fabricmc.fabric.api.event.server.ServerStartCallback;
 import net.fabricmc.fabric.api.event.server.ServerStopCallback;
 import net.fabricmc.fabric.api.event.server.ServerTickCallback;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.network.MessageType;
 import net.minecraft.text.LiteralText;
+import net.minecraft.text.Text;
+import net.minecraft.text.TranslatableText;
+import net.minecraft.util.Formatting;
 import net.minecraft.util.SystemUtil;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.DiscordApiBuilder;
@@ -155,13 +159,14 @@ public class DiscordBot {
         }));
     }
 
-    public void sendMessage(String string) {
+    public void sendMessage(Text text, MessageType messageType) {
         try {
             try {
-                if (string.equals(this.lastMessageD)) {
+                if (text.asString().equals(this.lastMessageD)) {
                     return;
                 } else {
-                    if (string.startsWith("<") && this.config.minecraftToDiscord.booleans.PlayerMessages) {
+                    if (MessageType.CHAT.equals(messageType) && this.config.minecraftToDiscord.booleans.PlayerMessages) {
+                        String string = text.asString();
                         if (this.config.minecraftToDiscord.booleans.MCtoDiscordTag) {
                             for (User user : this.api.getCachedUsers()) {
                                 ServerChannel serverChannel = (ServerChannel) this.api.getServerChannels().toArray()[0];
@@ -180,51 +185,47 @@ public class DiscordBot {
                                 if (!this.config.chatChannels.contains(this.config.logChannels.get(a))) {
                                     this.api.getServerTextChannelById(this.config.logChannels.get(a)).get().sendMessage(EmojiParser.parseToUnicode(string));
                                 }
-                    } else if (string.contains("left") && this.config.minecraftToDiscord.booleans.JoinAndLeftMessages) {
+                    } else if (((TranslatableText) text).getKey().equals("multiplayer.player.left") && this.config.minecraftToDiscord.booleans.JoinAndLeftMessages) {
                         if (this.hasChatChannels)
                             for (int a = 0; a < this.config.chatChannels.size(); a++)
-                                this.api.getServerTextChannelById(this.config.chatChannels.get(a)).get().sendMessage(string);
+                                this.api.getServerTextChannelById(this.config.chatChannels.get(a)).get().sendMessage(text.asString());
                         if (this.hasLogChannels)
                             for (int a = 0; a < this.config.logChannels.size(); a++)
                                 if (!this.config.chatChannels.contains(this.config.logChannels.get(a))) {
-                                    this.api.getServerTextChannelById(this.config.logChannels.get(a)).get().sendMessage(string);
+                                    this.api.getServerTextChannelById(this.config.logChannels.get(a)).get().sendMessage(text.asString());
                                 }
-                    } else if (string.contains("joined") && this.config.minecraftToDiscord.booleans.JoinAndLeftMessages) {
+                    } else if (((TranslatableText) text).getKey().startsWith("multiplayer.player.joined") && this.config.minecraftToDiscord.booleans.JoinAndLeftMessages) {
                         if (this.hasChatChannels)
                             for (int a = 0; a < this.config.chatChannels.size(); a++)
-                                this.api.getServerTextChannelById(this.config.chatChannels.get(a)).get().sendMessage(string);
+                                this.api.getServerTextChannelById(this.config.chatChannels.get(a)).get().sendMessage(text.asString());
                         if (this.hasLogChannels)
                             for (int a = 0; a < this.config.logChannels.size(); a++)
                                 if (!this.config.chatChannels.contains(this.config.logChannels.get(a))) {
-                                    this.api.getServerTextChannelById(this.config.logChannels.get(a)).get().sendMessage(string);
+                                    this.api.getServerTextChannelById(this.config.logChannels.get(a)).get().sendMessage(text.asString());
                                 }
-                    } else if (string.contains("advancement") && this.config.minecraftToDiscord.booleans.AdvancementMessages) {
+                    } else if (((TranslatableText) text).getKey().startsWith("chat.type.advancement.") && this.config.minecraftToDiscord.booleans.AdvancementMessages) {
                         if (this.hasChatChannels)
                             for (int a = 0; a < this.config.chatChannels.size(); a++)
-                                this.api.getServerTextChannelById(this.config.chatChannels.get(a)).get().sendMessage(string);
+                                this.api.getServerTextChannelById(this.config.chatChannels.get(a)).get().sendMessage(text.formatted(Formatting.RESET).asString());
                         if (this.hasLogChannels)
                             for (int a = 0; a < this.config.logChannels.size(); a++)
                                 if (!this.config.chatChannels.contains(this.config.logChannels.get(a))) {
-                                    this.api.getServerTextChannelById(this.config.logChannels.get(a)).get().sendMessage(string);
+                                    this.api.getServerTextChannelById(this.config.logChannels.get(a)).get().sendMessage(text.asString());
                                 }
-                    } else if (string.startsWith("[") && this.config.minecraftToDiscord.booleans.LogMessages) {
+                    } else if (((TranslatableText) text).getKey().startsWith("commands.") && this.config.minecraftToDiscord.booleans.LogMessages) {
                         if (this.hasChatChannels && !this.hasLogChannels)
                             for (int a = 0; a < this.config.chatChannels.size(); a++)
-                                this.api.getServerTextChannelById(this.config.chatChannels.get(a)).get().sendMessage(string);
+                                this.api.getServerTextChannelById(this.config.chatChannels.get(a)).get().sendMessage(text.asString());
                         if (this.hasLogChannels)
                             for (int a = 0; a < this.config.logChannels.size(); a++)
-                                this.api.getServerTextChannelById(this.config.logChannels.get(a)).get().sendMessage(string);
-                    } else {
-                        for (String deathMethod : Lists.DEATH_LIST) {
-                            if (string.contains(deathMethod) && this.config.minecraftToDiscord.booleans.DeathMessages) {
-                                if (this.hasChatChannels)
-                                    for (int a = 0; a < this.config.chatChannels.size(); a++)
-                                        this.api.getServerTextChannelById(this.config.chatChannels.get(a)).get().sendMessage(string);
-                                if (this.hasLogChannels)
-                                    for (int a = 0; a < this.config.logChannels.size(); a++)
-                                        this.api.getServerTextChannelById(this.config.logChannels.get(a)).get().sendMessage(string);
-                            }
-                        }
+                                this.api.getServerTextChannelById(this.config.logChannels.get(a)).get().sendMessage(text.asString());
+                    } else if (((TranslatableText) text).getKey().startsWith("death.") && this.config.minecraftToDiscord.booleans.DeathMessages) {
+                        if (this.hasChatChannels)
+                            for (int a = 0; a < this.config.chatChannels.size(); a++)
+                                this.api.getServerTextChannelById(this.config.chatChannels.get(a)).get().sendMessage(text.asString());
+                        if (this.hasLogChannels)
+                            for (int a = 0; a < this.config.logChannels.size(); a++)
+                                this.api.getServerTextChannelById(this.config.logChannels.get(a)).get().sendMessage(text.asString());
                     }
                 }
             } catch (NullPointerException error) {
