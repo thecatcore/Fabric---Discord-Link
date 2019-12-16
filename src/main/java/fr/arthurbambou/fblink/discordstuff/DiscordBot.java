@@ -6,12 +6,12 @@ import net.fabricmc.fabric.api.event.server.ServerStartCallback;
 import net.fabricmc.fabric.api.event.server.ServerStopCallback;
 import net.fabricmc.fabric.api.event.server.ServerTickCallback;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.network.MessageType;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
-import net.minecraft.util.Formatting;
 import net.minecraft.util.SystemUtil;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.DiscordApiBuilder;
 import org.javacord.api.entity.channel.ServerChannel;
@@ -20,12 +20,13 @@ import org.javacord.api.entity.user.User;
 import org.javacord.api.event.message.MessageCreateEvent;
 
 public class DiscordBot {
+    private static final Logger LOGGER = LogManager.getLogger();
 
     private FBLink.Config config;
     private boolean hasChatChannels;
     private boolean hasLogChannels;
     private MessageCreateEvent messageCreateEvent;
-    private boolean hasReceivedaMessage;
+    private boolean hasReceivedMessage;
     private String lastMessageD;
     private DiscordApi api;
     private long startTime;
@@ -38,19 +39,19 @@ public class DiscordBot {
         }
 
         if (token.isEmpty()) {
-            System.out.println("[FDLink] Please add a bot token to the config file!");
+            LOGGER.error("[FDLink] Please add a bot token to the config file!");
             return;
         }
 
         if (config.chatChannels.isEmpty()) {
-            System.out.println("[FDLink] Please add a game chat channel to the config file!");
+            LOGGER.info("[FDLink] Please add a game chat channel to the config file!");
             this.hasChatChannels = false;
         } else {
             this.hasChatChannels = true;
         }
 
         if (config.logChannels.isEmpty()) {
-            System.out.println("[FDLink] Please add a log channel to the config file!");
+            LOGGER.info("[FDLink] Please add a log channel to the config file!");
             this.hasLogChannels = false;
         } else {
             this.hasLogChannels = true;
@@ -68,7 +69,7 @@ public class DiscordBot {
             if (event.getMessageAuthor().isYourself()) return;
             if (!this.config.chatChannels.contains(event.getChannel().getIdAsString())) return;
             this.messageCreateEvent = event;
-            this.hasReceivedaMessage = true;
+            this.hasReceivedMessage = true;
         }));
         this.api = api;
 
@@ -87,7 +88,7 @@ public class DiscordBot {
         ServerTickCallback.EVENT.register((server -> {
             int playerNumber = server.getPlayerManager().getPlayerList().size();
             int maxPlayer = server.getPlayerManager().getMaxPlayerCount();
-            if (this.hasReceivedaMessage) {
+            if (this.hasReceivedMessage) {
                 if (this.messageCreateEvent.getMessageContent().startsWith("!playlist")) {
                     StringBuilder playerlist = new StringBuilder();
                     for (PlayerEntity playerEntity : server.getPlayerManager().getPlayerList()) {
@@ -104,7 +105,7 @@ public class DiscordBot {
                         .replace("%message", EmojiParser.parseToAliases(this.messageCreateEvent.getMessageContent()));
                 server.getPlayerManager().sendToAll(new LiteralText(this.lastMessageD));
 
-                this.hasReceivedaMessage = false;
+                this.hasReceivedMessage = false;
             }
             if (this.hasChatChannels && this.config.minecraftToDiscord.booleans.customChannelDescription) {
                 int totalUptimeSeconds = (int) (SystemUtil.getMeasuringTimeMs() - this.startTime) / 1000;
@@ -124,55 +125,68 @@ public class DiscordBot {
         }));
     }
 
-    public void sendMessage(Text text, MessageType messageType) {
-        try {
-            if (text.asString().equals(this.lastMessageD)) {
-                return;
-            }
+    public void sendMessage(Text text) {
+        if (text.asString().equals(this.lastMessageD)) {
+            return;
+        }
 
-            if (MessageType.CHAT.equals(messageType) && this.config.minecraftToDiscord.booleans.PlayerMessages) {
-                String string = text.asString();
-                if (this.config.minecraftToDiscord.booleans.MCtoDiscordTag) {
-                    for (User user : this.api.getCachedUsers()) {
-                        ServerChannel serverChannel = (ServerChannel) this.api.getServerChannels().toArray()[0];
-                        Server server = serverChannel.getServer();
-                        string = string.replace(user.getName(), user.getMentionTag());
-                        string = string.replace(user.getDisplayName(server), user.getMentionTag());
-                        string = string.replace(user.getName().toLowerCase(), user.getMentionTag());
-                        string = string.replace(user.getDisplayName(server).toLowerCase(), user.getMentionTag());
-                    }
+        if (!(text instanceof TranslatableText)) {
+            sendToLogChannels(text.getString());
+            return;
+        }
+
+        String key = ((TranslatableText) text).getKey();
+        String message = text.getString();
+        if (key.equals("chat.type.text") && this.config.minecraftToDiscord.booleans.PlayerMessages) {
+            // Handle normal chat
+            if (this.config.minecraftToDiscord.booleans.MCtoDiscordTag) {
+                for (User user : this.api.getCachedUsers()) {
+                    ServerChannel serverChannel = (ServerChannel) this.api.getServerChannels().toArray()[0];
+                    Server server = serverChannel.getServer();
+                    message = message
+                            .replace(user.getName(), user.getMentionTag())
+                            .replace(user.getDisplayName(server), user.getMentionTag())
+                            .replace(user.getName().toLowerCase(), user.getMentionTag())
+                            .replace(user.getDisplayName(server).toLowerCase(), user.getMentionTag());
                 }
-                sendToAllChannels(string);
-            } else if (((TranslatableText) text).getKey().equals("multiplayer.player.left") && this.config.minecraftToDiscord.booleans.JoinAndLeftMessages) {
-                sendToAllChannels(text.asString());
-            } else if (((TranslatableText) text).getKey().startsWith("multiplayer.player.joined") && this.config.minecraftToDiscord.booleans.JoinAndLeftMessages) {
-                sendToAllChannels(text.asString());
-            } else if (((TranslatableText) text).getKey().startsWith("chat.type.advancement.") && this.config.minecraftToDiscord.booleans.AdvancementMessages) {
-                sendToAllChannels(text.formatted(Formatting.RESET).asString());
-            } else if (((TranslatableText) text).getKey().startsWith("commands.") && this.config.minecraftToDiscord.booleans.LogMessages) {
-                if (this.hasLogChannels) {
-                    sendToLogChannels(text.asString());
-                } else {
-                    sendToChatChannels(text.asString());
-                }
-            } else if (((TranslatableText) text).getKey().startsWith("death.") && this.config.minecraftToDiscord.booleans.DeathMessages) {
-                sendToAllChannels(text.asString());
             }
-        } catch (NullPointerException error) {
-            error.printStackTrace();
+            sendToAllChannels(message);
+
+        } else if (key.equals("chat.type.emote") || key.equals("chat.type.announcement") // Handling /me and /say command
+                || (key.startsWith("multiplayer.player.") && this.config.minecraftToDiscord.booleans.JoinAndLeftMessages)
+                || (key.startsWith("chat.type.advancement.") && this.config.minecraftToDiscord.booleans.AdvancementMessages)
+                || (key.startsWith("death.") && this.config.minecraftToDiscord.booleans.DeathMessages)
+        ) {
+            sendToAllChannels(message);
+
+        } else if (key.equals("chat.type.admin")) {
+            sendToLogChannels(message);
+
+        } else {
+            LOGGER.info("[FDLink] Unhandled text \"{}\":{}", key, message);
         }
     }
 
     private void sendToAllChannels(String message) {
-        sendToChatChannels(message);
-        sendToLogChannels(message);
-    }
-
-    private void sendToLogChannels(String message) {
         if (this.hasLogChannels) {
             for (String id : this.config.logChannels) {
                 this.api.getServerTextChannelById(id).ifPresent(channel -> channel.sendMessage(message));
             }
+        }
+        sendToChatChannels(message);
+    }
+
+    /**
+     * This method will send to chat channel as fallback if no log channel is present
+     * @param message the message to send
+     */
+    public void sendToLogChannels(String message) {
+        if (this.hasLogChannels) {
+            for (String id : this.config.logChannels) {
+                this.api.getServerTextChannelById(id).ifPresent(channel -> channel.sendMessage(message));
+            }
+        } else {
+            sendToChatChannels(message);
         }
     }
 
