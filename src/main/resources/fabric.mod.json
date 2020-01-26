@@ -8,6 +8,9 @@
   "authors": [
     "arthurbambou (aka. Cat Core)"
   ],
+  "contributors": [
+    "yhr0x43"
+  ],
   "entrypoints": {
     "server": [
       "fr.arthurbambou.fblink.FBLink"

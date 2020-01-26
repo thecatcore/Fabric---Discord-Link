@@ -9,7 +9,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
-import net.minecraft.util.SystemUtil;
+import net.minecraft.util.Util;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.javacord.api.DiscordApi;
@@ -108,7 +108,7 @@ public class DiscordBot {
                 this.hasReceivedMessage = false;
             }
             if (this.hasChatChannels && this.config.minecraftToDiscord.booleans.customChannelDescription) {
-                int totalUptimeSeconds = (int) (SystemUtil.getMeasuringTimeMs() - this.startTime) / 1000;
+                int totalUptimeSeconds = (int) (Util.getMeasuringTimeMs() - this.startTime) / 1000;
                 final int uptimeH = totalUptimeSeconds / 3600 ;
                 final int uptimeM = (totalUptimeSeconds % 3600) / 60;
                 final int uptimeS = totalUptimeSeconds % 60;
