@@ -28,7 +28,7 @@ public class DiscordBot {
     private MessageCreateEvent messageCreateEvent;
     private boolean hasReceivedMessage;
     private String lastMessageD;
-    private DiscordApi api;
+    private DiscordApi api = null;
     private long startTime;
 
     public DiscordBot(String token, FBLink.Config config) {
@@ -126,6 +126,7 @@ public class DiscordBot {
     }
 
     public void sendMessage(Text text) {
+        if (this.api == null || (!this.hasChatChannels && !this.hasLogChannels)) return;
         if (text.asString().equals(this.lastMessageD)) {
             return;
         }
@@ -137,6 +138,7 @@ public class DiscordBot {
 
         String key = ((TranslatableText) text).getKey();
         String message = text.getString();
+        LOGGER.debug(this.config.toString());
         if (key.equals("chat.type.text") && this.config.minecraftToDiscord.booleans.PlayerMessages) {
             // Handle normal chat
             if (this.config.minecraftToDiscord.booleans.MCtoDiscordTag) {
