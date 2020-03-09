@@ -5,6 +5,7 @@ import fr.arthurbambou.fblink.FBLink;
 import net.fabricmc.fabric.api.event.server.ServerStartCallback;
 import net.fabricmc.fabric.api.event.server.ServerStopCallback;
 import net.fabricmc.fabric.api.event.server.ServerTickCallback;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
@@ -138,6 +139,7 @@ public class DiscordBot {
 
         String key = ((TranslatableText) text).getKey();
         String message = text.getString();
+        message = message.replaceAll("§[b0931825467adcfeklmnor]", "");
         LOGGER.debug(this.config.toString());
         if (key.equals("chat.type.text") && this.config.minecraftToDiscord.booleans.PlayerMessages) {
             // Handle normal chat
