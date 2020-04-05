@@ -109,12 +109,24 @@ public class DiscordBot {
                 }
                 this.lastMessageD = this.config.discordToMinecraft
                         .replace("%player", this.messageCreateEvent.getMessageAuthor().getDisplayName());
-                if (!this.messageCreateEvent.getMessageAttachments().isEmpty()) {
-                    this.lastMessageD = this.lastMessageD.replace("%message", EmojiParser.parseToAliases(this.messageCreateEvent.getMessageContent()) + " (Click to open attachment URL)");
-                } else {
-                    this.lastMessageD = this.lastMessageD.replace("%message", EmojiParser.parseToAliases(this.messageCreateEvent.getMessageContent()));
+                String string_message = EmojiParser.parseToAliases(this.messageCreateEvent.getMessageContent());
+                if (this.config.minecraftToDiscord.booleans.MCtoDiscordTag) {
+                    for (User user : this.api.getCachedUsers()) {
+                        ServerChannel serverChannel = (ServerChannel) this.api.getServerChannels().toArray()[0];
+                        Server discordServer = serverChannel.getServer();
+                        string_message = string_message.replace("<@!" + user.getIdAsString() + ">", "@" + user.getName());
+                        if (user.getNickname(discordServer).isPresent()) {
+                            string_message = string_message.replace("@" + user.getName(), "@" + user.getDisplayName(discordServer) + "(" + user.getNickname(discordServer).get() + ")");
+                        }
+                    }
                 }
-                Style style = new Style().setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, this.messageCreateEvent.getMessageAttachments().get(0).getUrl().toString()));
+                Style style = new Style();
+                if (!this.messageCreateEvent.getMessageAttachments().isEmpty()) {
+                    this.lastMessageD = this.lastMessageD.replace("%message", string_message + " (Click to open attachment URL)");
+                    style.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, this.messageCreateEvent.getMessageAttachments().get(0).getUrl().toString()));
+                } else {
+                    this.lastMessageD = this.lastMessageD.replace("%message", string_message);
+                }
                 server.getPlayerManager().sendToAll(new LiteralText(this.lastMessageD).setStyle(style));
 
                 this.hasReceivedMessage = false;
@@ -160,10 +172,15 @@ public class DiscordBot {
                     ServerChannel serverChannel = (ServerChannel) this.api.getServerChannels().toArray()[0];
                     Server server = serverChannel.getServer();
                     message = message
-                            .replace(user.getName(), user.getMentionTag())
-                            .replace(user.getDisplayName(server), user.getMentionTag())
-                            .replace(user.getName().toLowerCase(), user.getMentionTag())
-                            .replace(user.getDisplayName(server).toLowerCase(), user.getMentionTag());
+                            .replace("@" + user.getName(), user.getMentionTag())
+                            .replace("@" + user.getDisplayName(server), user.getMentionTag())
+                            .replace("@" + user.getName().toLowerCase(), user.getMentionTag())
+                            .replace("@" + user.getDisplayName(server).toLowerCase(), user.getMentionTag());
+                    if (user.getNickname(server).isPresent()) {
+                        message = message
+                                .replace("@" + user.getNickname(server).get(), user.getMentionTag())
+                                .replace("@" + user.getNickname(server).get().toLowerCase(), user.getMentionTag());
+                    }
                 }
             }
             sendToAllChannels(text.getString().split("> ")[0] + "> " + message.split("> ")[1]);
