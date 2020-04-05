@@ -7,9 +7,7 @@ import net.fabricmc.fabric.api.event.server.ServerStopCallback;
 import net.fabricmc.fabric.api.event.server.ServerTickCallback;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.text.LiteralText;
-import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.text.*;
 import net.minecraft.util.Util;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -19,6 +17,9 @@ import org.javacord.api.entity.channel.ServerChannel;
 import org.javacord.api.entity.server.Server;
 import org.javacord.api.entity.user.User;
 import org.javacord.api.event.message.MessageCreateEvent;
+
+import java.net.MalformedURLException;
+import java.net.URL;
 
 public class DiscordBot {
     private static final Logger LOGGER = LogManager.getLogger();
@@ -31,8 +32,10 @@ public class DiscordBot {
     private String lastMessageD;
     private DiscordApi api = null;
     private long startTime;
+    private int ticks;
 
     public DiscordBot(String token, FBLink.Config config) {
+        this.ticks = 0;
         this.lastMessageD = "";
         if (token == null) {
             FBLink.regenConfig();
@@ -63,8 +66,8 @@ public class DiscordBot {
         config.logChannels.removeIf(id -> config.chatChannels.contains(id));
 
         this.config = config;
-        DiscordApi api = new DiscordApiBuilder().setToken(token).login().join();
-        api.addMessageCreateListener((event -> {
+        DiscordApi api1 = new DiscordApiBuilder().setToken(token).login().join();
+        api1.addMessageCreateListener((event -> {
             if (event.getMessageAuthor().isBotUser() && this.config.ignoreBots) return;
             if (!this.hasChatChannels) return;
             if (event.getMessageAuthor().isYourself()) return;
@@ -72,7 +75,8 @@ public class DiscordBot {
             this.messageCreateEvent = event;
             this.hasReceivedMessage = true;
         }));
-        this.api = api;
+        this.api = api1;
+        api1 = null;
 
         sendToAllChannels(this.config.minecraftToDiscord.messages.serverStarting);
 
@@ -84,9 +88,11 @@ public class DiscordBot {
         ServerStopCallback.EVENT.register((server -> {
             sendToAllChannels(config.minecraftToDiscord.messages.serverStopped);
             this.api.disconnect();
+            this.api = null;
         }));
 
         ServerTickCallback.EVENT.register((server -> {
+            this.ticks++;
             int playerNumber = server.getPlayerManager().getPlayerList().size();
             int maxPlayer = server.getPlayerManager().getMaxPlayerCount();
             if (this.hasReceivedMessage) {
@@ -102,13 +108,19 @@ public class DiscordBot {
                     this.messageCreateEvent.getChannel().sendMessage("Players : " + server.getPlayerManager().getPlayerList().size() + "/" + server.getPlayerManager().getMaxPlayerCount() + "\n\n" + playerlist);
                 }
                 this.lastMessageD = this.config.discordToMinecraft
-                        .replace("%player", this.messageCreateEvent.getMessageAuthor().getDisplayName())
-                        .replace("%message", EmojiParser.parseToAliases(this.messageCreateEvent.getMessageContent()));
-                server.getPlayerManager().sendToAll(new LiteralText(this.lastMessageD));
+                        .replace("%player", this.messageCreateEvent.getMessageAuthor().getDisplayName());
+                if (!this.messageCreateEvent.getMessageAttachments().isEmpty()) {
+                    this.lastMessageD = this.lastMessageD.replace("%message", EmojiParser.parseToAliases(this.messageCreateEvent.getMessageContent()) + " (Click to open attachment URL)");
+                } else {
+                    this.lastMessageD = this.lastMessageD.replace("%message", EmojiParser.parseToAliases(this.messageCreateEvent.getMessageContent()));
+                }
+                Style style = new Style().setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, this.messageCreateEvent.getMessageAttachments().get(0).getUrl().toString()));
+                server.getPlayerManager().sendToAll(new LiteralText(this.lastMessageD).setStyle(style));
 
                 this.hasReceivedMessage = false;
             }
-            if (this.hasChatChannels && this.config.minecraftToDiscord.booleans.customChannelDescription) {
+            if (this.hasChatChannels && this.config.minecraftToDiscord.booleans.customChannelDescription && this.ticks >= 200) {
+                this.ticks = 0;
                 int totalUptimeSeconds = (int) (Util.getMeasuringTimeMs() - this.startTime) / 1000;
                 final int uptimeH = totalUptimeSeconds / 3600 ;
                 final int uptimeM = (totalUptimeSeconds % 3600) / 60;
@@ -154,7 +166,7 @@ public class DiscordBot {
                             .replace(user.getDisplayName(server).toLowerCase(), user.getMentionTag());
                 }
             }
-            sendToAllChannels(message);
+            sendToAllChannels(text.getString().split("> ")[0] + "> " + message.split("> ")[1]);
 
         } else if (key.equals("chat.type.emote") || key.equals("chat.type.announcement") // Handling /me and /say command
                 || (key.startsWith("multiplayer.player.") && this.config.minecraftToDiscord.booleans.JoinAndLeftMessages)
@@ -173,9 +185,7 @@ public class DiscordBot {
 
     private void sendToAllChannels(String message) {
         if (this.hasLogChannels) {
-            for (String id : this.config.logChannels) {
-                this.api.getServerTextChannelById(id).ifPresent(channel -> channel.sendMessage(message));
-            }
+            sendToLogChannels(message);
         }
         sendToChatChannels(message);
     }
