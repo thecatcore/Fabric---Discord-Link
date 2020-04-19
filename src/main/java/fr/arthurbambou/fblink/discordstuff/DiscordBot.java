@@ -5,7 +5,6 @@ import fr.arthurbambou.fblink.FBLink;
 import net.fabricmc.fabric.api.event.server.ServerStartCallback;
 import net.fabricmc.fabric.api.event.server.ServerStopCallback;
 import net.fabricmc.fabric.api.event.server.ServerTickCallback;
-import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.text.*;
 import net.minecraft.util.Util;
@@ -17,9 +16,6 @@ import org.javacord.api.entity.channel.ServerChannel;
 import org.javacord.api.entity.server.Server;
 import org.javacord.api.entity.user.User;
 import org.javacord.api.event.message.MessageCreateEvent;
-
-import java.net.MalformedURLException;
-import java.net.URL;
 
 public class DiscordBot {
     private static final Logger LOGGER = LogManager.getLogger();
@@ -78,25 +74,28 @@ public class DiscordBot {
         this.api = api1;
         api1 = null;
 
-        sendToAllChannels(this.config.minecraftToDiscord.messages.serverStarting);
+        if (this.config.minecraftToDiscord.booleans.serverStartingMessage) sendToAllChannels(this.config.minecraftToDiscord.messages.serverStarting);
 
-        ServerStartCallback.EVENT.register((server -> {
-            startTime = server.getServerStartTime();
-            sendToAllChannels(this.config.minecraftToDiscord.messages.serverStarted);
-        }));
-
-        ServerStopCallback.EVENT.register((server -> {
-            sendToAllChannels(config.minecraftToDiscord.messages.serverStopped);
-            this.api.disconnect();
-            this.api = null;
-        }));
+        if (this.config.minecraftToDiscord.booleans.serverStartMessage) {
+            ServerStartCallback.EVENT.register((server -> {
+                startTime = server.getServerStartTime();
+                sendToAllChannels(this.config.minecraftToDiscord.messages.serverStarted);
+            }));
+        }
+        if (this.config.minecraftToDiscord.booleans.serverStopMessage) {
+            ServerStopCallback.EVENT.register((server -> {
+                sendToAllChannels(config.minecraftToDiscord.messages.serverStopped);
+                this.api.disconnect();
+                this.api = null;
+            }));
+        }
 
         ServerTickCallback.EVENT.register((server -> {
             this.ticks++;
             int playerNumber = server.getPlayerManager().getPlayerList().size();
             int maxPlayer = server.getPlayerManager().getMaxPlayerCount();
             if (this.hasReceivedMessage) {
-                if (this.messageCreateEvent.getMessageContent().startsWith("!playlist")) {
+                if (this.messageCreateEvent.getMessageContent().startsWith("!playerlist")) {
                     StringBuilder playerlist = new StringBuilder();
                     for (PlayerEntity playerEntity : server.getPlayerManager().getPlayerList()) {
                         playerlist.append(playerEntity.getName().getString()).append("\n");
@@ -110,12 +109,12 @@ public class DiscordBot {
                 this.lastMessageD = this.config.discordToMinecraft
                         .replace("%player", this.messageCreateEvent.getMessageAuthor().getDisplayName());
                 String string_message = EmojiParser.parseToAliases(this.messageCreateEvent.getMessageContent());
-                if (this.config.minecraftToDiscord.booleans.MCtoDiscordTag) {
+                if (this.config.minecraftToDiscord.booleans.minecraftToDiscordTag) {
                     for (User user : this.api.getCachedUsers()) {
                         ServerChannel serverChannel = (ServerChannel) this.api.getServerChannels().toArray()[0];
                         Server discordServer = serverChannel.getServer();
                         String string_discriminator = "";
-                        if(this.config.minecraftToDiscord.booleans.MCtoDiscordDiscriminator){
+                        if(this.config.minecraftToDiscord.booleans.minecraftToDiscordDiscriminator){
                             string_discriminator = "#" + user.getDiscriminator();
                         }
                         string_message = string_message.replace("<@!" + user.getIdAsString() + ">", "@" + user.getName() + string_discriminator);
@@ -169,9 +168,9 @@ public class DiscordBot {
         String message = text.getString();
         message = message.replaceAll("§[b0931825467adcfeklmnor]", "");
         LOGGER.debug(this.config.toString());
-        if (key.equals("chat.type.text") && this.config.minecraftToDiscord.booleans.PlayerMessages) {
+        if (key.equals("chat.type.text") && this.config.minecraftToDiscord.booleans.playerMessages) {
             // Handle normal chat
-            if (this.config.minecraftToDiscord.booleans.MCtoDiscordTag) {
+            if (this.config.minecraftToDiscord.booleans.minecraftToDiscordTag) {
                 for (User user : this.api.getCachedUsers()) {
                     ServerChannel serverChannel = (ServerChannel) this.api.getServerChannels().toArray()[0];
                     Server server = serverChannel.getServer();
@@ -190,9 +189,9 @@ public class DiscordBot {
             sendToAllChannels(text.getString().split("> ")[0] + "> " + message.split("> ")[1]);
 
         } else if (key.equals("chat.type.emote") || key.equals("chat.type.announcement") // Handling /me and /say command
-                || (key.startsWith("multiplayer.player.") && this.config.minecraftToDiscord.booleans.JoinAndLeftMessages)
-                || (key.startsWith("chat.type.advancement.") && this.config.minecraftToDiscord.booleans.AdvancementMessages)
-                || (key.startsWith("death.") && this.config.minecraftToDiscord.booleans.DeathMessages)
+                || (key.startsWith("multiplayer.player.") && this.config.minecraftToDiscord.booleans.joinAndLeftMessages)
+                || (key.startsWith("chat.type.advancement.") && this.config.minecraftToDiscord.booleans.advancementMessages)
+                || (key.startsWith("death.") && this.config.minecraftToDiscord.booleans.deathMessages)
         ) {
             sendToAllChannels(message);
 

@@ -139,14 +139,16 @@ public class FBLink implements DedicatedServerModInitializer {
 		}
 
 		public class MinecraftToDiscordBooleans {
+			public boolean serverStartingMessage = true;
+			public boolean serverStartMessage = true;
+			public boolean serverStopMessage = true;
 			public boolean customChannelDescription = false;
-			public boolean MCtoDiscordTag = false;
-			public boolean MCtoDiscordDiscriminator = false;
-			public boolean PlayerMessages = true;
-			public boolean JoinAndLeftMessages = true;
-			public boolean AdvancementMessages = true;
-			public boolean LogMessages = true;
-			public boolean DeathMessages = true;
+			public boolean minecraftToDiscordTag = false;
+			public boolean minecraftToDiscordDiscriminator = false;
+			public boolean playerMessages = true;
+			public boolean joinAndLeftMessages = true;
+			public boolean advancementMessages = true;
+			public boolean deathMessages = true;
 		}
 	}
 }

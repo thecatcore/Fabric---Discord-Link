@@ -17,7 +17,7 @@ public class MixinMinecraftServer {
      * @param text_1
      * @param ci
      */
-    @Inject(at = @At("RETURN"), method = "sendMessage")
+    @Inject(at = @At("RETURN"), method = "sendSystemMessage")
     public void sendMessage(Text text_1, CallbackInfo ci) {
         FBLink.getDiscordBot().sendMessage(text_1);
     }
