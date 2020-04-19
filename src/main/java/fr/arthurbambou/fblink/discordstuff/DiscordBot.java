@@ -116,7 +116,7 @@ public class DiscordBot {
                         Server discordServer = serverChannel.getServer();
                         string_message = string_message.replace("<@!" + user.getIdAsString() + ">", "@" + user.getName());
                         if (user.getNickname(discordServer).isPresent()) {
-                            string_message = string_message.replace("@" + user.getName(), "@" + user.getDisplayName(discordServer) + "(" + user.getNickname(discordServer).get() + ")");
+                            string_message = string_message.replace("@" + user.getName(), "@" + user.getDisplayName(discordServer) + "(" + user.getName() + ")");
                         }
                     }
                 }
