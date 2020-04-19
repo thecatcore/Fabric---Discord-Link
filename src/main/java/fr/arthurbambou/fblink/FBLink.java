@@ -141,6 +141,7 @@ public class FBLink implements DedicatedServerModInitializer {
 		public class MinecraftToDiscordBooleans {
 			public boolean customChannelDescription = false;
 			public boolean MCtoDiscordTag = false;
+			public boolean MCtoDiscordDiscriminator = false;
 			public boolean PlayerMessages = true;
 			public boolean JoinAndLeftMessages = true;
 			public boolean AdvancementMessages = true;
