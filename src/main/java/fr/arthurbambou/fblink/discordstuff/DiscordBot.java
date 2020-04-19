@@ -114,9 +114,13 @@ public class DiscordBot {
                     for (User user : this.api.getCachedUsers()) {
                         ServerChannel serverChannel = (ServerChannel) this.api.getServerChannels().toArray()[0];
                         Server discordServer = serverChannel.getServer();
-                        string_message = string_message.replace("<@!" + user.getIdAsString() + ">", "@" + user.getName());
+                        String string_discriminator = "";
+                        if(this.config.minecraftToDiscord.booleans.MCtoDiscordDiscriminator){
+                            string_discriminator = "#" + user.getDiscriminator();
+                        }
+                        string_message = string_message.replace("<@!" + user.getIdAsString() + ">", "@" + user.getName() + string_discriminator);
                         if (user.getNickname(discordServer).isPresent()) {
-                            string_message = string_message.replace("@" + user.getName(), "@" + user.getDisplayName(discordServer) + "(" + user.getNickname(discordServer).get() + ")");
+                            string_message = string_message.replace("@" + user.getName(), "@" + user.getDisplayName(discordServer) + "(" + user.getName() + string_discriminator + ")");
                         }
                     }
                 }
