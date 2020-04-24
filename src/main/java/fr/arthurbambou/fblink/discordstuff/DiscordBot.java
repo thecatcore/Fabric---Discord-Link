@@ -18,7 +18,7 @@ import org.javacord.api.entity.user.User;
 import org.javacord.api.event.message.MessageCreateEvent;
 
 public class DiscordBot {
-    private static final Logger LOGGER = LogManager.getLogger();
+    public static final Logger LOGGER = LogManager.getLogger();
 
     private FBLink.Config config;
     private boolean hasChatChannels;
@@ -123,7 +123,7 @@ public class DiscordBot {
                         }
                     }
                 }
-                Style style = new Style();
+                Style style = Style.field_24360;
                 if (!this.messageCreateEvent.getMessageAttachments().isEmpty()) {
                     this.lastMessageD = this.lastMessageD.replace("%message", string_message + " (Click to open attachment URL)");
                     style.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, this.messageCreateEvent.getMessageAttachments().get(0).getUrl().toString()));
@@ -155,7 +155,7 @@ public class DiscordBot {
 
     public void sendMessage(Text text) {
         if (this.api == null || (!this.hasChatChannels && !this.hasLogChannels)) return;
-        if (text.asString().equals(this.lastMessageD)) {
+        if (text.getString().equals(this.lastMessageD)) {
             return;
         }
 

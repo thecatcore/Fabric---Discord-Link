@@ -1,6 +1,7 @@
 package fr.arthurbambou.fblink.mixin;
 
 import fr.arthurbambou.fblink.FBLink;
+import fr.arthurbambou.fblink.discordstuff.DiscordBot;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.text.Text;
 import org.spongepowered.asm.mixin.Mixin;
