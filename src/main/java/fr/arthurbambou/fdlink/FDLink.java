@@ -1,8 +1,8 @@
-package fr.arthurbambou.fblink;
+package fr.arthurbambou.fdlink;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import fr.arthurbambou.fblink.discordstuff.DiscordBot;
+import fr.arthurbambou.fdlink.discordstuff.DiscordBot;
 import net.fabricmc.api.DedicatedServerModInitializer;
 import net.fabricmc.loader.api.FabricLoader;
 import org.apache.logging.log4j.LogManager;
@@ -15,7 +15,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FBLink implements DedicatedServerModInitializer {
+public class FDLink implements DedicatedServerModInitializer {
 
 	private static ConfigManager configManager;
 	private static DiscordBot discordBot;
@@ -121,11 +121,11 @@ public class FBLink implements DedicatedServerModInitializer {
 
 	public class Config {
 		private String token = "";
-		public String discordToMinecraft = "[%player] %message";
 		public List<String> chatChannels = new ArrayList<String>();
 		public List<String> logChannels = new ArrayList<String>();
 		public boolean ignoreBots = true;
 		public MinecraftToDiscord minecraftToDiscord = new MinecraftToDiscord();
+		public DiscordToMinecraft discordToMinecraft = new DiscordToMinecraft();
 
 		public class MinecraftToDiscord {
 			public MinecraftToDiscordMessage messages = new MinecraftToDiscordMessage();
@@ -149,6 +149,11 @@ public class FBLink implements DedicatedServerModInitializer {
 			public boolean joinAndLeftMessages = true;
 			public boolean advancementMessages = true;
 			public boolean deathMessages = true;
+		}
+
+		public class DiscordToMinecraft {
+			public boolean pingLongVersion = false;
+			public String message = "[%player] %message";
 		}
 	}
 }

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "id": "fblink",
+  "id": "fdlink",
   "name": "Fabric <-> Discord Link",
   "description": "A mod to link Minecraft and Discord chats for Fabric.",
   "version": "${version}",
@@ -9,18 +9,18 @@
     "arthurbambou (aka. Cat Core)"
   ],
   "contributors": [
-    "yhr0x43"
+    "Thedude7054","yhr0x43","BeeFox-sys"
   ],
   "entrypoints": {
     "server": [
-      "fr.arthurbambou.fblink.FBLink"
+      "fr.arthurbambou.fdlink.FDLink"
     ]
   },
   "depends": {
     "fabricloader": ">=0.7.0",
-    "minecraft": "<1.16-Snapshot.20.17.a"
+    "minecraft": "<1.16-alpha.20.17.a"
   },
   "mixins": [
-    "fblink.mixin.json"
+    "fdlink.mixin.json"
   ]
 }
