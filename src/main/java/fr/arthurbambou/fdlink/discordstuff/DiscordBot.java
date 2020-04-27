@@ -117,7 +117,7 @@ public class DiscordBot {
                         if(this.config.minecraftToDiscord.booleans.minecraftToDiscordDiscriminator){
                             string_discriminator = "#" + user.getDiscriminator();
                         }
-                        string_message = string_message.replace("<@!" + user.getIdAsString() + ">", "@" + user.getName() + string_discriminator);
+                        string_message = string_message.replace("<@!" + user.getIdAsString() + ">", "@" + user.getDisplayName(discordServer) + string_discriminator);
                         if (user.getNickname(discordServer).isPresent() && this.config.discordToMinecraft.pingLongVersion) {
                             string_message = string_message.replace("@" + user.getName(), "@" + user.getDisplayName(discordServer) + "(" + user.getName() + string_discriminator + ")");
                         }
