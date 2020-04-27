@@ -19,7 +19,7 @@ public class FDLink implements DedicatedServerModInitializer {
 
 	private static ConfigManager configManager;
 	private static DiscordBot discordBot;
-	public static Logger LOGGER = LogManager.getLogger("FBlink");
+	public static Logger LOGGER = LogManager.getLogger("FDlink");
 
 	@Override
 	public void onInitializeServer() {
@@ -44,7 +44,7 @@ public class FDLink implements DedicatedServerModInitializer {
 		private final Gson DEFAULT_GSON = new GsonBuilder().setPrettyPrinting().create();
 
 		private File configFile;
-		private String configFilename = "fblink";
+		private String configFilename = "fdlink";
 		private Gson gson = DEFAULT_GSON;
 		private Config DefaultConfig = new Config();
 
