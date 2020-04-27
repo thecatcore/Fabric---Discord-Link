@@ -118,7 +118,7 @@ public class DiscordBot {
                             string_discriminator = "#" + user.getDiscriminator();
                         }
                         string_message = string_message.replace("<@!" + user.getIdAsString() + ">", "@" + user.getName() + string_discriminator);
-                        if (user.getNickname(discordServer).isPresent()) {
+                        if (user.getNickname(discordServer).isPresent() && this.config.discordToMinecraft.pingLongVersion) {
                             string_message = string_message.replace("@" + user.getName(), "@" + user.getDisplayName(discordServer) + "(" + user.getName() + string_discriminator + ")");
                         }
                     }
