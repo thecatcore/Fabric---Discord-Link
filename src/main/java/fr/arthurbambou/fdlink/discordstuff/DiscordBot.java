@@ -106,7 +106,7 @@ public class DiscordBot {
                     }
                     this.messageCreateEvent.getChannel().sendMessage("Players : " + server.getPlayerManager().getPlayerList().size() + "/" + server.getPlayerManager().getMaxPlayerCount() + "\n\n" + playerlist);
                 }
-                this.lastMessageD = this.config.discordToMinecraft
+                this.lastMessageD = this.config.discordToMinecraft.message
                         .replace("%player", this.messageCreateEvent.getMessageAuthor().getDisplayName());
                 String string_message = EmojiParser.parseToAliases(this.messageCreateEvent.getMessageContent());
                 if (this.config.minecraftToDiscord.booleans.minecraftToDiscordTag) {
