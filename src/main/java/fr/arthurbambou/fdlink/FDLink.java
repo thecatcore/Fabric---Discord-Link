@@ -121,11 +121,11 @@ public class FDLink implements DedicatedServerModInitializer {
 
 	public class Config {
 		private String token = "";
-		public String discordToMinecraft = "[%player] %message";
 		public List<String> chatChannels = new ArrayList<String>();
 		public List<String> logChannels = new ArrayList<String>();
 		public boolean ignoreBots = true;
 		public MinecraftToDiscord minecraftToDiscord = new MinecraftToDiscord();
+		public DiscordToMinecraft discordToMinecraft = new DiscordToMinecraft();
 
 		public class MinecraftToDiscord {
 			public MinecraftToDiscordMessage messages = new MinecraftToDiscordMessage();
@@ -149,6 +149,11 @@ public class FDLink implements DedicatedServerModInitializer {
 			public boolean joinAndLeftMessages = true;
 			public boolean advancementMessages = true;
 			public boolean deathMessages = true;
+		}
+
+		public class DiscordToMinecraft {
+			public boolean pingLongVersion = false;
+			public String message = "[%player] %message";
 		}
 	}
 }

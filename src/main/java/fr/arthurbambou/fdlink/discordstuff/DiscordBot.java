@@ -118,7 +118,7 @@ public class DiscordBot {
                             string_discriminator = "#" + user.getDiscriminator();
                         }
                         string_message = string_message.replace("<@!" + user.getIdAsString() + ">", "@" + user.getName() + string_discriminator);
-                        if (user.getNickname(discordServer).isPresent()) {
+                        if (user.getNickname(discordServer).isPresent() && this.config.discordToMinecraft.pingLongVersion) {
                             string_message = string_message.replace("@" + user.getName(), "@" + user.getDisplayName(discordServer) + "(" + user.getName() + string_discriminator + ")");
                         }
                     }
@@ -186,7 +186,7 @@ public class DiscordBot {
                     }
                 }
             }
-            sendToAllChannels(text.getString().split("> ")[0] + "> " + message.split("> ")[1]);
+            sendToAllChannels(message);
 
         } else if (key.equals("chat.type.emote") || key.equals("chat.type.announcement") // Handling /me and /say command
                 || (key.startsWith("multiplayer.player.") && this.config.minecraftToDiscord.booleans.joinAndLeftMessages)
