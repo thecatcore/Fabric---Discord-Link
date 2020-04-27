@@ -1,6 +1,6 @@
 {
   "required": true,
-  "package": "fr.arthurbambou.fblink.mixin",
+  "package": "fr.arthurbambou.fdlink.mixin",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
     "MixinMinecraftServer"

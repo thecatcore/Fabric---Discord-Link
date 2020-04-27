@@ -1,8 +1,8 @@
-package fr.arthurbambou.fblink;
+package fr.arthurbambou.fdlink;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import fr.arthurbambou.fblink.discordstuff.DiscordBot;
+import fr.arthurbambou.fdlink.discordstuff.DiscordBot;
 import net.fabricmc.api.DedicatedServerModInitializer;
 import net.fabricmc.loader.api.FabricLoader;
 import org.apache.logging.log4j.LogManager;
@@ -15,11 +15,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FBLink implements DedicatedServerModInitializer {
+public class FDLink implements DedicatedServerModInitializer {
 
 	private static ConfigManager configManager;
 	private static DiscordBot discordBot;
-	public static Logger LOGGER = LogManager.getLogger("FBlink");
+	public static Logger LOGGER = LogManager.getLogger("FDlink");
 
 	@Override
 	public void onInitializeServer() {
@@ -44,7 +44,7 @@ public class FBLink implements DedicatedServerModInitializer {
 		private final Gson DEFAULT_GSON = new GsonBuilder().setPrettyPrinting().create();
 
 		private File configFile;
-		private String configFilename = "fblink";
+		private String configFilename = "fdlink";
 		private Gson gson = DEFAULT_GSON;
 		private Config DefaultConfig = new Config();
 

@@ -1,7 +1,6 @@
-package fr.arthurbambou.fblink.mixin;
+package fr.arthurbambou.fdlink.mixin;
 
-import fr.arthurbambou.fblink.FBLink;
-import fr.arthurbambou.fblink.discordstuff.DiscordBot;
+import fr.arthurbambou.fdlink.FDLink;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.text.Text;
 import org.spongepowered.asm.mixin.Mixin;
@@ -20,6 +19,6 @@ public class MixinMinecraftServer {
      */
     @Inject(at = @At("RETURN"), method = "sendSystemMessage")
     public void sendMessage(Text text_1, CallbackInfo ci) {
-        FBLink.getDiscordBot().sendMessage(text_1);
+        FDLink.getDiscordBot().sendMessage(text_1);
     }
 }
