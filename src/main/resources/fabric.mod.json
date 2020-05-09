@@ -18,7 +18,8 @@
   },
   "depends": {
     "fabricloader": ">=0.7.0",
-    "minecraft": ">=1.16-Snapshot.20.17.a"
+    "minecraft": ">=1.16-Snapshot.20.19.a",
+    "fabric": "*"
   },
   "mixins": [
     "fdlink.mixin.json"
