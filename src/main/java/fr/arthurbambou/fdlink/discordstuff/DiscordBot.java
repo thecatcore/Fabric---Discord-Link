@@ -123,10 +123,10 @@ public class DiscordBot {
                         }
                     }
                 }
-                Style style = Style.field_24360;
+                Style style = Style.EMPTY;
                 if (!this.messageCreateEvent.getMessageAttachments().isEmpty()) {
                     this.lastMessageD = this.lastMessageD.replace("%message", string_message + " (Click to open attachment URL)");
-                    style.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, this.messageCreateEvent.getMessageAttachments().get(0).getUrl().toString()));
+                    style = style.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, this.messageCreateEvent.getMessageAttachments().get(0).getUrl().toString()));
                 } else {
                     this.lastMessageD = this.lastMessageD.replace("%message", string_message);
                 }
