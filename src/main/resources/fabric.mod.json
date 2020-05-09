@@ -17,8 +17,8 @@
     ]
   },
   "depends": {
-    "fabricloader": ">=0.7.0",
-    "minecraft": "<1.16-alpha.20.17.a"
+    "fabricloader": ">=0.8.2",
+    "minecraft": "1.16-alpha.20.19.a"
   },
   "mixins": [
     "fdlink.mixin.json"
