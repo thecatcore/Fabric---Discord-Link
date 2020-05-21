@@ -6,6 +6,8 @@ import net.fabricmc.fabric.api.event.server.ServerStartCallback;
 import net.fabricmc.fabric.api.event.server.ServerStopCallback;
 import net.fabricmc.fabric.api.event.server.ServerTickCallback;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.network.MessageType;
+import net.minecraft.network.packet.s2c.play.GameMessageS2CPacket;
 import net.minecraft.text.*;
 import net.minecraft.util.Util;
 import org.apache.logging.log4j.LogManager;
@@ -16,6 +18,8 @@ import org.javacord.api.entity.channel.ServerChannel;
 import org.javacord.api.entity.server.Server;
 import org.javacord.api.entity.user.User;
 import org.javacord.api.event.message.MessageCreateEvent;
+
+import java.util.UUID;
 
 public class DiscordBot {
     public static final Logger LOGGER = LogManager.getLogger();
@@ -130,7 +134,7 @@ public class DiscordBot {
                 } else {
                     this.lastMessageD = this.lastMessageD.replace("%message", string_message);
                 }
-                server.getPlayerManager().sendToAll(new LiteralText(this.lastMessageD).setStyle(style));
+                server.getPlayerManager().sendToAll(new GameMessageS2CPacket(new LiteralText(this.lastMessageD).setStyle(style), MessageType.CHAT, UUID.randomUUID()));
 
                 this.hasReceivedMessage = false;
             }
