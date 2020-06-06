@@ -111,6 +111,12 @@ public class FDLink implements DedicatedServerModInitializer {
 				if (config.minecraftToDiscord.messages.serverStopped == null) {
 					config.minecraftToDiscord.messages.serverStopped = DefaultConfig.minecraftToDiscord.messages.serverStopped;
 				}
+				if (config.minecraftToDiscord.messages.playerJoined == null) {
+					config.minecraftToDiscord.messages.playerJoined = DefaultConfig.minecraftToDiscord.messages.playerJoined;
+				}
+				if (config.minecraftToDiscord.messages.playerLeft == null) {
+					config.minecraftToDiscord.messages.playerLeft = DefaultConfig.minecraftToDiscord.messages.playerLeft;
+				}
 				return saveConfig(config);
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -136,6 +142,8 @@ public class FDLink implements DedicatedServerModInitializer {
 			public String serverStarting = "Server is starting !";
 			public String serverStarted = "Server Started";
 			public String serverStopped = "Server Stopped";
+			public String playerJoined = "%player joined the game";
+			public String playerLeft = "%player left the game";
 		}
 
 		public class MinecraftToDiscordBooleans {

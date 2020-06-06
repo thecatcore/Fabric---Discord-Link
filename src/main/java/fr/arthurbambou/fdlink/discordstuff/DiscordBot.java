@@ -193,12 +193,19 @@ public class DiscordBot {
             sendToAllChannels(message);
 
         } else if (key.equals("chat.type.emote") || key.equals("chat.type.announcement") // Handling /me and /say command
-                || (key.startsWith("multiplayer.player.") && this.config.minecraftToDiscord.booleans.joinAndLeftMessages)
                 || (key.startsWith("chat.type.advancement.") && this.config.minecraftToDiscord.booleans.advancementMessages)
                 || (key.startsWith("death.") && this.config.minecraftToDiscord.booleans.deathMessages)
         ) {
             sendToAllChannels(message);
 
+        } else if ((key.startsWith("multiplayer.player.") && this.config.minecraftToDiscord.booleans.joinAndLeftMessages)) {
+            if (message.endsWith(" joined the game")) {
+                sendToAllChannels(this.config.minecraftToDiscord.messages.playerJoined.replace("%player", message.replace(" joined the game", "")));
+            } else if (message.endsWith(" left the game")) {
+                sendToAllChannels(this.config.minecraftToDiscord.messages.playerLeft.replace("%player", message.replace(" left the game", "")));
+            } else {
+                sendToAllChannels(message);
+            }
         } else if (key.equals("chat.type.admin")) {
             sendToLogChannels(message);
 
