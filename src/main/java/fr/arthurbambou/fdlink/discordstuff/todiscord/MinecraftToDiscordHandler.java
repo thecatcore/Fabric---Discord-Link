@@ -32,6 +32,10 @@ public class MinecraftToDiscordHandler {
         registerTextHandler(new TextHandler("chat.type.text", text -> {
             String message = text.getString().replaceAll("§[b0931825467adcfeklmnor]", "");
             if (this.config.minecraftToDiscord.booleans.playerMessages) {
+                String playerName = message.split("> ")[0];
+                playerName = playerName.substring(1);
+                String fixedName = adaptUsernameToDiscord(playerName);
+                message = message.replace("<" + playerName + ">", "<" + fixedName + ">");
                 for (FDLink.Config.EmojiEntry emojiEntry : this.config.emojiMap) {
                     message = message.replaceAll(emojiEntry.name, "<" + emojiEntry.id + ">");
                 }
@@ -78,7 +82,7 @@ public class MinecraftToDiscordHandler {
             if (this.config.minecraftToDiscord.booleans.advancementMessages) {
                 String[] args = message.split(" has made the advancement ");
                 message = this.config.minecraftToDiscord.messages.advancementTask
-                        .replace("%player", args[0])
+                        .replace("%player", adaptUsernameToDiscord(args[0]))
                         .replace("%advancement", args[1]);
                 this.discordBot.sendToAllChannels(message);
             }
@@ -90,7 +94,7 @@ public class MinecraftToDiscordHandler {
             if (this.config.minecraftToDiscord.booleans.advancementMessages) {
                 String[] args = message.split(" has completed the challenge ");
                 message = this.config.minecraftToDiscord.messages.advancementChallenge
-                        .replace("%player", args[0])
+                        .replace("%player", adaptUsernameToDiscord(args[0]))
                         .replace("%advancement", args[1]);
                 this.discordBot.sendToAllChannels(message);
             }
@@ -102,7 +106,7 @@ public class MinecraftToDiscordHandler {
             if (this.config.minecraftToDiscord.booleans.advancementMessages) {
                 String[] args = message.split(" has reached the goal ");
                 message = this.config.minecraftToDiscord.messages.advancementGoal
-                        .replace("%player", args[0])
+                        .replace("%player", adaptUsernameToDiscord(args[0]))
                         .replace("%advancement", args[1]);
                 this.discordBot.sendToAllChannels(message);
             }
@@ -122,7 +126,7 @@ public class MinecraftToDiscordHandler {
                 newName = newName.substring(0, newName.length() - 2);
                 String oldName = message.split("formerly known as ")[1].split(" joined the game")[0];
                 oldName = oldName.substring(0, oldName.length() - 1);
-                message = this.config.minecraftToDiscord.messages.playerJoinedRenamed.replace("%new", newName).replace("%old", oldName);
+                message = this.config.minecraftToDiscord.messages.playerJoinedRenamed.replace("%new", adaptUsernameToDiscord(newName)).replace("%old", adaptUsernameToDiscord(oldName));
                 this.discordBot.sendToAllChannels(message);
             }
         }));
@@ -132,7 +136,7 @@ public class MinecraftToDiscordHandler {
             String message = text.getString().replaceAll("§[b0931825467adcfeklmnor]", "");
             if (this.config.minecraftToDiscord.booleans.joinAndLeftMessages) {
                 String name = message.split(" joined the game")[0];
-                message = this.config.minecraftToDiscord.messages.playerJoined.replace("%player", name);
+                message = this.config.minecraftToDiscord.messages.playerJoined.replace("%player", adaptUsernameToDiscord(name));
                 this.discordBot.sendToAllChannels(message);
             }
         }));
@@ -142,7 +146,7 @@ public class MinecraftToDiscordHandler {
             String message = text.getString().replaceAll("§[b0931825467adcfeklmnor]", "");
             if (this.config.minecraftToDiscord.booleans.joinAndLeftMessages) {
                 String name = message.split(" left the game")[0];
-                message = this.config.minecraftToDiscord.messages.playerLeft.replace("%player", name);
+                message = this.config.minecraftToDiscord.messages.playerLeft.replace("%player", adaptUsernameToDiscord(name));
                 this.discordBot.sendToAllChannels(message);
             }
         }));
@@ -154,6 +158,15 @@ public class MinecraftToDiscordHandler {
                 this.discordBot.sendToAllChannels(message);
             }
         }));
+    }
+
+    public String adaptUsernameToDiscord(String string) {
+        return string
+                .replaceAll("_", "\\_")
+                .replaceAll("`", "\\`")
+                .replaceAll(String.valueOf(new Character('\\')), "\\\\")
+                .replaceAll(String.valueOf(new Character('*')),"\\*")
+                .replaceAll("~", "\\~");
     }
 
     public TextHandler registerTextHandler(TextHandler textHandler) {
