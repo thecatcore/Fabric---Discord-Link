@@ -113,6 +113,9 @@ public class DiscordBot {
                 this.lastMessageD = this.config.discordToMinecraft.message
                         .replace("%player", this.messageCreateEvent.getMessageAuthor().getDisplayName());
                 String string_message = EmojiParser.parseToAliases(this.messageCreateEvent.getMessageContent());
+                for (FDLink.Config.EmojiEntry emojiEntry : this.config.emojiMap) {
+                    string_message = string_message.replace("<" + emojiEntry.id + ">", emojiEntry.name);
+                }
                 if (this.config.minecraftToDiscord.booleans.minecraftToDiscordTag) {
                     for (User user : this.api.getCachedUsers()) {
                         ServerChannel serverChannel = (ServerChannel) this.api.getServerChannels().toArray()[0];
@@ -173,6 +176,9 @@ public class DiscordBot {
         message = message.replaceAll("§[b0931825467adcfeklmnor]", "");
         LOGGER.debug(this.config.toString());
         if (key.equals("chat.type.text") && this.config.minecraftToDiscord.booleans.playerMessages) {
+            for (FDLink.Config.EmojiEntry emojiEntry : this.config.emojiMap) {
+                message = message.replace(emojiEntry.name, "<" + emojiEntry.id + ">");
+            }
             // Handle normal chat
             if (this.config.minecraftToDiscord.booleans.minecraftToDiscordTag) {
                 for (User user : this.api.getCachedUsers()) {

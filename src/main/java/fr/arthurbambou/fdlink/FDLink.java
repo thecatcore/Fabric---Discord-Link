@@ -117,6 +117,9 @@ public class FDLink implements DedicatedServerModInitializer {
 				if (config.minecraftToDiscord.messages.playerLeft == null) {
 					config.minecraftToDiscord.messages.playerLeft = DefaultConfig.minecraftToDiscord.messages.playerLeft;
 				}
+				if (config.emojiMap == null) {
+					config.emojiMap = DefaultConfig.emojiMap;
+				}
 				return saveConfig(config);
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -132,6 +135,22 @@ public class FDLink implements DedicatedServerModInitializer {
 		public boolean ignoreBots = true;
 		public MinecraftToDiscord minecraftToDiscord = new MinecraftToDiscord();
 		public DiscordToMinecraft discordToMinecraft = new DiscordToMinecraft();
+		public List<EmojiEntry> emojiMap = new ArrayList<>();
+
+		public Config() {
+			emojiMap.add(new EmojiEntry("example_name", ":example_id:22222222"));
+			emojiMap.add(new EmojiEntry("example_name2", ":example_id2:22222222"));
+		}
+
+		public class EmojiEntry {
+			public String name;
+			public String id;
+
+			public EmojiEntry(String name, String id) {
+				this.name = name;
+				this.id = id;
+			}
+		}
 
 		public class MinecraftToDiscord {
 			public MinecraftToDiscordMessage messages = new MinecraftToDiscordMessage();
