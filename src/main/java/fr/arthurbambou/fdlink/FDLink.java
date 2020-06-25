@@ -65,7 +65,7 @@ public class FDLink implements DedicatedServerModInitializer {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			if (instanceConfig.token != DefaultConfig.token) {
+			if (!instanceConfig.token.equals(DefaultConfig.token)) {
 				return instanceConfig.token;
 			}
 			return DefaultConfig.token;

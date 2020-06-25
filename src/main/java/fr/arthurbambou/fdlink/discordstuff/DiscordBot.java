@@ -19,6 +19,7 @@ import org.javacord.api.entity.channel.ServerChannel;
 import org.javacord.api.entity.server.Server;
 import org.javacord.api.entity.user.User;
 import org.javacord.api.event.message.MessageCreateEvent;
+import org.javacord.api.listener.message.MessageCreateListener;
 
 import java.util.UUID;
 
@@ -68,16 +69,16 @@ public class DiscordBot {
         config.logChannels.removeIf(id -> config.chatChannels.contains(id));
 
         this.config = config;
-        DiscordApi api1 = new DiscordApiBuilder().setToken(token).login().join();
-        api1.addMessageCreateListener((event -> {
+        this.api = new DiscordApiBuilder().setToken(token).login().join();
+        MessageCreateListener messageCreateListener = (event -> {
             if (event.getMessageAuthor().isBotUser() && this.config.ignoreBots) return;
             if (!this.hasChatChannels) return;
             if (event.getMessageAuthor().isYourself()) return;
             if (!this.config.chatChannels.contains(event.getChannel().getIdAsString())) return;
             this.messageCreateEvent = event;
             this.hasReceivedMessage = true;
-        }));
-        this.api = api1;
+        });
+        this.api.addMessageCreateListener(messageCreateListener);
         this.minecraftToDiscordHandler = new MinecraftToDiscordHandler(this.api, this, this.config);
 
         if (this.config.minecraftToDiscord.booleans.serverStartingMessage) sendToAllChannels(this.config.minecraftToDiscord.messages.serverStarting);
@@ -88,12 +89,11 @@ public class DiscordBot {
                 sendToAllChannels(this.config.minecraftToDiscord.messages.serverStarted);
             }));
         }
-        if (this.config.minecraftToDiscord.booleans.serverStopMessage) {
-            ServerStopCallback.EVENT.register((server -> {
-                sendToAllChannels(config.minecraftToDiscord.messages.serverStopped);
-                this.api.disconnect();
-            }));
-        }
+        ServerStopCallback.EVENT.register((server -> {
+            if (this.config.minecraftToDiscord.booleans.serverStopMessage) sendToAllChannels(config.minecraftToDiscord.messages.serverStopped);
+            this.api.removeListener(MessageCreateListener.class, messageCreateListener);
+            this.api.disconnect();
+        }));
 
         ServerTickCallback.EVENT.register((server -> {
             this.ticks++;
