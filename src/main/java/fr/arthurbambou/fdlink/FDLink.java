@@ -99,6 +99,9 @@ public class FDLink implements DedicatedServerModInitializer {
 				if (config.minecraftToDiscord == null) {
 					config.minecraftToDiscord = DefaultConfig.minecraftToDiscord;
 				}
+				if (config.minecraftToDiscord.booleans == null) {
+					config.minecraftToDiscord.booleans = DefaultConfig.minecraftToDiscord.booleans;
+				}
 				if (config.minecraftToDiscord.messages == null) {
 					config.minecraftToDiscord.messages = DefaultConfig.minecraftToDiscord.messages;
 				}
@@ -116,6 +119,18 @@ public class FDLink implements DedicatedServerModInitializer {
 				}
 				if (config.minecraftToDiscord.messages.playerLeft == null) {
 					config.minecraftToDiscord.messages.playerLeft = DefaultConfig.minecraftToDiscord.messages.playerLeft;
+				}
+				if (config.minecraftToDiscord.messages.advancementTask == null) {
+					config.minecraftToDiscord.messages.advancementTask = DefaultConfig.minecraftToDiscord.messages.advancementTask;
+				}
+				if (config.minecraftToDiscord.messages.advancementChallenge == null) {
+					config.minecraftToDiscord.messages.advancementChallenge = DefaultConfig.minecraftToDiscord.messages.advancementChallenge;
+				}
+				if (config.minecraftToDiscord.messages.advancementGoal == null) {
+					config.minecraftToDiscord.messages.advancementGoal = DefaultConfig.minecraftToDiscord.messages.advancementGoal;
+				}
+				if (config.minecraftToDiscord.messages.playerJoinedRenamed == null) {
+					config.minecraftToDiscord.messages.playerJoinedRenamed = DefaultConfig.minecraftToDiscord.messages.playerJoinedRenamed;
 				}
 				if (config.emojiMap == null) {
 					config.emojiMap = DefaultConfig.emojiMap;
@@ -162,7 +177,11 @@ public class FDLink implements DedicatedServerModInitializer {
 			public String serverStarted = "Server Started";
 			public String serverStopped = "Server Stopped";
 			public String playerJoined = "%player joined the game";
+			public String playerJoinedRenamed = "%new (formerly known as %old) joined the game";
 			public String playerLeft = "%player left the game";
+			public String advancementTask = "%player has made the advancement %advancement";
+			public String advancementChallenge = "%player has made the challenge %advancement";
+			public String advancementGoal = "%player has made the goal %advancement";
 		}
 
 		public class MinecraftToDiscordBooleans {
@@ -176,6 +195,9 @@ public class FDLink implements DedicatedServerModInitializer {
 			public boolean joinAndLeftMessages = true;
 			public boolean advancementMessages = true;
 			public boolean deathMessages = true;
+			public boolean sendMeCommand = true;
+			public boolean sendSayCommand = true;
+			public boolean adminMessages = true;
 		}
 
 		public class DiscordToMinecraft {

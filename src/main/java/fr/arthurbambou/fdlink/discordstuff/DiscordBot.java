@@ -2,6 +2,7 @@ package fr.arthurbambou.fdlink.discordstuff;
 
 import com.vdurmont.emoji.EmojiParser;
 import fr.arthurbambou.fdlink.FDLink;
+import fr.arthurbambou.fdlink.discordstuff.todiscord.MinecraftToDiscordHandler;
 import net.fabricmc.fabric.api.event.server.ServerStartCallback;
 import net.fabricmc.fabric.api.event.server.ServerStopCallback;
 import net.fabricmc.fabric.api.event.server.ServerTickCallback;
@@ -23,13 +24,14 @@ import java.util.UUID;
 
 public class DiscordBot {
     public static final Logger LOGGER = LogManager.getLogger();
+    private MinecraftToDiscordHandler minecraftToDiscordHandler = null;
 
     private FDLink.Config config;
-    private boolean hasChatChannels;
-    private boolean hasLogChannels;
+    public boolean hasChatChannels;
+    public boolean hasLogChannels;
     private MessageCreateEvent messageCreateEvent;
     private boolean hasReceivedMessage;
-    private String lastMessageD;
+    public String lastMessageD;
     private DiscordApi api = null;
     private long startTime;
     private int ticks;
@@ -76,6 +78,7 @@ public class DiscordBot {
             this.hasReceivedMessage = true;
         }));
         this.api = api1;
+        this.minecraftToDiscordHandler = new MinecraftToDiscordHandler(this.api, this, this.config);
 
         if (this.config.minecraftToDiscord.booleans.serverStartingMessage) sendToAllChannels(this.config.minecraftToDiscord.messages.serverStarting);
 
@@ -89,7 +92,6 @@ public class DiscordBot {
             ServerStopCallback.EVENT.register((server -> {
                 sendToAllChannels(config.minecraftToDiscord.messages.serverStopped);
                 this.api.disconnect();
-                this.api = null;
             }));
         }
 
@@ -160,66 +162,10 @@ public class DiscordBot {
     }
 
     public void sendMessage(Text text) {
-        if (this.api == null || (!this.hasChatChannels && !this.hasLogChannels)) return;
-        if (text.getString().equals(this.lastMessageD)) {
-            return;
-        }
-
-        if (!(text instanceof TranslatableText)) {
-            sendToLogChannels(text.getString());
-            return;
-        }
-
-        String key = ((TranslatableText) text).getKey();
-        String message = text.getString();
-        message = message.replaceAll("§[b0931825467adcfeklmnor]", "");
-        LOGGER.debug(this.config.toString());
-        if (key.equals("chat.type.text") && this.config.minecraftToDiscord.booleans.playerMessages) {
-            for (FDLink.Config.EmojiEntry emojiEntry : this.config.emojiMap) {
-                message = message.replaceAll(emojiEntry.name, "<" + emojiEntry.id + ">");
-            }
-            // Handle normal chat
-            if (this.config.minecraftToDiscord.booleans.minecraftToDiscordTag) {
-                for (User user : this.api.getCachedUsers()) {
-                    ServerChannel serverChannel = (ServerChannel) this.api.getServerChannels().toArray()[0];
-                    Server server = serverChannel.getServer();
-                    message = message
-                            .replaceAll("@" + user.getName(), user.getMentionTag())
-                            .replaceAll("@" + user.getDisplayName(server), user.getMentionTag())
-                            .replaceAll("@" + user.getName().toLowerCase(), user.getMentionTag())
-                            .replaceAll("@" + user.getDisplayName(server).toLowerCase(), user.getMentionTag());
-                    if (user.getNickname(server).isPresent()) {
-                        message = message
-                                .replaceAll("@" + user.getNickname(server).get(), user.getMentionTag())
-                                .replaceAll("@" + user.getNickname(server).get().toLowerCase(), user.getMentionTag());
-                    }
-                }
-            }
-            sendToAllChannels(message);
-
-        } else if (key.equals("chat.type.emote") || key.equals("chat.type.announcement") // Handling /me and /say command
-                || (key.startsWith("chat.type.advancement.") && this.config.minecraftToDiscord.booleans.advancementMessages)
-                || (key.startsWith("death.") && this.config.minecraftToDiscord.booleans.deathMessages)
-        ) {
-            sendToAllChannels(message);
-
-        } else if ((key.startsWith("multiplayer.player.") && this.config.minecraftToDiscord.booleans.joinAndLeftMessages)) {
-            if (message.endsWith(" joined the game")) {
-                sendToAllChannels(this.config.minecraftToDiscord.messages.playerJoined.replaceAll("%player", message.replaceAll(" joined the game", "")));
-            } else if (message.endsWith(" left the game")) {
-                sendToAllChannels(this.config.minecraftToDiscord.messages.playerLeft.replaceAll("%player", message.replaceAll(" left the game", "")));
-            } else {
-                sendToAllChannels(message);
-            }
-        } else if (key.equals("chat.type.admin")) {
-            sendToLogChannels(message);
-
-        } else {
-            LOGGER.info("[FDLink] Unhandled text \"{}\":{}", key, message);
-        }
+        if (this.minecraftToDiscordHandler != null) this.minecraftToDiscordHandler.handleTexts(text);
     }
 
-    private void sendToAllChannels(String message) {
+    public void sendToAllChannels(String message) {
         if (this.hasLogChannels) {
             sendToLogChannels(message);
         }
@@ -240,7 +186,7 @@ public class DiscordBot {
         }
     }
 
-    private void sendToChatChannels(String message) {
+    public void sendToChatChannels(String message) {
         if (this.hasChatChannels) {
             for (String id : this.config.chatChannels) {
                 this.api.getServerTextChannelById(id).ifPresent(channel -> channel.sendMessage(message));
