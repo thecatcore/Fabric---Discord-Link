@@ -76,7 +76,6 @@ public class DiscordBot {
             this.hasReceivedMessage = true;
         }));
         this.api = api1;
-        api1 = null;
 
         if (this.config.minecraftToDiscord.booleans.serverStartingMessage) sendToAllChannels(this.config.minecraftToDiscord.messages.serverStarting);
 
@@ -111,10 +110,10 @@ public class DiscordBot {
                     this.messageCreateEvent.getChannel().sendMessage("Players : " + server.getPlayerManager().getPlayerList().size() + "/" + server.getPlayerManager().getMaxPlayerCount() + "\n\n" + playerlist);
                 }
                 this.lastMessageD = this.config.discordToMinecraft.message
-                        .replace("%player", this.messageCreateEvent.getMessageAuthor().getDisplayName());
+                        .replaceAll("%player", this.messageCreateEvent.getMessageAuthor().getDisplayName());
                 String string_message = EmojiParser.parseToAliases(this.messageCreateEvent.getMessageContent());
                 for (FDLink.Config.EmojiEntry emojiEntry : this.config.emojiMap) {
-                    string_message = string_message.replace("<" + emojiEntry.id + ">", emojiEntry.name);
+                    string_message = string_message.replaceAll("<" + emojiEntry.id + ">", emojiEntry.name);
                 }
                 if (this.config.minecraftToDiscord.booleans.minecraftToDiscordTag) {
                     for (User user : this.api.getCachedUsers()) {
@@ -124,18 +123,18 @@ public class DiscordBot {
                         if(this.config.minecraftToDiscord.booleans.minecraftToDiscordDiscriminator){
                             string_discriminator = "#" + user.getDiscriminator();
                         }
-                        string_message = string_message.replace("<@!" + user.getIdAsString() + ">", "@" + user.getDisplayName(discordServer) + string_discriminator);
+                        string_message = string_message.replaceAll("<@!" + user.getIdAsString() + ">", "@" + user.getDisplayName(discordServer) + string_discriminator);
                         if (user.getNickname(discordServer).isPresent() && this.config.discordToMinecraft.pingLongVersion) {
-                            string_message = string_message.replace("@" + user.getName(), "@" + user.getDisplayName(discordServer) + "(" + user.getName() + string_discriminator + ")");
+                            string_message = string_message.replaceAll("@" + user.getName(), "@" + user.getDisplayName(discordServer) + "(" + user.getName() + string_discriminator + ")");
                         }
                     }
                 }
                 Style style = Style.EMPTY;
                 if (!this.messageCreateEvent.getMessageAttachments().isEmpty()) {
-                    this.lastMessageD = this.lastMessageD.replace("%message", string_message + " (Click to open attachment URL)");
+                    this.lastMessageD = this.lastMessageD.replaceAll("%message", string_message + " (Click to open attachment URL)");
                     style = style.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, this.messageCreateEvent.getMessageAttachments().get(0).getUrl().toString()));
                 } else {
-                    this.lastMessageD = this.lastMessageD.replace("%message", string_message);
+                    this.lastMessageD = this.lastMessageD.replaceAll("%message", string_message);
                 }
                 server.getPlayerManager().sendToAll(new GameMessageS2CPacket(new LiteralText(this.lastMessageD).setStyle(style), MessageType.CHAT, UUID.randomUUID()));
 
@@ -177,7 +176,7 @@ public class DiscordBot {
         LOGGER.debug(this.config.toString());
         if (key.equals("chat.type.text") && this.config.minecraftToDiscord.booleans.playerMessages) {
             for (FDLink.Config.EmojiEntry emojiEntry : this.config.emojiMap) {
-                message = message.replace(emojiEntry.name, "<" + emojiEntry.id + ">");
+                message = message.replaceAll(emojiEntry.name, "<" + emojiEntry.id + ">");
             }
             // Handle normal chat
             if (this.config.minecraftToDiscord.booleans.minecraftToDiscordTag) {
@@ -185,14 +184,14 @@ public class DiscordBot {
                     ServerChannel serverChannel = (ServerChannel) this.api.getServerChannels().toArray()[0];
                     Server server = serverChannel.getServer();
                     message = message
-                            .replace("@" + user.getName(), user.getMentionTag())
-                            .replace("@" + user.getDisplayName(server), user.getMentionTag())
-                            .replace("@" + user.getName().toLowerCase(), user.getMentionTag())
-                            .replace("@" + user.getDisplayName(server).toLowerCase(), user.getMentionTag());
+                            .replaceAll("@" + user.getName(), user.getMentionTag())
+                            .replaceAll("@" + user.getDisplayName(server), user.getMentionTag())
+                            .replaceAll("@" + user.getName().toLowerCase(), user.getMentionTag())
+                            .replaceAll("@" + user.getDisplayName(server).toLowerCase(), user.getMentionTag());
                     if (user.getNickname(server).isPresent()) {
                         message = message
-                                .replace("@" + user.getNickname(server).get(), user.getMentionTag())
-                                .replace("@" + user.getNickname(server).get().toLowerCase(), user.getMentionTag());
+                                .replaceAll("@" + user.getNickname(server).get(), user.getMentionTag())
+                                .replaceAll("@" + user.getNickname(server).get().toLowerCase(), user.getMentionTag());
                     }
                 }
             }
@@ -206,9 +205,9 @@ public class DiscordBot {
 
         } else if ((key.startsWith("multiplayer.player.") && this.config.minecraftToDiscord.booleans.joinAndLeftMessages)) {
             if (message.endsWith(" joined the game")) {
-                sendToAllChannels(this.config.minecraftToDiscord.messages.playerJoined.replace("%player", message.replace(" joined the game", "")));
+                sendToAllChannels(this.config.minecraftToDiscord.messages.playerJoined.replaceAll("%player", message.replaceAll(" joined the game", "")));
             } else if (message.endsWith(" left the game")) {
-                sendToAllChannels(this.config.minecraftToDiscord.messages.playerLeft.replace("%player", message.replace(" left the game", "")));
+                sendToAllChannels(this.config.minecraftToDiscord.messages.playerLeft.replaceAll("%player", message.replaceAll(" left the game", "")));
             } else {
                 sendToAllChannels(message);
             }
