@@ -185,7 +185,11 @@ public class MinecraftToDiscordHandler {
                 return;
             }
         }
-        DiscordBot.LOGGER.error("[FDLink] Unhandled text \"{}\":{}", ((TranslatableText)text).getKey(), text.getString());
+        if (text instanceof TranslatableText) {
+            DiscordBot.LOGGER.error("[FDLink] Unhandled text \"{}\":{}", ((TranslatableText) text).getKey(), text.getString());
+        } else {
+            DiscordBot.LOGGER.error("[FDLink] Unhandled text \"{}\"", text.getString());
+        }
     }
 
     public static class TextHandler {
