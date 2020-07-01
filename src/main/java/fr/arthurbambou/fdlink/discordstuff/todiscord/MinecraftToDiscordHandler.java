@@ -164,8 +164,8 @@ public class MinecraftToDiscordHandler {
         return string
                 .replaceAll("_", "\\_")
                 .replaceAll("`", "\\`")
-                .replaceAll(String.valueOf(new Character('\\')), "\\\\")
-                .replaceAll(String.valueOf(new Character('*')),"\\*")
+//                .replaceAll(Character.toString('\\'), "\\\\")
+//                .replaceAll(Character.toString('*'),"\\*")
                 .replaceAll("~", "\\~");
     }
 
