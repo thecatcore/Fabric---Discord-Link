@@ -112,10 +112,10 @@ public class DiscordBot {
                     this.messageCreateEvent.getChannel().sendMessage("Players : " + server.getPlayerManager().getPlayerList().size() + "/" + server.getPlayerManager().getMaxPlayerCount() + "\n\n" + playerlist);
                 }
                 this.lastMessageD = this.config.discordToMinecraft.message
-                        .replaceAll("%player", this.messageCreateEvent.getMessageAuthor().getDisplayName());
+                        .replace("%player", this.messageCreateEvent.getMessageAuthor().getDisplayName());
                 String string_message = EmojiParser.parseToAliases(this.messageCreateEvent.getMessageContent());
                 for (FDLink.Config.EmojiEntry emojiEntry : this.config.emojiMap) {
-                    string_message = string_message.replaceAll("<" + emojiEntry.id + ">", emojiEntry.name);
+                    string_message = string_message.replace("<" + emojiEntry.id + ">", emojiEntry.name);
                 }
                 if (this.config.minecraftToDiscord.booleans.minecraftToDiscordTag) {
                     for (User user : this.api.getCachedUsers()) {
@@ -125,18 +125,18 @@ public class DiscordBot {
                         if(this.config.minecraftToDiscord.booleans.minecraftToDiscordDiscriminator){
                             string_discriminator = "#" + user.getDiscriminator();
                         }
-                        string_message = string_message.replaceAll("<@!" + user.getIdAsString() + ">", "@" + user.getDisplayName(discordServer) + string_discriminator);
+                        string_message = string_message.replace("<@!" + user.getIdAsString() + ">", "@" + user.getDisplayName(discordServer) + string_discriminator);
                         if (user.getNickname(discordServer).isPresent() && this.config.discordToMinecraft.pingLongVersion) {
-                            string_message = string_message.replaceAll("@" + user.getName(), "@" + user.getDisplayName(discordServer) + "(" + user.getName() + string_discriminator + ")");
+                            string_message = string_message.replace("@" + user.getName(), "@" + user.getDisplayName(discordServer) + "(" + user.getName() + string_discriminator + ")");
                         }
                     }
                 }
                 Style style = Style.EMPTY;
                 if (!this.messageCreateEvent.getMessageAttachments().isEmpty()) {
-                    this.lastMessageD = this.lastMessageD.replaceAll("%message", string_message + " (Click to open attachment URL)");
+                    this.lastMessageD = this.lastMessageD.replace("%message", string_message + " (Click to open attachment URL)");
                     style = style.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, this.messageCreateEvent.getMessageAttachments().get(0).getUrl().toString()));
                 } else {
-                    this.lastMessageD = this.lastMessageD.replaceAll("%message", string_message);
+                    this.lastMessageD = this.lastMessageD.replace("%message", string_message);
                 }
                 server.getPlayerManager().sendToAll(new GameMessageS2CPacket(new LiteralText(this.lastMessageD).setStyle(style), MessageType.CHAT, UUID.randomUUID()));
 
