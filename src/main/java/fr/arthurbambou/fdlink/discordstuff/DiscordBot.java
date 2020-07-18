@@ -5,9 +5,6 @@ import fr.arthurbambou.fdlink.FDLink;
 import fr.arthurbambou.fdlink.discordstuff.todiscord.MinecraftToDiscordHandler;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
-import net.fabricmc.fabric.api.event.server.ServerStartCallback;
-import net.fabricmc.fabric.api.event.server.ServerStopCallback;
-import net.fabricmc.fabric.api.event.server.ServerTickCallback;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.MessageType;
 import net.minecraft.network.packet.s2c.play.GameMessageS2CPacket;
@@ -18,12 +15,16 @@ import org.apache.logging.log4j.Logger;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.DiscordApiBuilder;
 import org.javacord.api.entity.channel.ServerChannel;
+import org.javacord.api.entity.channel.ServerTextChannel;
+import org.javacord.api.entity.message.Message;
 import org.javacord.api.entity.server.Server;
 import org.javacord.api.entity.user.User;
 import org.javacord.api.event.message.MessageCreateEvent;
 import org.javacord.api.listener.message.MessageCreateListener;
 
+import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 public class DiscordBot {
     public static final Logger LOGGER = LogManager.getLogger();
@@ -38,7 +39,6 @@ public class DiscordBot {
     private DiscordApi api = null;
     private long startTime;
     private int ticks;
-    private boolean canDisconnect = false;
 
     public DiscordBot(String token, FDLink.Config config) {
         this.ticks = 0;
@@ -74,11 +74,6 @@ public class DiscordBot {
         this.config = config;
         this.api = new DiscordApiBuilder().setToken(token).login().join();
         MessageCreateListener messageCreateListener = (event -> {
-            if (this.config.minecraftToDiscord.booleans.serverStopMessage &&
-                    event.getMessageAuthor().isBotUser() &&
-                    event.getMessage().getContent().equals(this.config.minecraftToDiscord.messages.serverStopped)) {
-                this.canDisconnect = true;
-            }
             if (event.getMessageAuthor().isBotUser() && this.config.ignoreBots) return;
             if (!this.hasChatChannels) return;
             if (event.getMessageAuthor().isYourself()) return;
@@ -101,22 +96,19 @@ public class DiscordBot {
                 sendToAllChannels(this.config.minecraftToDiscord.messages.serverStarted);
             }));
         }
-        if (this.config.minecraftToDiscord.booleans.serverStoppingMessage) {
-            ServerLifecycleEvents.SERVER_STOPPING.register(minecraftServer -> {
-                sendToAllChannels(config.minecraftToDiscord.messages.serverStopping);
-            });
-        }
+        ServerLifecycleEvents.SERVER_STOPPING.register(minecraftServer -> {
+            this.api.removeListener(MessageCreateListener.class, messageCreateListener);
+            if (this.config.minecraftToDiscord.booleans.serverStoppingMessage) sendToAllChannels(config.minecraftToDiscord.messages.serverStopping);
+        });
         ServerLifecycleEvents.SERVER_STOPPED.register((server -> {
             if (this.config.minecraftToDiscord.booleans.serverStopMessage) {
-                sendToAllChannels(config.minecraftToDiscord.messages.serverStopped);
-                while (!this.canDisconnect) {
-                    if (this.config.minecraftToDiscord.booleans.enableDebugLogs) {
-                        LOGGER.error("waiting on message to be sent.");
-                    }
-                }
+                CompletableFuture<Message> request = sendToAllChannels(config.minecraftToDiscord.messages.serverStopped);
+                request.whenComplete((message, throwable) -> {
+                    this.api.disconnect();
+                });
+            } else {
+                this.api.disconnect();
             }
-            this.api.removeListener(MessageCreateListener.class, messageCreateListener);
-            this.api.disconnect();
         }));
 
         ServerTickEvents.START_SERVER_TICK.register((server -> {
@@ -189,32 +181,41 @@ public class DiscordBot {
         if (this.minecraftToDiscordHandler != null) this.minecraftToDiscordHandler.handleTexts(text);
     }
 
-    public void sendToAllChannels(String message) {
+    public CompletableFuture<Message> sendToAllChannels(String message) {
         if (this.hasLogChannels) {
-            sendToLogChannels(message);
+            return sendToLogChannels(message);
         }
-        sendToChatChannels(message);
+        return sendToChatChannels(message);
     }
 
     /**
      * This method will send to chat channel as fallback if no log channel is present
      * @param message the message to send
+     * @return
      */
-    public void sendToLogChannels(String message) {
+    public CompletableFuture<Message> sendToLogChannels(String message) {
         if (this.hasLogChannels) {
             for (String id : this.config.logChannels) {
-                this.api.getServerTextChannelById(id).ifPresent(channel -> channel.sendMessage(message));
+                Optional<ServerTextChannel> channel = this.api.getServerTextChannelById(id);
+                if (channel.isPresent()) {
+                    return channel.get().sendMessage(message);
+                }
             }
         } else {
-            sendToChatChannels(message);
+            return sendToChatChannels(message);
         }
+        return null;
     }
 
-    public void sendToChatChannels(String message) {
+    public CompletableFuture<Message> sendToChatChannels(String message) {
         if (this.hasChatChannels) {
             for (String id : this.config.chatChannels) {
-                this.api.getServerTextChannelById(id).ifPresent(channel -> channel.sendMessage(message));
+                Optional<ServerTextChannel> channel = this.api.getServerTextChannelById(id);
+                if (channel.isPresent()) {
+                    return channel.get().sendMessage(message);
+                }
             }
         }
+        return null;
     }
 }
