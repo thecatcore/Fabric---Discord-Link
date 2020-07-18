@@ -9,7 +9,7 @@
     "arthurbambou (aka. Cat Core)"
   ],
   "contributors": [
-    "Thedude7054","yhr0x43","BeeFox-sys"
+    "Thedude7054","yhr0x43","BeeFox-sys","PegasusEpsilon"
   ],
   "entrypoints": {
     "server": [
@@ -19,7 +19,7 @@
   "depends": {
     "fabricloader": ">=0.7.0",
     "minecraft": ">=1.16-Snapshot.20.21.a",
-    "fabric": "*"
+    "fabric": ">=0.15"
   },
   "mixins": [
     "fdlink.mixin.json"

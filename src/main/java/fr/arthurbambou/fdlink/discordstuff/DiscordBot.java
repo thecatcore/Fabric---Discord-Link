@@ -3,6 +3,8 @@ package fr.arthurbambou.fdlink.discordstuff;
 import com.vdurmont.emoji.EmojiParser;
 import fr.arthurbambou.fdlink.FDLink;
 import fr.arthurbambou.fdlink.discordstuff.todiscord.MinecraftToDiscordHandler;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.event.server.ServerStartCallback;
 import net.fabricmc.fabric.api.event.server.ServerStopCallback;
 import net.fabricmc.fabric.api.event.server.ServerTickCallback;
@@ -36,6 +38,7 @@ public class DiscordBot {
     private DiscordApi api = null;
     private long startTime;
     private int ticks;
+    private boolean canDisconnect = false;
 
     public DiscordBot(String token, FDLink.Config config) {
         this.ticks = 0;
@@ -71,6 +74,11 @@ public class DiscordBot {
         this.config = config;
         this.api = new DiscordApiBuilder().setToken(token).login().join();
         MessageCreateListener messageCreateListener = (event -> {
+            if (this.config.minecraftToDiscord.booleans.serverStopMessage &&
+                    event.getMessageAuthor().isBotUser() &&
+                    event.getMessage().getContent().equals(this.config.minecraftToDiscord.messages.serverStopped)) {
+                this.canDisconnect = true;
+            }
             if (event.getMessageAuthor().isBotUser() && this.config.ignoreBots) return;
             if (!this.hasChatChannels) return;
             if (event.getMessageAuthor().isYourself()) return;
@@ -81,21 +89,37 @@ public class DiscordBot {
         this.api.addMessageCreateListener(messageCreateListener);
         this.minecraftToDiscordHandler = new MinecraftToDiscordHandler(this.api, this, this.config);
 
-        if (this.config.minecraftToDiscord.booleans.serverStartingMessage) sendToAllChannels(this.config.minecraftToDiscord.messages.serverStarting);
+        if (this.config.minecraftToDiscord.booleans.serverStartingMessage) {
+            ServerLifecycleEvents.SERVER_STARTING.register(minecraftServer -> {
+                sendToAllChannels(this.config.minecraftToDiscord.messages.serverStarting);
+            });
+        }
 
         if (this.config.minecraftToDiscord.booleans.serverStartMessage) {
-            ServerStartCallback.EVENT.register((server -> {
+            ServerLifecycleEvents.SERVER_STARTED.register((server -> {
                 startTime = server.getServerStartTime();
                 sendToAllChannels(this.config.minecraftToDiscord.messages.serverStarted);
             }));
         }
-        ServerStopCallback.EVENT.register((server -> {
-            if (this.config.minecraftToDiscord.booleans.serverStopMessage) sendToAllChannels(config.minecraftToDiscord.messages.serverStopped);
+        if (this.config.minecraftToDiscord.booleans.serverStoppingMessage) {
+            ServerLifecycleEvents.SERVER_STOPPING.register(minecraftServer -> {
+                sendToAllChannels(config.minecraftToDiscord.messages.serverStopping);
+            });
+        }
+        ServerLifecycleEvents.SERVER_STOPPED.register((server -> {
+            if (this.config.minecraftToDiscord.booleans.serverStopMessage) {
+                sendToAllChannels(config.minecraftToDiscord.messages.serverStopped);
+                while (!this.canDisconnect) {
+                    if (this.config.minecraftToDiscord.booleans.enableDebugLogs) {
+                        LOGGER.error("waiting on message to be sent.");
+                    }
+                }
+            }
             this.api.removeListener(MessageCreateListener.class, messageCreateListener);
             this.api.disconnect();
         }));
 
-        ServerTickCallback.EVENT.register((server -> {
+        ServerTickEvents.START_SERVER_TICK.register((server -> {
             this.ticks++;
             int playerNumber = server.getPlayerManager().getPlayerList().size();
             int maxPlayer = server.getPlayerManager().getMaxPlayerCount();

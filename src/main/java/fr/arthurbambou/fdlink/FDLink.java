@@ -111,6 +111,9 @@ public class FDLink implements DedicatedServerModInitializer {
 				if (config.minecraftToDiscord.messages.serverStarting == null) {
 					config.minecraftToDiscord.messages.serverStarting = DefaultConfig.minecraftToDiscord.messages.serverStarting;
 				}
+				if (config.minecraftToDiscord.messages.serverStopping == null) {
+					config.minecraftToDiscord.messages.serverStopping = DefaultConfig.minecraftToDiscord.messages.serverStopping;
+				}
 				if (config.minecraftToDiscord.messages.serverStopped == null) {
 					config.minecraftToDiscord.messages.serverStopped = DefaultConfig.minecraftToDiscord.messages.serverStopped;
 				}
@@ -175,6 +178,7 @@ public class FDLink implements DedicatedServerModInitializer {
 		public class MinecraftToDiscordMessage {
 			public String serverStarting = "Server is starting !";
 			public String serverStarted = "Server Started";
+			public String serverStopping = "Server is stopping!";
 			public String serverStopped = "Server Stopped";
 			public String playerJoined = "%player joined the game";
 			public String playerJoinedRenamed = "%new (formerly known as %old) joined the game";
@@ -188,16 +192,18 @@ public class FDLink implements DedicatedServerModInitializer {
 			public boolean serverStartingMessage = true;
 			public boolean serverStartMessage = true;
 			public boolean serverStopMessage = true;
+			public boolean serverStoppingMessage = true;
 			public boolean customChannelDescription = false;
 			public boolean minecraftToDiscordTag = false;
 			public boolean minecraftToDiscordDiscriminator = false;
 			public boolean playerMessages = true;
-			public boolean joinAndLeftMessages = true;
+			public boolean joinAndLeaveMessages = true;
 			public boolean advancementMessages = true;
 			public boolean deathMessages = true;
 			public boolean sendMeCommand = true;
 			public boolean sendSayCommand = true;
 			public boolean adminMessages = true;
+			public boolean enableDebugLogs = false;
 		}
 
 		public class DiscordToMinecraft {

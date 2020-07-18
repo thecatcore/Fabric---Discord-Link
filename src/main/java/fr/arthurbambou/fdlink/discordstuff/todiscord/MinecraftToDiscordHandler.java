@@ -12,12 +12,12 @@ import org.javacord.api.entity.user.User;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MinecraftToDiscordHandler {
+public final class MinecraftToDiscordHandler {
 
-    private DiscordApi api;
-    private DiscordBot discordBot;
-    private FDLink.Config config;
-    private List<TextHandler> TEXT_HANDLERS = new ArrayList<>();
+    private final DiscordApi api;
+    private final DiscordBot discordBot;
+    private final FDLink.Config config;
+    private final List<TextHandler> TEXT_HANDLERS = new ArrayList<>();
 
     public MinecraftToDiscordHandler(DiscordApi api, DiscordBot discordBot, FDLink.Config config) {
         this.api = api;
@@ -121,7 +121,7 @@ public class MinecraftToDiscordHandler {
         // Player join server with new username
         registerTextHandler(new TextHandler("multiplayer.player.joined.renamed", text -> {
             String message = text.getString().replaceAll("§[b0931825467adcfeklmnor]", "");
-            if (this.config.minecraftToDiscord.booleans.joinAndLeftMessages) {
+            if (this.config.minecraftToDiscord.booleans.joinAndLeaveMessages) {
                 String newName = message.split("formerly known as ")[0];
                 newName = newName.substring(0, newName.length() - 2);
                 String oldName = message.split("formerly known as ")[1].split(" joined the game")[0];
@@ -134,7 +134,7 @@ public class MinecraftToDiscordHandler {
         // Player join server
         registerTextHandler(new TextHandler("multiplayer.player.joined", text -> {
             String message = text.getString().replaceAll("§[b0931825467adcfeklmnor]", "");
-            if (this.config.minecraftToDiscord.booleans.joinAndLeftMessages) {
+            if (this.config.minecraftToDiscord.booleans.joinAndLeaveMessages) {
                 String name = message.split(" joined the game")[0];
                 message = this.config.minecraftToDiscord.messages.playerJoined.replace("%player", adaptUsernameToDiscord(name));
                 this.discordBot.sendToAllChannels(message);
@@ -144,7 +144,7 @@ public class MinecraftToDiscordHandler {
         // Player leave server
         registerTextHandler(new TextHandler("multiplayer.player.left", text -> {
             String message = text.getString().replaceAll("§[b0931825467adcfeklmnor]", "");
-            if (this.config.minecraftToDiscord.booleans.joinAndLeftMessages) {
+            if (this.config.minecraftToDiscord.booleans.joinAndLeaveMessages) {
                 String name = message.split(" left the game")[0];
                 message = this.config.minecraftToDiscord.messages.playerLeft.replace("%player", adaptUsernameToDiscord(name));
                 this.discordBot.sendToAllChannels(message);
@@ -185,13 +185,13 @@ public class MinecraftToDiscordHandler {
                 return;
             }
         }
-/*
-        if (text instanceof TranslatableText) {
-            DiscordBot.LOGGER.error("[FDLink] Unhandled text \"{}\":{}", ((TranslatableText) text).getKey(), text.getString());
-        } else {
-            DiscordBot.LOGGER.error("[FDLink] Unhandled text \"{}\"", text.getString());
+        if (this.config.minecraftToDiscord.booleans.enableDebugLogs) {
+            if (text instanceof TranslatableText) {
+                DiscordBot.LOGGER.error("[FDLink] Unhandled text \"{}\":{}", ((TranslatableText) text).getKey(), text.getString());
+            } else {
+                DiscordBot.LOGGER.error("[FDLink] Unhandled text \"{}\"", text.getString());
+            }
         }
-*/
     }
 
     public static class TextHandler {
