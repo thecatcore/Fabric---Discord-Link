@@ -22,6 +22,8 @@ import org.javacord.api.entity.user.User;
 import org.javacord.api.event.message.MessageCreateEvent;
 import org.javacord.api.listener.message.MessageCreateListener;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -102,13 +104,14 @@ public class DiscordBot {
         });
         ServerLifecycleEvents.SERVER_STOPPED.register((server -> {
             if (this.config.minecraftToDiscord.booleans.serverStopMessage) {
-                CompletableFuture<Message> request = sendToAllChannels(config.minecraftToDiscord.messages.serverStopped);
-                request.whenComplete((message, throwable) -> {
-                    this.api.disconnect();
-                });
-            } else {
-                this.api.disconnect();
+                List<CompletableFuture<Message>> requests = sendToAllChannels(config.minecraftToDiscord.messages.serverStopped);
+                for (CompletableFuture<Message> request : requests) {
+                    while (!request.isDone()) {
+                        if (this.config.minecraftToDiscord.booleans.enableDebugLogs) LOGGER.info("Request is not done yet!");
+                    }
+                }
             }
+            this.api.disconnect();
         }));
 
         ServerTickEvents.START_SERVER_TICK.register((server -> {
@@ -181,11 +184,13 @@ public class DiscordBot {
         if (this.minecraftToDiscordHandler != null) this.minecraftToDiscordHandler.handleTexts(text);
     }
 
-    public CompletableFuture<Message> sendToAllChannels(String message) {
+    public List<CompletableFuture<Message>> sendToAllChannels(String message) {
+        List<CompletableFuture<Message>> requests = new ArrayList<>();
         if (this.hasLogChannels) {
-            return sendToLogChannels(message);
+            requests.add(sendToLogChannels(message));
         }
-        return sendToChatChannels(message);
+        requests.add(sendToChatChannels(message));
+        return requests;
     }
 
     /**
