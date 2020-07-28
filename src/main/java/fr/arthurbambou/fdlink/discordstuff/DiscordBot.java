@@ -5,6 +5,7 @@ import fr.arthurbambou.fdlink.FDLink;
 import fr.arthurbambou.fdlink.discordstuff.todiscord.MinecraftToDiscordHandler;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents.ServerStopping;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.MessageType;
 import net.minecraft.network.packet.s2c.play.GameMessageS2CPacket;
@@ -86,28 +87,33 @@ public class DiscordBot {
         this.api.addMessageCreateListener(messageCreateListener);
         this.minecraftToDiscordHandler = new MinecraftToDiscordHandler(this.api, this, this.config);
 
-        if (this.config.minecraftToDiscord.booleans.serverStartingMessage) {
+        if (this.config.minecraftToDiscord.chatChannels.serverStartingMessage || this.config.minecraftToDiscord.logChannels.serverStartingMessage) {
             ServerLifecycleEvents.SERVER_STARTING.register(minecraftServer -> {
-                sendToAllChannels(this.config.minecraftToDiscord.messages.serverStarting);
+                if (this.config.minecraftToDiscord.chatChannels.serverStoppingMessage) sendToChatChannels(config.minecraftToDiscord.messages.serverStarting);
+                if (this.config.minecraftToDiscord.logChannels.serverStoppingMessage) sendToLogChannels(config.minecraftToDiscord.messages.serverStarting);
             });
         }
 
-        if (this.config.minecraftToDiscord.booleans.serverStartMessage) {
+        if (this.config.minecraftToDiscord.chatChannels.serverStartMessage || this.config.minecraftToDiscord.logChannels.serverStartMessage) {
             ServerLifecycleEvents.SERVER_STARTED.register((server -> {
                 startTime = server.getServerStartTime();
-                sendToAllChannels(this.config.minecraftToDiscord.messages.serverStarted);
+                if (this.config.minecraftToDiscord.chatChannels.serverStartMessage) sendToChatChannels(config.minecraftToDiscord.messages.serverStarted);
+                if (this.config.minecraftToDiscord.logChannels.serverStartMessage) sendToLogChannels(config.minecraftToDiscord.messages.serverStarted);
             }));
         }
         ServerLifecycleEvents.SERVER_STOPPING.register(minecraftServer -> {
             this.api.removeListener(MessageCreateListener.class, messageCreateListener);
-            if (this.config.minecraftToDiscord.booleans.serverStoppingMessage) sendToAllChannels(config.minecraftToDiscord.messages.serverStopping);
+            if (this.config.minecraftToDiscord.chatChannels.serverStoppingMessage) sendToChatChannels(config.minecraftToDiscord.messages.serverStopping);
+            if (this.config.minecraftToDiscord.logChannels.serverStoppingMessage) sendToLogChannels(config.minecraftToDiscord.messages.serverStopping);
         });
         ServerLifecycleEvents.SERVER_STOPPED.register((server -> {
-            if (this.config.minecraftToDiscord.booleans.serverStopMessage) {
-                List<CompletableFuture<Message>> requests = sendToAllChannels(config.minecraftToDiscord.messages.serverStopped);
+            if (this.config.minecraftToDiscord.chatChannels.serverStopMessage || this.config.minecraftToDiscord.logChannels.serverStopMessage) {
+                List<CompletableFuture<Message>> requests = new ArrayList<>();
+                if(this.config.minecraftToDiscord.chatChannels.serverStopMessage) requests.add(sendToChatChannels(config.minecraftToDiscord.messages.serverStopped));
+                if(this.config.minecraftToDiscord.logChannels.serverStopMessage) requests.add(sendToLogChannels(config.minecraftToDiscord.messages.serverStopped));
                 for (CompletableFuture<Message> request : requests) {
                     while (!request.isDone()) {
-                        if (this.config.minecraftToDiscord.booleans.enableDebugLogs) LOGGER.info("Request is not done yet!");
+                        if (this.config.minecraftToDiscord.general.enableDebugLogs) LOGGER.info("Request is not done yet!");
                     }
                 }
             }
@@ -136,12 +142,12 @@ public class DiscordBot {
                 for (FDLink.Config.EmojiEntry emojiEntry : this.config.emojiMap) {
                     string_message = string_message.replace("<" + emojiEntry.id + ">", emojiEntry.name);
                 }
-                if (this.config.minecraftToDiscord.booleans.minecraftToDiscordTag) {
+                if (this.config.minecraftToDiscord.chatChannels.minecraftToDiscordTag || this.config.minecraftToDiscord.logChannels.minecraftToDiscordTag) {
                     for (User user : this.api.getCachedUsers()) {
                         ServerChannel serverChannel = (ServerChannel) this.api.getServerChannels().toArray()[0];
                         Server discordServer = serverChannel.getServer();
                         String string_discriminator = "";
-                        if(this.config.minecraftToDiscord.booleans.minecraftToDiscordDiscriminator){
+                        if (this.config.minecraftToDiscord.chatChannels.minecraftToDiscordDiscriminator || this.config.minecraftToDiscord.logChannels.minecraftToDiscordDiscriminator){
                             string_discriminator = "#" + user.getDiscriminator();
                         }
                         string_message = string_message.replace("<@!" + user.getIdAsString() + ">", "@" + user.getDisplayName(discordServer) + string_discriminator);
@@ -161,7 +167,7 @@ public class DiscordBot {
 
                 this.hasReceivedMessage = false;
             }
-            if (this.hasChatChannels && this.config.minecraftToDiscord.booleans.customChannelDescription && this.ticks >= 200) {
+            if (this.hasChatChannels && (this.config.minecraftToDiscord.chatChannels.customChannelDescription ||  this.config.minecraftToDiscord.logChannels.customChannelDescription) && this.ticks >= 200) {
                 this.ticks = 0;
                 int totalUptimeSeconds = (int) (Util.getMeasuringTimeMs() - this.startTime) / 1000;
                 final int uptimeH = totalUptimeSeconds / 3600 ;
@@ -206,8 +212,6 @@ public class DiscordBot {
                     return channel.get().sendMessage(message);
                 }
             }
-        } else {
-            return sendToChatChannels(message);
         }
         return null;
     }
