@@ -189,14 +189,14 @@ public class DiscordBot {
         if (this.minecraftToDiscordHandler != null) this.minecraftToDiscordHandler.handleTexts(text);
     }
 
-    public List<CompletableFuture<Message>> sendToAllChannels(String message) {
-        List<CompletableFuture<Message>> requests = new ArrayList<>();
-        if (this.hasLogChannels) {
-            requests.add(sendToLogChannels(message));
-        }
-        requests.add(sendToChatChannels(message));
-        return requests;
-    }
+//    public List<CompletableFuture<Message>> sendToAllChannels(String message) {
+//        List<CompletableFuture<Message>> requests = new ArrayList<>();
+//        if (this.hasLogChannels) {
+//            requests.add(sendToLogChannels(message));
+//        }
+//        requests.add(sendToChatChannels(message));
+//        return requests;
+//    }
 
     /**
      * This method will send to chat channel as fallback if no log channel is present
