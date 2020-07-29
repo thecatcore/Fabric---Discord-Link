@@ -88,8 +88,8 @@ public class DiscordBot {
 
         if (this.config.minecraftToDiscord.chatChannels.serverStartingMessage || this.config.minecraftToDiscord.logChannels.serverStartingMessage) {
             ServerLifecycleEvents.SERVER_STARTING.register(minecraftServer -> {
-                if (this.config.minecraftToDiscord.chatChannels.serverStoppingMessage) sendToChatChannels(config.minecraftToDiscord.messages.serverStarting);
-                if (this.config.minecraftToDiscord.logChannels.serverStoppingMessage) sendToLogChannels(config.minecraftToDiscord.messages.serverStarting);
+                if (this.config.minecraftToDiscord.chatChannels.serverStartingMessage) sendToChatChannels(config.minecraftToDiscord.messages.serverStarting);
+                if (this.config.minecraftToDiscord.logChannels.serverStartingMessage) sendToLogChannels(config.minecraftToDiscord.messages.serverStarting);
             });
         }
 
