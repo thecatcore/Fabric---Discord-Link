@@ -188,10 +188,10 @@ public class FDLink implements DedicatedServerModInitializer {
 		}
 
 		public class MinecraftToDiscordMessage {
-			public String serverStarting = "Server is starting !";
-			public String serverStarted = "Server Started";
+			public String serverStarting = "Server is starting!";
+			public String serverStarted = "Server Started.";
 			public String serverStopping = "Server is stopping!";
-			public String serverStopped = "Server Stopped";
+			public String serverStopped = "Server Stopped.";
 			public String playerJoined = "%player joined the game";
 			public String playerJoinedRenamed = "%new (formerly known as %old) joined the game";
 			public String playerLeft = "%player left the game";
@@ -231,8 +231,8 @@ public class FDLink implements DedicatedServerModInitializer {
 			public boolean joinAndLeaveMessages = true;
 			public boolean advancementMessages = false;
 			public boolean challengeCompletedMessages = false;
-			public boolean goalReachedMessages = true;
-			public boolean deathMessages = false;
+			public boolean goalReachedMessages = false;
+			public boolean deathMessages = true;
 			public boolean sendMeCommand = true;
 			public boolean sendSayCommand = true;
 			public boolean adminMessages = true;
