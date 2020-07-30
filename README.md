@@ -39,7 +39,7 @@ After downloading the latest version, just drop the jar into the mods folder.
 ### Building from source
 1. Download the repository
 2. Follow [this guide](https://fabricmc.net/wiki/tutorial:setup) to setup gradle and build the project
-3. Drop the jar into the fabric mod folder
+3. Drop the resulting jar into the fabric mod folder
 
 ### Acquiring and configuring a Discord Bot
 
