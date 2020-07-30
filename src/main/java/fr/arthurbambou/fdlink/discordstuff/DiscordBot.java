@@ -44,12 +44,6 @@ public class DiscordBot {
     public DiscordBot(String token, FDLink.Config config) {
         this.lastMessageD = "";
 
-        ArrayList<String> commands = new ArrayList<>();
-        commands.add("!playercount");
-        commands.add("!playerlist");
-        commands.add("!uptime");
-        commands.add("!status");
-
         if (token == null) {
             FDLink.regenConfig();
             return;
