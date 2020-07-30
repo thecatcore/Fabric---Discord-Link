@@ -119,15 +119,15 @@ public final class MinecraftToDiscordHandler {
         // Advancement challenge
         registerTextHandler(new TextHandler("chat.type.advancement.challenge", text -> {
             String message = text.getString().replaceAll("§[b0931825467adcfeklmnor]", "");
-            if (this.config.minecraftToDiscord.chatChannels.challengeCompletedMessages || this.config.minecraftToDiscord.logChannels.challengeCompletedMessages) {
+            if (this.config.minecraftToDiscord.chatChannels.challengeMessages || this.config.minecraftToDiscord.logChannels.challengeMessages) {
                 String[] args = message.split(" has completed the challenge ");
                 message = this.config.minecraftToDiscord.messages.advancementChallenge
                         .replace("%player", adaptUsernameToDiscord(args[0]))
                         .replace("%advancement", args[1]);
-                if (this.config.minecraftToDiscord.chatChannels.challengeCompletedMessages) {
+                if (this.config.minecraftToDiscord.chatChannels.challengeMessages) {
                     this.discordBot.sendToChatChannels(message);
                 }
-                if (this.config.minecraftToDiscord.logChannels.challengeCompletedMessages) {
+                if (this.config.minecraftToDiscord.logChannels.challengeMessages) {
                     this.discordBot.sendToLogChannels(message);
                 }
             }
@@ -136,15 +136,15 @@ public final class MinecraftToDiscordHandler {
         // Advancement goal
         registerTextHandler(new TextHandler("chat.type.advancement.goal", text -> {
             String message = text.getString().replaceAll("§[b0931825467adcfeklmnor]", "");
-            if (this.config.minecraftToDiscord.chatChannels.goalReachedMessages || this.config.minecraftToDiscord.logChannels.goalReachedMessages) {
+            if (this.config.minecraftToDiscord.chatChannels.goalMessages || this.config.minecraftToDiscord.logChannels.goalMessages) {
                 String[] args = message.split(" has reached the goal ");
                 message = this.config.minecraftToDiscord.messages.advancementGoal
                         .replace("%player", adaptUsernameToDiscord(args[0]))
                         .replace("%advancement", args[1]);
-                if (this.config.minecraftToDiscord.chatChannels.goalReachedMessages) {
+                if (this.config.minecraftToDiscord.chatChannels.goalMessages) {
                     this.discordBot.sendToChatChannels(message);
                 }
-                if (this.config.minecraftToDiscord.logChannels.goalReachedMessages) {
+                if (this.config.minecraftToDiscord.logChannels.goalMessages) {
                     this.discordBot.sendToLogChannels(message);
                 }
             }
@@ -213,10 +213,10 @@ public final class MinecraftToDiscordHandler {
         registerTextHandler(new TextHandler("death.", text -> {
             String message = text.getString().replaceAll("§[b0931825467adcfeklmnor]", "");
             if (this.config.minecraftToDiscord.chatChannels.deathMessages) {
-                this.discordBot.sendToChatChannels(message);
+                this.discordBot.sendToChatChannels(this.config.minecraftToDiscord.messages.deathMsgPrefix + message + this.config.minecraftToDiscord.messages.deathMsgPostfix);
             }
             if (this.config.minecraftToDiscord.logChannels.deathMessages) {
-                this.discordBot.sendToLogChannels(message);
+                this.discordBot.sendToLogChannels(this.config.minecraftToDiscord.messages.deathMsgPrefix + message + this.config.minecraftToDiscord.messages.deathMsgPostfix);
             }
         }));
     }
@@ -256,11 +256,11 @@ public final class MinecraftToDiscordHandler {
     }
 
     public static class TextHandler {
-        private final Class textType;
+        private final Class<?> textType;
         private final MinecraftToDiscordFunction minecraftToDiscordFunction;
         private String key;
 
-        public TextHandler(Class textType, MinecraftToDiscordFunction minecraftToDiscordFunction) {
+        public TextHandler(Class<?> textType, MinecraftToDiscordFunction minecraftToDiscordFunction) {
             this.textType = textType;
             this.minecraftToDiscordFunction = minecraftToDiscordFunction;
         }

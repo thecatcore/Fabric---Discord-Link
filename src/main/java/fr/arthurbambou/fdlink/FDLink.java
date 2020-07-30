@@ -135,6 +135,12 @@ public class FDLink implements DedicatedServerModInitializer {
 				if (config.minecraftToDiscord.messages.playerJoinedRenamed == null) {
 					config.minecraftToDiscord.messages.playerJoinedRenamed = DefaultConfig.minecraftToDiscord.messages.playerJoinedRenamed;
 				}
+				if (config.minecraftToDiscord.messages.deathMsgPrefix == null) {
+					config.minecraftToDiscord.messages.deathMsgPrefix = DefaultConfig.minecraftToDiscord.messages.deathMsgPrefix;
+				}
+				if (config.minecraftToDiscord.messages.deathMsgPostfix == null) {
+					config.minecraftToDiscord.messages.deathMsgPostfix = DefaultConfig.minecraftToDiscord.messages.deathMsgPostfix;
+				}
 				if (config.minecraftToDiscord.chatChannels == null) {
 					config.minecraftToDiscord.chatChannels = DefaultConfig.minecraftToDiscord.chatChannels;
 				}
@@ -196,8 +202,10 @@ public class FDLink implements DedicatedServerModInitializer {
 			public String playerJoinedRenamed = "%new (formerly known as %old) joined the game";
 			public String playerLeft = "%player left the game";
 			public String advancementTask = "%player has made the advancement %advancement";
-			public String advancementChallenge = "%player has made the challenge %advancement";
-			public String advancementGoal = "%player has made the goal %advancement";
+			public String advancementChallenge = "%player has completed the challenge %advancement";
+			public String advancementGoal = "%player has reached the goal %advancement";
+			public String deathMsgPrefix = "";
+			public String deathMsgPostfix = "";
 		}
 
 		public class MinecraftToDiscordChatChannel {
@@ -205,14 +213,14 @@ public class FDLink implements DedicatedServerModInitializer {
 			public boolean serverStartMessage = true;
 			public boolean serverStopMessage = true;
 			public boolean serverStoppingMessage = true;
-			public boolean customChannelDescription = false;
+//			public boolean customChannelDescription = false;
 			public boolean minecraftToDiscordTag = false;
 			public boolean minecraftToDiscordDiscriminator = false;
 			public boolean playerMessages = true;
 			public boolean joinAndLeaveMessages = true;
 			public boolean advancementMessages = true;
-			public boolean challengeCompletedMessages = true;
-			public boolean goalReachedMessages = true;
+			public boolean challengeMessages = true;
+			public boolean goalMessages = true;
 			public boolean deathMessages = true;
 			public boolean sendMeCommand = true;
 			public boolean sendSayCommand = true;
@@ -224,14 +232,14 @@ public class FDLink implements DedicatedServerModInitializer {
 			public boolean serverStartMessage = true;
 			public boolean serverStopMessage = true;
 			public boolean serverStoppingMessage = true;
-			public boolean customChannelDescription = false;
+//			public boolean customChannelDescription = false;
 			public boolean minecraftToDiscordTag = false;
 			public boolean minecraftToDiscordDiscriminator = false;
 			public boolean playerMessages = false;
 			public boolean joinAndLeaveMessages = true;
 			public boolean advancementMessages = false;
-			public boolean challengeCompletedMessages = false;
-			public boolean goalReachedMessages = false;
+			public boolean challengeMessages = false;
+			public boolean goalMessages = false;
 			public boolean deathMessages = true;
 			public boolean sendMeCommand = true;
 			public boolean sendSayCommand = true;
