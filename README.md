@@ -52,7 +52,7 @@ After downloading the latest version, just drop the jar into the mods folder.
 ### Configuring Fabric-Discord-Link
 1. Start your minecraft server once to let Fabric-Discord-Link generate it's default config `<fdlink.json>`
 2. Turn your server back off
-2. Copy your Bots Token from the Discord Developer Portal and paste it into the empty double quotes behind "token" in the config
+2. Copy your Bots Token from the Discord Developer Portal and paste it into the empty double quotes behind `<"token">` in the config
 3. Obtain the channel IDs of the channels that you want your bot to function in (these can be from separate discord servers). To do this, you need to enable Discords Developer mode in your Discord Settings under `<Appearance>`. Afterwards you can right click channels and select `<Copy ID>` at the bottom
 3. Paste the Discord Chat and/or Log Channel's IDs into the appropriate locations in the config. The IDs need to be in double quotes inside the brackets. If you have more than one Chat or Log Channel you need to separate the channel IDs inside the brackets with commas (no comma behind the last ID)
 4. Configure the other settings in the config to your liking
