@@ -23,7 +23,7 @@ import org.javacord.api.event.message.MessageCreateEvent;
 import org.javacord.api.listener.message.MessageCreateListener;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Iterator;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -106,11 +106,12 @@ public class DiscordBot {
         });
         ServerLifecycleEvents.SERVER_STOPPED.register((server -> {
             if (this.config.minecraftToDiscord.chatChannels.serverStopMessage || this.config.minecraftToDiscord.logChannels.serverStopMessage) {
-                List<CompletableFuture<Message>> requests = new ArrayList<>();
+                ArrayList<CompletableFuture<Message>> requests = new ArrayList<>();
                 if(this.config.minecraftToDiscord.chatChannels.serverStopMessage) requests.add(sendToChatChannels(config.minecraftToDiscord.messages.serverStopped));
                 if(this.config.minecraftToDiscord.logChannels.serverStopMessage) requests.add(sendToLogChannels(config.minecraftToDiscord.messages.serverStopped));
-                for (CompletableFuture<Message> request : requests) {
-                    while (!request.isDone()) {
+                Iterator<CompletableFuture<Message>> requestsIterator = requests.iterator();
+                while (requestsIterator.hasNext()) {
+                    while (!requestsIterator.next().isDone()) {
                         if (this.config.minecraftToDiscord.general.enableDebugLogs) LOGGER.info("Request is not done yet!");
                     }
                 }
@@ -198,7 +199,7 @@ public class DiscordBot {
 
                 this.hasReceivedMessage = false;
             }
-/*             if ((this.hasChatChannels || this.hasLogChannels) && (this.config.minecraftToDiscord.chatChannels.customChannelDescription ||  this.config.minecraftToDiscord.logChannels.customChannelDescription) && ((Util.getMeasuringTimeMs()/1000) % 10) == 0) {
+             if ((this.hasChatChannels || this.hasLogChannels) && (this.config.minecraftToDiscord.chatChannels.customChannelDescription ||  this.config.minecraftToDiscord.logChannels.customChannelDescription) && ((Util.getMeasuringTimeMs()/1000) % 300 == 0)) {
                 int totalUptimeSeconds = (int) (Util.getMeasuringTimeMs() - this.startTime) / 1000;
                 final int uptimeH = totalUptimeSeconds / 3600 ;
                 final int uptimeM = (totalUptimeSeconds % 3600) / 60;
@@ -224,7 +225,7 @@ public class DiscordBot {
                     )));
                     }
                 }
-            } */
+            }
         }));
     }
 

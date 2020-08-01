@@ -213,7 +213,7 @@ public class FDLink implements DedicatedServerModInitializer {
 			public boolean serverStartMessage = true;
 			public boolean serverStopMessage = true;
 			public boolean serverStoppingMessage = true;
-//			public boolean customChannelDescription = false;
+			public boolean customChannelDescription = false;
 			public boolean minecraftToDiscordTag = false;
 			public boolean minecraftToDiscordDiscriminator = false;
 			public boolean playerMessages = true;
@@ -232,7 +232,7 @@ public class FDLink implements DedicatedServerModInitializer {
 			public boolean serverStartMessage = true;
 			public boolean serverStopMessage = true;
 			public boolean serverStoppingMessage = true;
-//			public boolean customChannelDescription = false;
+			public boolean customChannelDescription = false;
 			public boolean minecraftToDiscordTag = false;
 			public boolean minecraftToDiscordDiscriminator = false;
 			public boolean playerMessages = false;
