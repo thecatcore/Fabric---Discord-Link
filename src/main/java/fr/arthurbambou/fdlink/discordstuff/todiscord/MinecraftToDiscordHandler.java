@@ -33,7 +33,7 @@ public final class MinecraftToDiscordHandler {
             String message = text.getString().replaceAll("§[b0931825467adcfeklmnor]", "");
             String smessage = message.substring(message.indexOf(">")+1);
             smessage.trim();
-            if (!this.config.minecraftToDiscord.booleans.playerNames && smessage.substring(0,1) == this.config.minecraftToDiscord.booleans.commandPrefix) {
+            if (this.config.minecraftToDiscord.booleans.allowDiscordCommands && smessage.substring(0,1) == this.config.minecraftToDiscord.booleans.commandPrefix) {
                 message=smessage;
             }
                 
