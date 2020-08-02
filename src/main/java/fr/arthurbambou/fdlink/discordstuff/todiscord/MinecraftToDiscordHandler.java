@@ -31,6 +31,12 @@ public final class MinecraftToDiscordHandler {
         // Chat messages
         registerTextHandler(new TextHandler("chat.type.text", text -> {
             String message = text.getString().replaceAll("§[b0931825467adcfeklmnor]", "");
+            if (!this.config.minecraftToDiscord.booleans.playerNames) {
+                String smessage = message.substring(message.indexOf(">")+1);
+                smessage.trim();
+                message=smessage
+            }
+                
             if (this.config.minecraftToDiscord.booleans.playerMessages) {
                 String playerName = message.split("> ")[0];
                 playerName = playerName.substring(1);
