@@ -189,6 +189,7 @@ public class FDLink implements DedicatedServerModInitializer {
 		}
 
 		public class MinecraftToDiscordBooleans {
+			public boolean playerName = true;
 			public boolean serverStartingMessage = true;
 			public boolean serverStartMessage = true;
 			public boolean serverStopMessage = true;
