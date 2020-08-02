@@ -107,11 +107,12 @@ public class DiscordBot {
         ServerLifecycleEvents.SERVER_STOPPED.register((server -> {
             if (this.config.minecraftToDiscord.chatChannels.serverStopMessage || this.config.minecraftToDiscord.logChannels.serverStopMessage) {
                 ArrayList<CompletableFuture<Message>> requests = new ArrayList<>();
-                if(this.config.minecraftToDiscord.chatChannels.serverStopMessage) requests.add(sendToChatChannels(config.minecraftToDiscord.messages.serverStopped));
-                if(this.config.minecraftToDiscord.logChannels.serverStopMessage) requests.add(sendToLogChannels(config.minecraftToDiscord.messages.serverStopped));
-                Iterator<CompletableFuture<Message>> requestsIterator = requests.iterator();
-                while (requestsIterator.hasNext()) {
-                    while (!requestsIterator.next().isDone()) {
+                if(this.config.minecraftToDiscord.chatChannels.serverStopMessage && this.hasChatChannels) requests.add(sendToChatChannels(config.minecraftToDiscord.messages.serverStopped));
+                if(this.config.minecraftToDiscord.logChannels.serverStopMessage && this.hasLogChannels) requests.add(sendToLogChannels(config.minecraftToDiscord.messages.serverStopped));
+//                Iterator<CompletableFuture<Message>> requestsIterator = requests.iterator();
+//               while (requestsIterator.hasNext()) {
+                for (CompletableFuture<Message> request : requests){    
+                    while (!request.isDone()) {
                         if (this.config.minecraftToDiscord.general.enableDebugLogs) LOGGER.info("Request is not done yet!");
                     }
                 }
