@@ -31,10 +31,10 @@ public final class MinecraftToDiscordHandler {
         // Chat messages
         registerTextHandler(new TextHandler("chat.type.text", text -> {
             String message = text.getString().replaceAll("§[b0931825467adcfeklmnor]", "");
-            String smessage = message.substring(message.indexOf(">")+1);
+            String smessage = message.substring(message.indexOf(">")+2);
             smessage.trim();
-            if (this.config.minecraftToDiscord.booleans.allowDiscordCommands && smessage.substring(0,1) == this.config.minecraftToDiscord.booleans.commandPrefix) {
-                message=smessage;
+            if (this.config.minecraftToDiscord.booleans.allowDiscordCommands && smessage.charAt(0) == this.config.minecraftToDiscord.commandPrefix){
+                message = smessage;
             }
                 
             if (this.config.minecraftToDiscord.booleans.playerMessages) {
