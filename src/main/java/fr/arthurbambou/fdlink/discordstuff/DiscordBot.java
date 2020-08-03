@@ -189,6 +189,7 @@ public class DiscordBot {
                 }
             }
         }));
+        this.api.updateActivity(this.config.discordToMinecraft.commandPrefix + "commands");
     }
 
     public void sendMessage(Text text) {
