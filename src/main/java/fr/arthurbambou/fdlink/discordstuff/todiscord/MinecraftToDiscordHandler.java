@@ -33,6 +33,11 @@ public final class MinecraftToDiscordHandler {
             String message = text.getString().replaceAll("§[b0931825467adcfeklmnor]", "");
             String chatMessage = text.getString().replaceAll("§[b0931825467adcfeklmnor]", "");
             String logMessage = text.getString().replaceAll("§[b0931825467adcfeklmnor]", "");
+            String smessage = message.substring(message.indexOf(">")+2);
+            smessage.trim();
+            if (this.config.minecraftToDiscord.booleans.allowDiscordCommands && smessage.charAt(0) == this.config.minecraftToDiscord.commandPrefix){
+                message = smessage;
+            }
             if (this.config.minecraftToDiscord.chatChannels.playerMessages || this.config.minecraftToDiscord.logChannels.playerMessages) {
                 String playerName = message.split("> ")[0];
                 playerName = playerName.substring(1);

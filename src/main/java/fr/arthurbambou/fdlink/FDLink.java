@@ -206,8 +206,10 @@ public class FDLink implements DedicatedServerModInitializer {
 			public String deathMsgPrefix = "";
 			public String deathMsgPostfix = "";
 		}
-
+    
 		public class MinecraftToDiscordChatChannel {
+      public boolean commandPrefix = "-";
+			public boolean allowDiscordCommands = true;
 			public boolean serverStartingMessage = true;
 			public boolean serverStartMessage = true;
 			public boolean serverStopMessage = true;
