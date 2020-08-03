@@ -2,6 +2,7 @@ package fr.arthurbambou.fdlink.discordstuff;
 
 import com.vdurmont.emoji.EmojiParser;
 import fr.arthurbambou.fdlink.FDLink;
+import fr.arthurbambou.fdlink.discord.Commands;
 import fr.arthurbambou.fdlink.discordstuff.todiscord.MinecraftToDiscordHandler;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
@@ -22,10 +23,7 @@ import org.javacord.api.entity.user.User;
 import org.javacord.api.event.message.MessageCreateEvent;
 import org.javacord.api.listener.message.MessageCreateListener;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
 public class DiscordBot {
@@ -40,6 +38,7 @@ public class DiscordBot {
     public String lastMessageD;
     private DiscordApi api = null;
     private long startTime;
+    private boolean stopping = false;
 
     public DiscordBot(String token, FDLink.Config config) {
         this.lastMessageD = "";
@@ -101,14 +100,15 @@ public class DiscordBot {
         }
         ServerLifecycleEvents.SERVER_STOPPING.register(minecraftServer -> {
             this.api.removeListener(MessageCreateListener.class, messageCreateListener);
+            this.stopping = true;
             if (this.config.minecraftToDiscord.chatChannels.serverStoppingMessage) sendToChatChannels(config.minecraftToDiscord.messages.serverStopping);
             if (this.config.minecraftToDiscord.logChannels.serverStoppingMessage) sendToLogChannels(config.minecraftToDiscord.messages.serverStopping);
         });
         ServerLifecycleEvents.SERVER_STOPPED.register((server -> {
             if (this.config.minecraftToDiscord.chatChannels.serverStopMessage || this.config.minecraftToDiscord.logChannels.serverStopMessage) {
                 ArrayList<CompletableFuture<Message>> requests = new ArrayList<>();
-                if(this.config.minecraftToDiscord.chatChannels.serverStopMessage && this.hasChatChannels) requests.add(sendToChatChannels(config.minecraftToDiscord.messages.serverStopped));
-                if(this.config.minecraftToDiscord.logChannels.serverStopMessage && this.hasLogChannels) requests.add(sendToLogChannels(config.minecraftToDiscord.messages.serverStopped));
+                if(this.config.minecraftToDiscord.chatChannels.serverStopMessage && this.hasChatChannels) requests.addAll(sendToChatChannels(config.minecraftToDiscord.messages.serverStopped, requests));
+                if(this.config.minecraftToDiscord.logChannels.serverStopMessage && this.hasLogChannels) requests.addAll(sendToLogChannels(config.minecraftToDiscord.messages.serverStopped, requests));
 //                Iterator<CompletableFuture<Message>> requestsIterator = requests.iterator();
 //               while (requestsIterator.hasNext()) {
                 for (CompletableFuture<Message> request : requests){    
@@ -124,51 +124,12 @@ public class DiscordBot {
             int playerNumber = server.getPlayerManager().getPlayerList().size();
             int maxPlayer = server.getPlayerManager().getMaxPlayerCount();
             if (this.hasReceivedMessage) {
-                if (this.messageCreateEvent.getMessageContent().equals("!playerlist")) {
-                    StringBuilder playerlist = new StringBuilder();
-                    for (PlayerEntity playerEntity : server.getPlayerManager().getPlayerList()) {
-                        playerlist.append(playerEntity.getName().getString()).append("\n");
+                for (Commands command : Commands.values()) {
+                    if (this.messageCreateEvent.getMessageContent().toLowerCase().equals(this.config.discordToMinecraft.commandPrefix + command.name().toLowerCase())) {
+                        this.hasReceivedMessage = command.execute(server, this.messageCreateEvent, this.startTime);
+                        return;
                     }
-                    if (playerlist.toString().endsWith("\n")) {
-                        int a = playerlist.lastIndexOf("\n");
-                        playerlist = new StringBuilder(playerlist.substring(0, a));
-                    }
-                    this.messageCreateEvent.getChannel().sendMessage("\n Players: \n" + playerlist);
-                    this.hasReceivedMessage = false;
-                    return;
                 }
-                if (this.messageCreateEvent.getMessageContent().equals("!playercount")) {
-                    this.messageCreateEvent.getChannel().sendMessage("Playercount: " + playerNumber +  "/" + maxPlayer);
-                    this.hasReceivedMessage = false;
-                    return;
-                }
-                if (this.messageCreateEvent.getMessageContent().equals("!status")) {
-                    int totalUptimeSeconds = (int) (Util.getMeasuringTimeMs() - this.startTime) / 1000;
-
-                    final int uptimeH = totalUptimeSeconds / 3600 ;
-                    final int uptimeM = (totalUptimeSeconds % 3600) / 60;
-                    final int uptimeS = totalUptimeSeconds % 60;
-
-                    this.messageCreateEvent.getChannel().sendMessage(String.format(
-                        "Playercount : %d/%d,\n" +
-                                "Uptime : %dh %dm %ds",
-                        playerNumber, maxPlayer, uptimeH, uptimeM, uptimeS
-                        )
-                    );
-                    this.hasReceivedMessage = false;
-                    return;
-                }
-                if (this.messageCreateEvent.getMessageContent().equals("!uptime")) {
-                    int totalUptimeSeconds = (int) (Util.getMeasuringTimeMs() - this.startTime) / 1000;
-
-                    final int uptimeH = totalUptimeSeconds / 3600 ;
-                    final int uptimeM = (totalUptimeSeconds % 3600) / 60;
-                    final int uptimeS = totalUptimeSeconds % 60;
-
-                    this.messageCreateEvent.getChannel().sendMessage("Uptime: " + uptimeH + "h " + uptimeM + "m " + uptimeS + "s");
-                    this.hasReceivedMessage = false;
-                    return;
-                }    
                 this.lastMessageD = this.config.discordToMinecraft.message
                         .replace("%player", this.messageCreateEvent.getMessageAuthor().getDisplayName());
                 String string_message = EmojiParser.parseToAliases(this.messageCreateEvent.getMessageContent());
@@ -231,7 +192,7 @@ public class DiscordBot {
     }
 
     public void sendMessage(Text text) {
-        if (this.minecraftToDiscordHandler != null) this.minecraftToDiscordHandler.handleTexts(text);
+        if (this.minecraftToDiscordHandler != null && !this.stopping) this.minecraftToDiscordHandler.handleTexts(text);
     }
 
 /*     public List<CompletableFuture<Message>> sendToAllChannels(String message) {
@@ -243,32 +204,40 @@ public class DiscordBot {
         return requests;
     } */
 
+    public List<CompletableFuture<Message>> sendToLogChannels(String message) {
+        return this.sendToLogChannels(message, new ArrayList<>());
+    }
+
+    public List<CompletableFuture<Message>> sendToChatChannels(String message) {
+        return this.sendToChatChannels(message, new ArrayList<>());
+    }
+
     /**
      * This method will no longer send to chat channel as fallback if no log channel is present since log channels have their own config now
      * @param message the message to send
      * @return
      */
-    public CompletableFuture<Message> sendToLogChannels(String message) {
+    public List<CompletableFuture<Message>> sendToLogChannels(String message, List<CompletableFuture<Message>> list) {
         if (this.hasLogChannels) {
             for (String id : this.config.logChannels) {
                 Optional<ServerTextChannel> channel = this.api.getServerTextChannelById(id);
                 if (channel.isPresent()) {
-                    return channel.get().sendMessage(message);
+                    list.add(channel.get().sendMessage(message));
                 }
             }
         }
-        return null;
+        return list;
     }
 
-    public CompletableFuture<Message> sendToChatChannels(String message) {
+    public List<CompletableFuture<Message>> sendToChatChannels(String message, List<CompletableFuture<Message>> list) {
         if (this.hasChatChannels) {
             for (String id : this.config.chatChannels) {
                 Optional<ServerTextChannel> channel = this.api.getServerTextChannelById(id);
                 if (channel.isPresent()) {
-                    return channel.get().sendMessage(message);
+                    list.add(channel.get().sendMessage(message));
                 }
             }
         }
-        return null;
+        return list;
     }
 }

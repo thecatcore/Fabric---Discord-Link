@@ -208,8 +208,8 @@ public class FDLink implements DedicatedServerModInitializer {
 		}
     
 		public class MinecraftToDiscordChatChannel {
-      public boolean commandPrefix = "-";
-			public boolean allowDiscordCommands = true;
+      		public String commandPrefix = "-";
+			public boolean allowDiscordCommands = false;
 			public boolean serverStartingMessage = true;
 			public boolean serverStartMessage = true;
 			public boolean serverStopMessage = true;
@@ -250,6 +250,7 @@ public class FDLink implements DedicatedServerModInitializer {
 		public class DiscordToMinecraft {
 			public boolean pingLongVersion = false;
 			public String message = "[%player] %message";
+			public String commandPrefix = "!";
 		}
 	}
 }

@@ -33,9 +33,8 @@ public final class MinecraftToDiscordHandler {
             String message = text.getString().replaceAll("§[b0931825467adcfeklmnor]", "");
             String chatMessage = text.getString().replaceAll("§[b0931825467adcfeklmnor]", "");
             String logMessage = text.getString().replaceAll("§[b0931825467adcfeklmnor]", "");
-            String smessage = message.substring(message.indexOf(">")+2);
-            smessage.trim();
-            if (this.config.minecraftToDiscord.booleans.allowDiscordCommands && smessage.charAt(0) == this.config.minecraftToDiscord.commandPrefix){
+            String smessage = message.substring(message.indexOf(">")+2).trim();
+            if (this.config.minecraftToDiscord.chatChannels.allowDiscordCommands && smessage.startsWith(this.config.minecraftToDiscord.chatChannels.commandPrefix)){
                 message = smessage;
             }
             if (this.config.minecraftToDiscord.chatChannels.playerMessages || this.config.minecraftToDiscord.logChannels.playerMessages) {
@@ -75,9 +74,9 @@ public final class MinecraftToDiscordHandler {
                     }
                 }
                 if(this.config.minecraftToDiscord.chatChannels.playerMessages){
-                this.discordBot.sendToChatChannels(chatMessage);
+                    this.discordBot.sendToChatChannels(chatMessage);
                 }else if(this.config.minecraftToDiscord.logChannels.playerMessages){
-                this.discordBot.sendToLogChannels(logMessage);
+                    this.discordBot.sendToLogChannels(logMessage);
                 }
             }
         }));
