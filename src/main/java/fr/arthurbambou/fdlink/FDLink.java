@@ -8,10 +8,9 @@ import net.fabricmc.loader.api.FabricLoader;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,7 +38,7 @@ public class FDLink implements DedicatedServerModInitializer {
 	}
 
 	protected class ConfigManager {
-		private File CONFIG_PATH = FabricLoader.getInstance().getConfigDirectory();
+		private File CONFIG_PATH = FabricLoader.getInstance().getConfigDir().toFile();
 
 		private final Gson DEFAULT_GSON = new GsonBuilder().setPrettyPrinting().create();
 
@@ -82,7 +81,7 @@ public class FDLink implements DedicatedServerModInitializer {
 		}
 
 		public String loadConfig() {
-			try (FileReader fileReader = new FileReader(configFile)) {
+			try (InputStreamReader fileReader = new InputStreamReader(new FileInputStream(configFile), StandardCharsets.UTF_8)) {
 				config = gson.fromJson(fileReader, Config.class);
 				if (config.token == null) {
 					config.token = DefaultConfig.token;
@@ -99,8 +98,8 @@ public class FDLink implements DedicatedServerModInitializer {
 				if (config.minecraftToDiscord == null) {
 					config.minecraftToDiscord = DefaultConfig.minecraftToDiscord;
 				}
-				if (config.minecraftToDiscord.booleans == null) {
-					config.minecraftToDiscord.booleans = DefaultConfig.minecraftToDiscord.booleans;
+				if (config.minecraftToDiscord.general == null) {
+					config.minecraftToDiscord.general = DefaultConfig.minecraftToDiscord.general;
 				}
 				if (config.minecraftToDiscord.messages == null) {
 					config.minecraftToDiscord.messages = DefaultConfig.minecraftToDiscord.messages;
@@ -134,6 +133,18 @@ public class FDLink implements DedicatedServerModInitializer {
 				}
 				if (config.minecraftToDiscord.messages.playerJoinedRenamed == null) {
 					config.minecraftToDiscord.messages.playerJoinedRenamed = DefaultConfig.minecraftToDiscord.messages.playerJoinedRenamed;
+				}
+				if (config.minecraftToDiscord.messages.deathMsgPrefix == null) {
+					config.minecraftToDiscord.messages.deathMsgPrefix = DefaultConfig.minecraftToDiscord.messages.deathMsgPrefix;
+				}
+				if (config.minecraftToDiscord.messages.deathMsgPostfix == null) {
+					config.minecraftToDiscord.messages.deathMsgPostfix = DefaultConfig.minecraftToDiscord.messages.deathMsgPostfix;
+				}
+				if (config.minecraftToDiscord.chatChannels == null) {
+					config.minecraftToDiscord.chatChannels = DefaultConfig.minecraftToDiscord.chatChannels;
+				}
+				if (config.minecraftToDiscord.logChannels == null) {
+					config.minecraftToDiscord.logChannels = DefaultConfig.minecraftToDiscord.logChannels;
 				}
 				if (config.emojiMap == null) {
 					config.emojiMap = DefaultConfig.emojiMap;
@@ -171,25 +182,33 @@ public class FDLink implements DedicatedServerModInitializer {
 		}
 
 		public class MinecraftToDiscord {
+			public MinecraftToDiscordGeneral general = new MinecraftToDiscordGeneral();
 			public MinecraftToDiscordMessage messages = new MinecraftToDiscordMessage();
-			public MinecraftToDiscordBooleans booleans = new MinecraftToDiscordBooleans();
+			public MinecraftToDiscordChatChannel chatChannels = new MinecraftToDiscordChatChannel();
+			public MinecraftToDiscordLogChannel logChannels = new MinecraftToDiscordLogChannel();
+		}
+
+		public class MinecraftToDiscordGeneral {
+			public boolean enableDebugLogs = false;
 		}
 
 		public class MinecraftToDiscordMessage {
-			public String serverStarting = "Server is starting !";
-			public String serverStarted = "Server Started";
+			public String serverStarting = "Server is starting!";
+			public String serverStarted = "Server Started.";
 			public String serverStopping = "Server is stopping!";
-			public String serverStopped = "Server Stopped";
+			public String serverStopped = "Server Stopped.";
 			public String playerJoined = "%player joined the game";
 			public String playerJoinedRenamed = "%new (formerly known as %old) joined the game";
 			public String playerLeft = "%player left the game";
 			public String advancementTask = "%player has made the advancement %advancement";
-			public String advancementChallenge = "%player has made the challenge %advancement";
-			public String advancementGoal = "%player has made the goal %advancement";
+			public String advancementChallenge = "%player has completed the challenge %advancement";
+			public String advancementGoal = "%player has reached the goal %advancement";
+			public String deathMsgPrefix = "";
+			public String deathMsgPostfix = "";
 		}
-
-		public class MinecraftToDiscordBooleans {
-			public boolean commandPrefix = "-";
+    
+		public class MinecraftToDiscordChatChannel {
+      public boolean commandPrefix = "-";
 			public boolean allowDiscordCommands = true;
 			public boolean serverStartingMessage = true;
 			public boolean serverStartMessage = true;
@@ -201,11 +220,31 @@ public class FDLink implements DedicatedServerModInitializer {
 			public boolean playerMessages = true;
 			public boolean joinAndLeaveMessages = true;
 			public boolean advancementMessages = true;
+			public boolean challengeMessages = true;
+			public boolean goalMessages = true;
+			public boolean deathMessages = true;
+			public boolean sendMeCommand = true;
+			public boolean sendSayCommand = true;
+			public boolean adminMessages = false;
+		}
+
+		public class MinecraftToDiscordLogChannel {
+			public boolean serverStartingMessage = true;
+			public boolean serverStartMessage = true;
+			public boolean serverStopMessage = true;
+			public boolean serverStoppingMessage = true;
+			public boolean customChannelDescription = false;
+			public boolean minecraftToDiscordTag = false;
+			public boolean minecraftToDiscordDiscriminator = false;
+			public boolean playerMessages = false;
+			public boolean joinAndLeaveMessages = true;
+			public boolean advancementMessages = false;
+			public boolean challengeMessages = false;
+			public boolean goalMessages = false;
 			public boolean deathMessages = true;
 			public boolean sendMeCommand = true;
 			public boolean sendSayCommand = true;
 			public boolean adminMessages = true;
-			public boolean enableDebugLogs = false;
 		}
 
 		public class DiscordToMinecraft {
