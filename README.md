@@ -56,4 +56,6 @@ After downloading the latest version, just drop the jar into the mods folder.
 3. Obtain the channel IDs of the channels that you want your bot to function in (these can be from separate discord servers). To do this, you need to enable Discords Developer mode in your Discord Settings under `<Appearance>`. Afterwards you can right click channels and select `<Copy ID>` at the bottom
 3. Paste the Discord Chat and/or Log Channel's IDs into the appropriate locations in the config. The IDs need to be in double quotes inside the brackets. If you have more than one Chat or Log Channel you need to separate the channel IDs inside the brackets with commas (no comma behind the last ID)
 4. Configure the other settings in the config to your liking
+   - When you set a certain message type to `false`, those messages will still go to any `logChannel` you configured, but they won't be sent to `chatChannels`
+   - When `minecraftToDiscordDiscriminator` is set to `true`, messages sent from Discord into Minecraft will have the exact Discord name, e.g. `Bob#1234` instead of just `Bob`
 5. Restart your server
