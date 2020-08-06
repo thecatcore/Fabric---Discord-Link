@@ -3,7 +3,8 @@
   "package": "fr.arthurbambou.fdlink.mixin",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
-    "MixinMinecraftServer"
+    "MixinMinecraftServer",
+    "TranslatableTextAccessor"
   ],
   "injectors": {
     "defaultRequire": 1

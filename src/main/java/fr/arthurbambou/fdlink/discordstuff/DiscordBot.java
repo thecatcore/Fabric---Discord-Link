@@ -36,12 +36,13 @@ public class DiscordBot {
     private MessageCreateEvent messageCreateEvent;
     private boolean hasReceivedMessage;
     public String lastMessageD;
+    private static List<String> lastMessageMs = new ArrayList<>();
     private DiscordApi api = null;
     private long startTime;
     private boolean stopping = false;
 
     public DiscordBot(String token, FDLink.Config config) {
-        this.lastMessageD = "";
+        this.lastMessageD = "null";
 
         if (token == null) {
             FDLink.regenConfig();
@@ -78,6 +79,12 @@ public class DiscordBot {
             if (!this.hasChatChannels) return;
             if (event.getMessageAuthor().isYourself()) return;
             if (!this.config.chatChannels.contains(event.getChannel().getIdAsString())) return;
+            if (!lastMessageMs.isEmpty()) {
+                if (event.getMessageContent().equals(lastMessageMs.get(0))) {
+                    lastMessageMs.remove(0);
+                    return;
+                }
+            }
             this.messageCreateEvent = event;
             this.hasReceivedMessage = true;
         });
@@ -224,6 +231,7 @@ public class DiscordBot {
                 Optional<ServerTextChannel> channel = this.api.getServerTextChannelById(id);
                 if (channel.isPresent()) {
                     list.add(channel.get().sendMessage(message));
+                    lastMessageMs.add(message);
                 }
             }
         }
@@ -236,6 +244,7 @@ public class DiscordBot {
                 Optional<ServerTextChannel> channel = this.api.getServerTextChannelById(id);
                 if (channel.isPresent()) {
                     list.add(channel.get().sendMessage(message));
+                    lastMessageMs.add(message);
                 }
             }
         }

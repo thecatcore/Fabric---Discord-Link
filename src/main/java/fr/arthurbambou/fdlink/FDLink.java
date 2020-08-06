@@ -1,7 +1,6 @@
 package fr.arthurbambou.fdlink;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import com.google.gson.*;
 import fr.arthurbambou.fdlink.discordstuff.DiscordBot;
 import net.fabricmc.api.DedicatedServerModInitializer;
 import net.fabricmc.loader.api.FabricLoader;
@@ -12,6 +11,7 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 public class FDLink implements DedicatedServerModInitializer {
@@ -82,72 +82,79 @@ public class FDLink implements DedicatedServerModInitializer {
 
 		public String loadConfig() {
 			try (InputStreamReader fileReader = new InputStreamReader(new FileInputStream(configFile), StandardCharsets.UTF_8)) {
-				config = gson.fromJson(fileReader, Config.class);
-				if (config.token == null) {
-					config.token = DefaultConfig.token;
+				config = DefaultConfig;
+				JsonObject jsonObject = gson.fromJson(fileReader, JsonObject.class);
+				if (jsonObject.get("token") != null) {
+					config.token = jsonObject.get("token").getAsString();
 				}
-				if (config.chatChannels == null) {
-					config.chatChannels = DefaultConfig.chatChannels;
+				if (jsonObject.get("chatChannels") != null) {
+					config.chatChannels = gson.fromJson(jsonObject.get("chatChannels").toString(), List.class);
 				}
-				if (config.logChannels == null) {
-					config.logChannels = DefaultConfig.logChannels;
+				if (jsonObject.get("logChannels") != null) {
+					config.logChannels = gson.fromJson(jsonObject.get("logChannels").toString(), List.class);
 				}
-				if (config.discordToMinecraft == null) {
-					config.discordToMinecraft = DefaultConfig.discordToMinecraft;
+				if (jsonObject.get("discordToMinecraft") != null) {
+					JsonObject jsonToMinecraft = jsonObject.getAsJsonObject("discordToMinecraft");
+					if (jsonToMinecraft.get("message") != null) {
+						config.discordToMinecraft.message = jsonToMinecraft.get("message").getAsString();
+					}
+					if (jsonToMinecraft.get("commandPrefix") != null) {
+						config.discordToMinecraft.commandPrefix = jsonToMinecraft.get("commandPrefix").getAsString();
+					}
+					if (jsonToMinecraft.get("pingLongVersion") != null) {
+						config.discordToMinecraft.pingLongVersion = jsonToMinecraft.get("pingLongVersion").getAsBoolean();
+					}
 				}
-				if (config.minecraftToDiscord == null) {
-					config.minecraftToDiscord = DefaultConfig.minecraftToDiscord;
+				if (jsonObject.get("minecraftToDiscord") != null) {
+					JsonObject minecraftToDiscord = jsonObject.getAsJsonObject("minecraftToDiscord");
+					if (minecraftToDiscord.get("general") != null) {
+						JsonObject general = minecraftToDiscord.getAsJsonObject("general");
+						if (general.get("enableDebugLogs") != null) {
+							config.minecraftToDiscord.general.enableDebugLogs = general.get("enableDebugLogs").getAsBoolean();
+						}
+					}
+					if (minecraftToDiscord.get("messages") != null) {
+						JsonObject messages = minecraftToDiscord.getAsJsonObject("messages");
+						if (messages.get("serverStarting") != null) {
+							config.minecraftToDiscord.messages.serverStarting = messages.get("serverStarting").getAsString();
+						}
+						if (messages.get("serverStarted") != null) {
+							config.minecraftToDiscord.messages.serverStarted = messages.get("serverStarted").getAsString();
+						}
+						if (messages.get("serverStopped") != null) {
+							config.minecraftToDiscord.messages.serverStopped = messages.get("serverStopped").getAsString();
+						}
+						if (messages.get("serverStopping") != null) {
+							config.minecraftToDiscord.messages.serverStopping = messages.get("serverStopping").getAsString();
+						}
+						readConfigMessage(config.minecraftToDiscord.messages.playerMessage, "playerMessage", messages);
+						readConfigMessage(config.minecraftToDiscord.messages.playerJoined, "playerJoined", messages);
+						readConfigMessage(config.minecraftToDiscord.messages.playerJoinedRenamed, "playerJoinedRenamed", messages);
+						readConfigMessage(config.minecraftToDiscord.messages.playerLeft, "playerLeft", messages);
+						readConfigMessage(config.minecraftToDiscord.messages.advancementTask, "advancementTask", messages);
+						readConfigMessage(config.minecraftToDiscord.messages.advancementChallenge, "advancementChallenge", messages);
+						readConfigMessage(config.minecraftToDiscord.messages.advancementGoal, "advancementGoal", messages);
+						if (messages.get("deathMsgPrefix") != null) {
+							config.minecraftToDiscord.messages.deathMsgPrefix = messages.get("deathMsgPrefix").getAsString();
+						}
+						if (messages.get("deathMsgPostfix") != null) {
+							config.minecraftToDiscord.messages.deathMsgPostfix = messages.get("deathMsgPostfix").getAsString();
+						}
+					}
+					if (minecraftToDiscord.get("chatChannels") != null) {
+						config.minecraftToDiscord.chatChannels = gson.fromJson(minecraftToDiscord.get("chatChannels").toString(), Config.MinecraftToDiscordChatChannel.class);
+					}
+					if (minecraftToDiscord.get("logChannels") != null) {
+						config.minecraftToDiscord.logChannels = gson.fromJson(minecraftToDiscord.get("logChannels").toString(), Config.MinecraftToDiscordLogChannel.class);
+					}
 				}
-				if (config.minecraftToDiscord.general == null) {
-					config.minecraftToDiscord.general = DefaultConfig.minecraftToDiscord.general;
-				}
-				if (config.minecraftToDiscord.messages == null) {
-					config.minecraftToDiscord.messages = DefaultConfig.minecraftToDiscord.messages;
-				}
-				if (config.minecraftToDiscord.messages.serverStarted == null) {
-					config.minecraftToDiscord.messages.serverStarted = DefaultConfig.minecraftToDiscord.messages.serverStarted;
-				}
-				if (config.minecraftToDiscord.messages.serverStarting == null) {
-					config.minecraftToDiscord.messages.serverStarting = DefaultConfig.minecraftToDiscord.messages.serverStarting;
-				}
-				if (config.minecraftToDiscord.messages.serverStopping == null) {
-					config.minecraftToDiscord.messages.serverStopping = DefaultConfig.minecraftToDiscord.messages.serverStopping;
-				}
-				if (config.minecraftToDiscord.messages.serverStopped == null) {
-					config.minecraftToDiscord.messages.serverStopped = DefaultConfig.minecraftToDiscord.messages.serverStopped;
-				}
-				if (config.minecraftToDiscord.messages.playerJoined == null) {
-					config.minecraftToDiscord.messages.playerJoined = DefaultConfig.minecraftToDiscord.messages.playerJoined;
-				}
-				if (config.minecraftToDiscord.messages.playerLeft == null) {
-					config.minecraftToDiscord.messages.playerLeft = DefaultConfig.minecraftToDiscord.messages.playerLeft;
-				}
-				if (config.minecraftToDiscord.messages.advancementTask == null) {
-					config.minecraftToDiscord.messages.advancementTask = DefaultConfig.minecraftToDiscord.messages.advancementTask;
-				}
-				if (config.minecraftToDiscord.messages.advancementChallenge == null) {
-					config.minecraftToDiscord.messages.advancementChallenge = DefaultConfig.minecraftToDiscord.messages.advancementChallenge;
-				}
-				if (config.minecraftToDiscord.messages.advancementGoal == null) {
-					config.minecraftToDiscord.messages.advancementGoal = DefaultConfig.minecraftToDiscord.messages.advancementGoal;
-				}
-				if (config.minecraftToDiscord.messages.playerJoinedRenamed == null) {
-					config.minecraftToDiscord.messages.playerJoinedRenamed = DefaultConfig.minecraftToDiscord.messages.playerJoinedRenamed;
-				}
-				if (config.minecraftToDiscord.messages.deathMsgPrefix == null) {
-					config.minecraftToDiscord.messages.deathMsgPrefix = DefaultConfig.minecraftToDiscord.messages.deathMsgPrefix;
-				}
-				if (config.minecraftToDiscord.messages.deathMsgPostfix == null) {
-					config.minecraftToDiscord.messages.deathMsgPostfix = DefaultConfig.minecraftToDiscord.messages.deathMsgPostfix;
-				}
-				if (config.minecraftToDiscord.chatChannels == null) {
-					config.minecraftToDiscord.chatChannels = DefaultConfig.minecraftToDiscord.chatChannels;
-				}
-				if (config.minecraftToDiscord.logChannels == null) {
-					config.minecraftToDiscord.logChannels = DefaultConfig.minecraftToDiscord.logChannels;
-				}
-				if (config.emojiMap == null) {
-					config.emojiMap = DefaultConfig.emojiMap;
+				if (jsonObject.get("emojiMap") != null) {
+					Iterator<JsonElement> jsonArray = jsonObject.getAsJsonArray("emojiMap").iterator();
+					List<Config.EmojiEntry> emojiEntries = new ArrayList<>();
+					while (jsonArray.hasNext()) {
+						emojiEntries.add(gson.fromJson(jsonArray.next().toString(), Config.EmojiEntry.class));
+					}
+					config.emojiMap = emojiEntries;
 				}
 				return saveConfig(config);
 			} catch (IOException e) {
@@ -157,7 +164,23 @@ public class FDLink implements DedicatedServerModInitializer {
 		}
 	}
 
-	public class Config {
+	private static void readConfigMessage(Config.MinecraftToDiscordMessage.ConfigMessage configMessage, String name, JsonObject jsonObject) {
+		if (jsonObject.get(name) != null) {
+			if (jsonObject.get(name).isJsonObject()) {
+				JsonObject jsonObject1 = jsonObject.getAsJsonObject(name);
+				if (jsonObject1.get("customMessage") != null) {
+					configMessage.customMessage = jsonObject1.get("customMessage").getAsString();
+				}
+				if (jsonObject1.get("useCustomMessage") != null) {
+					configMessage.useCustomMessage = jsonObject1.get("useCustomMessage").getAsBoolean();
+				}
+			} else {
+				configMessage = new Config.MinecraftToDiscordMessage.ConfigMessage(jsonObject.get(name).getAsString());
+			}
+		}
+	}
+
+	public static class Config {
 		private String token = "";
 		public List<String> chatChannels = new ArrayList<String>();
 		public List<String> logChannels = new ArrayList<String>();
@@ -192,19 +215,34 @@ public class FDLink implements DedicatedServerModInitializer {
 			public boolean enableDebugLogs = false;
 		}
 
-		public class MinecraftToDiscordMessage {
+		public static class MinecraftToDiscordMessage {
+			public ConfigMessage playerMessage = new ConfigMessage("<%player> %message");
 			public String serverStarting = "Server is starting!";
 			public String serverStarted = "Server Started.";
 			public String serverStopping = "Server is stopping!";
 			public String serverStopped = "Server Stopped.";
-			public String playerJoined = "%player joined the game";
-			public String playerJoinedRenamed = "%new (formerly known as %old) joined the game";
-			public String playerLeft = "%player left the game";
-			public String advancementTask = "%player has made the advancement %advancement";
-			public String advancementChallenge = "%player has completed the challenge %advancement";
-			public String advancementGoal = "%player has reached the goal %advancement";
+			public ConfigMessage playerJoined = new ConfigMessage("%player joined the game");
+			public ConfigMessage playerJoinedRenamed = new ConfigMessage("%new (formerly known as %old) joined the game");
+			public ConfigMessage playerLeft = new ConfigMessage("%player left the game");
+			public ConfigMessage advancementTask = new ConfigMessage("%player has made the advancement %advancement");
+			public ConfigMessage advancementChallenge = new ConfigMessage("%player has completed the challenge %advancement");
+			public ConfigMessage advancementGoal = new ConfigMessage("%player has reached the goal %advancement");
 			public String deathMsgPrefix = "";
 			public String deathMsgPostfix = "";
+
+			public static class ConfigMessage {
+				public String customMessage;
+				public boolean useCustomMessage = true;
+
+				protected ConfigMessage(String customMessage, boolean useCustomMessage) {
+					this.customMessage = customMessage;
+					this.useCustomMessage = useCustomMessage;
+				}
+
+				protected ConfigMessage(String customMessage) {
+					this.customMessage = customMessage;
+				}
+			}
 		}
     
 		public class MinecraftToDiscordChatChannel {
