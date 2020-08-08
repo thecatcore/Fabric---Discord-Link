@@ -120,7 +120,7 @@ public final class MinecraftToDiscordHandler {
                 if (this.config.minecraftToDiscord.messages.advancementTask.useCustomMessage) {
                     message = this.config.minecraftToDiscord.messages.advancementTask.customMessage
                             .replace("%player", adaptUsernameToDiscord((LiteralText) ((TranslatableTextAccessor)text).getArgs()[0]))
-                            .replace("%advancement", ((TranslatableText)((TranslatableTextAccessor)text).getArgs()[1]).getString());
+                            .replace("%advancement", ((LiteralText)((TranslatableTextAccessor)text).getArgs()[1]).getString());
                 }
                 if (this.config.minecraftToDiscord.chatChannels.advancementMessages) {
                         this.discordBot.sendToChatChannels(message);
@@ -138,7 +138,7 @@ public final class MinecraftToDiscordHandler {
                 if (this.config.minecraftToDiscord.messages.advancementChallenge.useCustomMessage) {
                     message = this.config.minecraftToDiscord.messages.advancementChallenge.customMessage
                             .replace("%player", adaptUsernameToDiscord((LiteralText) ((TranslatableTextAccessor)text).getArgs()[0]))
-                            .replace("%advancement", ((TranslatableText)((TranslatableTextAccessor)text).getArgs()[1]).getString());
+                            .replace("%advancement", ((LiteralText)((TranslatableTextAccessor)text).getArgs()[1]).getString());
                 }
                 if (this.config.minecraftToDiscord.chatChannels.challengeMessages) {
                     this.discordBot.sendToChatChannels(message);
@@ -156,7 +156,7 @@ public final class MinecraftToDiscordHandler {
                 if (this.config.minecraftToDiscord.messages.advancementGoal.useCustomMessage) {
                     message = this.config.minecraftToDiscord.messages.advancementGoal.customMessage
                             .replace("%player", adaptUsernameToDiscord((LiteralText) ((TranslatableTextAccessor)text).getArgs()[0]))
-                            .replace("%advancement", ((TranslatableText)((TranslatableTextAccessor)text).getArgs()[1]).getString());
+                            .replace("%advancement", ((LiteralText)((TranslatableTextAccessor)text).getArgs()[1]).getString());
                 }
                 if (this.config.minecraftToDiscord.chatChannels.goalMessages) {
                     this.discordBot.sendToChatChannels(message);
