@@ -4,6 +4,7 @@ import com.vdurmont.emoji.EmojiParser;
 import fr.arthurbambou.fdlink.FDLink;
 import fr.arthurbambou.fdlink.discord.Commands;
 import fr.arthurbambou.fdlink.discordstuff.todiscord.MinecraftToDiscordHandler;
+import fr.arthurbambou.fdlink.versionhelpers.CrossVersionHandler;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.minecraft.entity.player.PlayerEntity;
@@ -157,14 +158,14 @@ public class DiscordBot {
                         }
                     }
                 }
-                Style style = Style.EMPTY;
+                Style style = null;
                 if (!this.messageCreateEvent.getMessageAttachments().isEmpty()) {
                     this.lastMessageD = this.lastMessageD.replace("%message", string_message + " (Click to open attachment URL)");
-                    style = style.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, this.messageCreateEvent.getMessageAttachments().get(0).getUrl().toString()));
+                    style = CrossVersionHandler.getStyleWithClickEventURL(this.messageCreateEvent.getMessageAttachments().get(0).getUrl().toString());
                 } else {
                     this.lastMessageD = this.lastMessageD.replace("%message", string_message);
                 }
-                server.getPlayerManager().sendToAll(new GameMessageS2CPacket(new LiteralText(this.lastMessageD).setStyle(style), MessageType.CHAT, UUID.randomUUID()));
+                CrossVersionHandler.sendMessageToChat(server, this.lastMessageD, style);
 
                 this.hasReceivedMessage = false;
             }

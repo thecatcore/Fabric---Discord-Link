@@ -1,10 +1,16 @@
 pluginManagement {
     repositories {
         jcenter()
+        gradlePluginPortal()
         maven {
             name = 'Fabric'
             url = 'https://maven.fabricmc.net/'
         }
-        gradlePluginPortal()
+        mavenLocal()
     }
 }
+
+rootProject.name = "Fabric-Discord-Link"
+
+include 'common'
+include '1.16.1'

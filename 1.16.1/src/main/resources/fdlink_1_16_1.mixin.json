@@ -8,5 +8,6 @@
   ],
   "injectors": {
     "defaultRequire": 1
-  }
+  },
+  "plugin": "fr.arthurbambou.fdlink.mixin_1_16_1.MixinPlugin"
 }

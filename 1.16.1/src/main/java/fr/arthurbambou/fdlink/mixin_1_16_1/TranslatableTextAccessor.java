@@ -1,4 +1,4 @@
-package fr.arthurbambou.fdlink.mixin;
+package fr.arthurbambou.fdlink.mixin_1_16_1;
 
 import net.minecraft.text.TranslatableText;
 import org.spongepowered.asm.mixin.Mixin;

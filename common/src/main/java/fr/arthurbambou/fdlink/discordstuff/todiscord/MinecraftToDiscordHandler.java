@@ -2,7 +2,7 @@ package fr.arthurbambou.fdlink.discordstuff.todiscord;
 
 import fr.arthurbambou.fdlink.FDLink;
 import fr.arthurbambou.fdlink.discordstuff.DiscordBot;
-import fr.arthurbambou.fdlink.mixin.TranslatableTextAccessor;
+import fr.arthurbambou.fdlink.versionhelpers.CrossVersionHandler;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
@@ -32,8 +32,8 @@ public final class MinecraftToDiscordHandler {
 
         // Chat messages
         registerTextHandler(new TextHandler("chat.type.text", text -> {
-            String playerName = ((LiteralText) ((TranslatableTextAccessor)text).getArgs()[0]).getString().replaceAll("§[b0931825467adcfeklmnor]", "");
-            String message = ((String) ((TranslatableTextAccessor)text).getArgs()[1]).replaceAll("§[b0931825467adcfeklmnor]", "");
+            String playerName = ((LiteralText) CrossVersionHandler.getArgs(text)[0]).getString().replaceAll("§[b0931825467adcfeklmnor]", "");
+            String message = ((String) CrossVersionHandler.getArgs(text)[1]).replaceAll("§[b0931825467adcfeklmnor]", "");
             String chatMessage = text.getString().replaceAll("§[b0931825467adcfeklmnor]", "");
             String logMessage = text.getString().replaceAll("§[b0931825467adcfeklmnor]", "");
             String chatPlayerName = "";
@@ -119,8 +119,8 @@ public final class MinecraftToDiscordHandler {
             if (this.config.minecraftToDiscord.chatChannels.advancementMessages || this.config.minecraftToDiscord.logChannels.advancementMessages) {
                 if (this.config.minecraftToDiscord.messages.advancementTask.useCustomMessage) {
                     message = this.config.minecraftToDiscord.messages.advancementTask.customMessage
-                            .replace("%player", adaptUsernameToDiscord((LiteralText) ((TranslatableTextAccessor)text).getArgs()[0]))
-                            .replace("%advancement", ((LiteralText)((TranslatableTextAccessor)text).getArgs()[1]).getString());
+                            .replace("%player", adaptUsernameToDiscord((LiteralText) CrossVersionHandler.getArgs(text)[0]))
+                            .replace("%advancement", ((LiteralText)CrossVersionHandler.getArgs(text)[1]).getString());
                 }
                 if (this.config.minecraftToDiscord.chatChannels.advancementMessages) {
                         this.discordBot.sendToChatChannels(message);
@@ -137,8 +137,8 @@ public final class MinecraftToDiscordHandler {
             if (this.config.minecraftToDiscord.chatChannels.challengeMessages || this.config.minecraftToDiscord.logChannels.challengeMessages) {
                 if (this.config.minecraftToDiscord.messages.advancementChallenge.useCustomMessage) {
                     message = this.config.minecraftToDiscord.messages.advancementChallenge.customMessage
-                            .replace("%player", adaptUsernameToDiscord((LiteralText) ((TranslatableTextAccessor)text).getArgs()[0]))
-                            .replace("%advancement", ((LiteralText)((TranslatableTextAccessor)text).getArgs()[1]).getString());
+                            .replace("%player", adaptUsernameToDiscord((LiteralText) CrossVersionHandler.getArgs(text)[0]))
+                            .replace("%advancement", ((LiteralText)CrossVersionHandler.getArgs(text)[1]).getString());
                 }
                 if (this.config.minecraftToDiscord.chatChannels.challengeMessages) {
                     this.discordBot.sendToChatChannels(message);
@@ -155,8 +155,8 @@ public final class MinecraftToDiscordHandler {
             if (this.config.minecraftToDiscord.chatChannels.goalMessages || this.config.minecraftToDiscord.logChannels.goalMessages) {
                 if (this.config.minecraftToDiscord.messages.advancementGoal.useCustomMessage) {
                     message = this.config.minecraftToDiscord.messages.advancementGoal.customMessage
-                            .replace("%player", adaptUsernameToDiscord((LiteralText) ((TranslatableTextAccessor)text).getArgs()[0]))
-                            .replace("%advancement", ((LiteralText)((TranslatableTextAccessor)text).getArgs()[1]).getString());
+                            .replace("%player", adaptUsernameToDiscord((LiteralText) CrossVersionHandler.getArgs(text)[0]))
+                            .replace("%advancement", ((LiteralText)CrossVersionHandler.getArgs(text)[1]).getString());
                 }
                 if (this.config.minecraftToDiscord.chatChannels.goalMessages) {
                     this.discordBot.sendToChatChannels(message);
@@ -183,7 +183,7 @@ public final class MinecraftToDiscordHandler {
             String message = text.getString().replaceAll("§[b0931825467adcfeklmnor]", "");
             if (this.config.minecraftToDiscord.chatChannels.joinAndLeaveMessages || this.config.minecraftToDiscord.logChannels.joinAndLeaveMessages) {
                 if (this.config.minecraftToDiscord.messages.playerJoinedRenamed.useCustomMessage) {
-                    message = this.config.minecraftToDiscord.messages.playerJoinedRenamed.customMessage.replace("%new", adaptUsernameToDiscord((LiteralText) ((TranslatableTextAccessor)text).getArgs()[0])).replace("%old", adaptUsernameToDiscord((LiteralText) ((TranslatableTextAccessor)text).getArgs()[1]));
+                    message = this.config.minecraftToDiscord.messages.playerJoinedRenamed.customMessage.replace("%new", adaptUsernameToDiscord((LiteralText) CrossVersionHandler.getArgs(text)[0])).replace("%old", adaptUsernameToDiscord((LiteralText) CrossVersionHandler.getArgs(text)[1]));
                 }
                 if (this.config.minecraftToDiscord.chatChannels.joinAndLeaveMessages) {
                     this.discordBot.sendToChatChannels(message);
@@ -199,7 +199,7 @@ public final class MinecraftToDiscordHandler {
             String message = text.getString().replaceAll("§[b0931825467adcfeklmnor]", "");
             if (this.config.minecraftToDiscord.chatChannels.joinAndLeaveMessages || this.config.minecraftToDiscord.logChannels.joinAndLeaveMessages) {
                 if (this.config.minecraftToDiscord.messages.playerJoined.useCustomMessage) {
-                    message = this.config.minecraftToDiscord.messages.playerJoined.customMessage.replace("%player", adaptUsernameToDiscord((LiteralText) ((TranslatableTextAccessor)text).getArgs()[0]));
+                    message = this.config.minecraftToDiscord.messages.playerJoined.customMessage.replace("%player", adaptUsernameToDiscord((LiteralText) CrossVersionHandler.getArgs(text)[0]));
                 }
                 if (this.config.minecraftToDiscord.chatChannels.joinAndLeaveMessages) {
                     this.discordBot.sendToChatChannels(message);
@@ -215,7 +215,7 @@ public final class MinecraftToDiscordHandler {
             String message = text.getString().replaceAll("§[b0931825467adcfeklmnor]", "");
             if (this.config.minecraftToDiscord.chatChannels.joinAndLeaveMessages || this.config.minecraftToDiscord.logChannels.joinAndLeaveMessages) {
                 if (this.config.minecraftToDiscord.messages.playerLeft.useCustomMessage) {
-                    message = this.config.minecraftToDiscord.messages.playerLeft.customMessage.replace("%player", adaptUsernameToDiscord((LiteralText) ((TranslatableTextAccessor)text).getArgs()[0]));
+                    message = this.config.minecraftToDiscord.messages.playerLeft.customMessage.replace("%player", adaptUsernameToDiscord((LiteralText) CrossVersionHandler.getArgs(text)[0]));
                 }
                 if (this.config.minecraftToDiscord.chatChannels.joinAndLeaveMessages) {
                     this.discordBot.sendToChatChannels(message);

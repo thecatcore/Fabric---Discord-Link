@@ -1,71 +1,172 @@
 plugins {
-	id 'fabric-loom' version '0.4-SNAPSHOT'
+	id 'java'
+	id 'eclipse'
+	id 'idea'
+	id 'maven-publish'
+	id 'fabric-loom' version '0.5-SNAPSHOT' apply false
+	id 'net.minecrell.licenser' version '0.4.1'
+	id "org.ajoberstar.grgit" version "3.1.1"
+	id 'com.matthewprenger.cursegradle' version "1.4.0"
 }
 
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
-
-archivesBaseName = project.archives_base_name
-version = project.mod_version
-group = project.maven_group
-
-minecraft {
+class Globals {
+	static def baseVersion = "0.6.0"
+	static def mcVersion = "1.16.1"
+	static def yarnVersion = "+build.21"
+	static def apiVersion = "0.17.0+build.386-1.16.1"
 }
 
-task sourcesJar(type: Jar) {
-	baseName = archivesBaseName
-	classifier = "sources"
-	from sourceSets.main.allSource
+version = Globals.baseVersion
+
+def getSubprojectVersion() {
+	return Globals.baseVersion
 }
+
+allprojects {
+	def projectName = it.name;
+	apply plugin: 'maven-publish'
+	apply plugin: 'fabric-loom'
+
+	sourceCompatibility = 1.8
+	targetCompatibility = 1.8
+
+	group = "fr.catcore"
+
+
+	dependencies {
+		if (projectName == "1.8.9") {
+			compile "com.google.guava:guava:23.5-jre"
+			minecraft "com.mojang:minecraft:1.8.9"
+			mappings "net.fabricmc:yarn:1.8.9+build.202007011615:v2"
+			modCompile ("net.fabricmc:fabric-loader-1.8.9:0.8.2+build.202004131640") {
+				exclude module: "guava"
+			}
+		} else {
+			if (projectName == "1.15.2") {
+				minecraft "com.mojang:minecraft:1.15.2"
+				mappings "net.fabricmc:yarn:1.15.2+build.17:v2"
+			} else {
+				minecraft "com.mojang:minecraft:$Globals.mcVersion"
+				mappings "net.fabricmc:yarn:${Globals.mcVersion}${Globals.yarnVersion}:v2"
+				modCompile "net.fabricmc.fabric-api:fabric-api:${Globals.apiVersion}"
+			}
+			modCompile "net.fabricmc:fabric-loader:0.9.1+build.205"
+		}
+	}
+
+	if (projectName == "1.8.9") {
+		minecraft {
+			intermediaryUrl = {
+				return "https://dl.bintray.com/legacy-fabric/Legacy-Fabric-Maven/net/fabricmc/intermediary/" + it + "/intermediary-" + it + "-v2.jar";
+			}
+		}
+	}
+
+	configurations {
+		dev
+	}
+
+	repositories {
+		mavenLocal()
+		mavenCentral()
+		jcenter()
+		maven {
+			name = 'Fabric'
+			url = 'http://maven.fabricmc.net/'
+		}
+		maven {
+			name = 'SpongePowered'
+			url = 'http://repo.spongepowered.org/maven'
+		}
+		maven {
+			name = 'mojang'
+			url = 'https://libraries.minecraft.net/'
+		}
+		maven {
+			name = 'legacy-fabric'
+			url = 'https://dl.bintray.com/legacy-fabric/Legacy-Fabric-Maven'
+		}
+	}
+
+	jar {
+		classifier = "dev"
+	}
+
+	afterEvaluate {
+		remapJar {
+			input = file("${project.buildDir}/libs/$archivesBaseName-${version}-dev.jar")
+			archiveName = "${archivesBaseName}-${version}.jar"
+		}
+
+		artifacts {
+			dev file: file("${project.buildDir}/libs/$archivesBaseName-${version}-dev.jar"), type: "jar", builtBy: jar
+		}
+
+		processResources {
+			inputs.property "version", project.version
+
+			from(sourceSets.main.resources.srcDirs) {
+				include "fabric.mod.json"
+				expand "version": project.version
+			}
+
+			from(sourceSets.main.resources.srcDirs) {
+				exclude "fabric.mod.json"
+			}
+		}
+	}
+
+	task sourcesJar(type: Jar, dependsOn: classes) {
+		classifier = 'sources'
+		from sourceSets.main.allSource
+	}
+}
+
+subprojects {
+
+	dependencies {
+//        testmodCompile sourceSets.main.output
+	}
+
+	task remapMavenJar(type: Copy, dependsOn: remapJar) {
+		afterEvaluate {
+			from("${project.buildDir}/libs/$archivesBaseName-${version}.jar")
+			into("${project.buildDir}/libs/")
+			rename { String fn -> "$archivesBaseName-${version}-maven.jar" }
+		}
+	}
+
+	publishing {
+		publications {
+			mavenJava(MavenPublication) {
+				afterEvaluate {
+					artifact(file("${project.buildDir}/libs/$archivesBaseName-${version}-maven.jar")) {
+						builtBy remapMavenJar
+					}
+					artifact(sourcesJar) {
+						builtBy remapSourcesJar
+					}
+				}
+			}
+		}
+	}
+}
+
+task remapMavenJar(type: net.fabricmc.loom.task.RemapJarTask, dependsOn: jar) {
+	afterEvaluate {
+		input = file("${project.buildDir}/libs/${archivesBaseName}-${version}-dev.jar")
+		archiveName = "${archivesBaseName}-${version}-maven.jar"
+		addNestedDependencies = false
+	}
+}
+
+subprojects.each { remapJar.dependsOn("${it.path}:remapJar") }
 
 dependencies {
-	//to change the versions see the gradle.properties file
-	minecraft "com.mojang:minecraft:${project.minecraft_version}"
-	mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
-	modCompile "net.fabricmc:fabric-loader:${project.loader_version}"
-
-	// Fabric API. This is technically optional, but you probably want it anyway.
-	modCompile "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
-
-	modCompile "org.javacord:javacord-api:${project.javacord_version}"
-    modCompile "org.javacord:javacord-core:${project.javacord_version}"
-	modCompile "com.vdurmont:emoji-java:5.1.1"
-
-	include "org.javacord:javacord-api:${project.javacord_version}"
-    include "org.javacord:javacord-core:${project.javacord_version}"
-	include "com.squareup.okhttp3:logging-interceptor:3.9.1"
-	include "com.squareup.okhttp3:okhttp:3.9.1"
-	include "com.squareup.okio:okio:1.13.0"
-	include "com.fasterxml.jackson.core:jackson-databind:2.9.3"
-	include "com.fasterxml.jackson.core:jackson-annotations:2.9.0"
-	include "com.fasterxml.jackson.core:jackson-core:2.9.3"
-	include "com.neovisionaries:nv-websocket-client:2.6"
-	include "org.json:json:20170516"
-	include "org.apache.logging.log4j:log4j-api:2.11.0"
-
-	include "com.vdurmont:emoji-java:5.1.1"
-}
-
-processResources {
-	inputs.property "version", project.version
-
-	from(sourceSets.main.resources.srcDirs) {
-		include "fabric.mod.json"
-		expand "version": project.version
+	afterEvaluate {
+		subprojects.each {
+			compile project(path: ":${it.name}", configuration: "dev")
+			include project("${it.name}:")
+		}
 	}
-
-	from(sourceSets.main.resources.srcDirs) {
-		exclude "fabric.mod.json"
-	}
-}
-
-// ensure that the encoding is set to UTF-8, no matter what the system default is
-// this fixes some edge cases with special characters not displaying correctly
-// see http://yodaconditions.net/blog/fix-for-java-file-encoding-problems-with-gradle.html
-tasks.withType(JavaCompile) {
-	options.encoding = "UTF-8"
-}
-
-jar {
-	from "LICENSE"
 }
