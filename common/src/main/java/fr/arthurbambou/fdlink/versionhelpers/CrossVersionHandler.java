@@ -1,5 +1,6 @@
 package fr.arthurbambou.fdlink.versionhelpers;
 
+import fr.arthurbambou.fdlink.FDLink;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.SemanticVersion;
 import net.fabricmc.loader.util.version.VersionParsingException;
@@ -70,7 +71,6 @@ public class CrossVersionHandler {
                 break;
             }
         }
-        assert argAccessor != null;
         return argAccessor.getArgs(translatableText);
     }
 }

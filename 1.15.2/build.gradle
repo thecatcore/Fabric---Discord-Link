@@ -1,0 +1,6 @@
+archivesBaseName = "1.15.2"
+version = getSubprojectVersion()
+
+dependencies {
+    compile project(path: ':common')
+}
