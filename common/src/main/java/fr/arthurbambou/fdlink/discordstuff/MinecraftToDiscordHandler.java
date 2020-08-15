@@ -60,10 +60,10 @@ public final class MinecraftToDiscordHandler {
                         TextChannel serverChannel = (TextChannel) this.api.getTextChannels().toArray()[0];
                         Guild server = serverChannel.getGuild();
                         message = message
-                                .replaceAll("@" + user.getName(), user.getAsTag())
-                                .replaceAll("@" + user.getName(), user.getAsTag())
-                                .replaceAll("@" + user.getName().toLowerCase(), user.getAsTag())
-                                .replaceAll("@" + user.getName().toLowerCase(), user.getAsTag());
+                                .replaceAll("@" + user.getName(), "<@!" + user.getId() + ">")
+                                .replaceAll("@" + user.getName(), "<@!" + user.getId() + ">")
+                                .replaceAll("@" + user.getName().toLowerCase(), "<@!" + user.getId() + ">")
+                                .replaceAll("@" + user.getName().toLowerCase(), "<@!" + user.getId() + ">");
 //                        if (user.getNickname(server).isPresent()) {
 //                            message = message
 //                                    .replaceAll("@" + user.getNickname(server).get(), user.getAsTag())
