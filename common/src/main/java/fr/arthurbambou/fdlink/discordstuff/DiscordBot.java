@@ -3,41 +3,36 @@ package fr.arthurbambou.fdlink.discordstuff;
 import com.vdurmont.emoji.EmojiParser;
 import fr.arthurbambou.fdlink.FDLink;
 import fr.arthurbambou.fdlink.discord.Commands;
-import fr.arthurbambou.fdlink.discordstuff.todiscord.MinecraftToDiscordHandler;
 import fr.arthurbambou.fdlink.versionhelpers.CrossVersionHandler;
+import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.JDABuilder;
+import net.dv8tion.jda.api.entities.*;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.minecraft.text.*;
 import net.minecraft.util.Util;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.javacord.api.DiscordApi;
-import org.javacord.api.DiscordApiBuilder;
-import org.javacord.api.entity.channel.ServerChannel;
-import org.javacord.api.entity.channel.ServerTextChannel;
-import org.javacord.api.entity.message.Message;
-import org.javacord.api.entity.server.Server;
-import org.javacord.api.entity.user.User;
-import org.javacord.api.event.message.MessageCreateEvent;
-import org.javacord.api.listener.message.MessageCreateListener;
 
+import javax.security.auth.login.LoginException;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
 public class DiscordBot {
     public static final Logger LOGGER = LogManager.getLogger();
-    private MinecraftToDiscordHandler minecraftToDiscordHandler = null;
+    protected MinecraftToDiscordHandler minecraftToDiscordHandler = null;
 
-    private FDLink.Config config;
+    protected FDLink.Config config;
     public boolean hasChatChannels;
     public boolean hasLogChannels;
-    private MessageCreateEvent messageCreateEvent;
-    private boolean hasReceivedMessage;
+    protected MessageReceivedEvent messageCreateEvent;
+    protected boolean hasReceivedMessage;
     public String lastMessageD;
-    private static List<String> lastMessageMs = new ArrayList<>();
-    private DiscordApi api = null;
-    private long startTime;
-    private boolean stopping = false;
+    protected static List<String> lastMessageMs = new ArrayList<>();
+    protected JDA api = null;
+    protected long startTime;
+    protected boolean stopping = false;
 
     public DiscordBot(String token, FDLink.Config config) {
         this.lastMessageD = "null";
@@ -71,23 +66,14 @@ public class DiscordBot {
         config.logChannels.removeIf(id -> config.chatChannels.contains(id));
 
         this.config = config;
-        this.api = new DiscordApiBuilder().setToken(token).login().join();
-        MessageCreateListener messageCreateListener = (event -> {
-            if (event.getMessageAuthor().isBotUser() && this.config.ignoreBots) return;
-            if (!this.hasChatChannels) return;
-            if (event.getMessageAuthor().isYourself()) return;
-            if (!this.config.chatChannels.contains(event.getChannel().getIdAsString())) return;
-            if (!lastMessageMs.isEmpty()) {
-                if (event.getMessageContent().equals(lastMessageMs.get(0))) {
-                    lastMessageMs.remove(0);
-                    return;
-                }
-            }
-            this.messageCreateEvent = event;
-            this.hasReceivedMessage = true;
-        });
-        this.api.addMessageCreateListener(messageCreateListener);
-        this.minecraftToDiscordHandler = new MinecraftToDiscordHandler(this.api, this, this.config);
+        try {
+            this.api = JDABuilder.createDefault(token).setActivity(Activity.playing(this.config.discordToMinecraft.commandPrefix + "commands")).build();
+        } catch (LoginException error) {
+            error.printStackTrace();
+        }
+        MessageReceivedListener messageCreateListener = new MessageReceivedListener(this);
+        this.api.addEventListener(messageCreateListener);
+        this.minecraftToDiscordHandler = new MinecraftToDiscordHandler(this);
 
         if (this.config.minecraftToDiscord.chatChannels.serverStartingMessage || this.config.minecraftToDiscord.logChannels.serverStartingMessage) {
             ServerLifecycleEvents.SERVER_STARTING.register(minecraftServer -> {
@@ -104,7 +90,7 @@ public class DiscordBot {
             }));
         }
         ServerLifecycleEvents.SERVER_STOPPING.register(minecraftServer -> {
-            this.api.removeListener(MessageCreateListener.class, messageCreateListener);
+            this.api.removeEventListener(messageCreateListener);
             this.stopping = true;
             if (this.config.minecraftToDiscord.chatChannels.serverStoppingMessage) sendToChatChannels(config.minecraftToDiscord.messages.serverStopping);
             if (this.config.minecraftToDiscord.logChannels.serverStoppingMessage) sendToLogChannels(config.minecraftToDiscord.messages.serverStopping);
@@ -122,7 +108,7 @@ public class DiscordBot {
                     }
                 }
             }
-            this.api.disconnect();
+            this.api.shutdown();
         }));
 
         ServerTickEvents.START_SERVER_TICK.register((server -> {
@@ -130,35 +116,35 @@ public class DiscordBot {
             int maxPlayer = server.getPlayerManager().getMaxPlayerCount();
             if (this.hasReceivedMessage) {
                 for (Commands command : Commands.values()) {
-                    if (this.messageCreateEvent.getMessageContent().toLowerCase().equals(this.config.discordToMinecraft.commandPrefix + command.name().toLowerCase())) {
+                    if (this.messageCreateEvent.getMessage().getContentRaw().toLowerCase().equals(this.config.discordToMinecraft.commandPrefix + command.name().toLowerCase())) {
                         this.hasReceivedMessage = command.execute(server, this.messageCreateEvent, this.startTime);
                         return;
                     }
                 }
                 this.lastMessageD = this.config.discordToMinecraft.message
-                        .replace("%player", this.messageCreateEvent.getMessageAuthor().getDisplayName());
-                String string_message = EmojiParser.parseToAliases(this.messageCreateEvent.getMessageContent());
+                        .replace("%player", this.messageCreateEvent.getAuthor().getName());
+                String string_message = EmojiParser.parseToAliases(this.messageCreateEvent.getMessage().getContentRaw());
                 for (FDLink.Config.EmojiEntry emojiEntry : this.config.emojiMap) {
                     string_message = string_message.replace("<" + emojiEntry.id + ">", emojiEntry.name);
                 }
                 if (this.config.minecraftToDiscord.chatChannels.minecraftToDiscordTag || this.config.minecraftToDiscord.logChannels.minecraftToDiscordTag) {
-                    for (User user : this.api.getCachedUsers()) {
-                        ServerChannel serverChannel = (ServerChannel) this.api.getServerChannels().toArray()[0];
-                        Server discordServer = serverChannel.getServer();
+                    for (User user : this.api.getUserCache()) {
+                        TextChannel serverChannel = (TextChannel) this.api.getTextChannels().toArray()[0];
+                        Guild discordServer = serverChannel.getGuild();
                         String string_discriminator = "";
                         if (this.config.minecraftToDiscord.chatChannels.minecraftToDiscordDiscriminator || this.config.minecraftToDiscord.logChannels.minecraftToDiscordDiscriminator){
                             string_discriminator = "#" + user.getDiscriminator();
                         }
-                        string_message = string_message.replace("<@!" + user.getIdAsString() + ">", "@" + user.getDisplayName(discordServer) + string_discriminator);
-                        if (user.getNickname(discordServer).isPresent() && this.config.discordToMinecraft.pingLongVersion) {
-                            string_message = string_message.replace("@" + user.getName(), "@" + user.getDisplayName(discordServer) + "(" + user.getName() + string_discriminator + ")");
-                        }
+                        string_message = string_message.replace("<@!" + user.getId() + ">", "@" + user.getName() + string_discriminator);
+//                        if (user.(discordServer).isPresent() && this.config.discordToMinecraft.pingLongVersion) {
+//                            string_message = string_message.replace("@" + user.getName(), "@" + user.getDisplayName(discordServer) + "(" + user.getName() + string_discriminator + ")");
+//                        }
                     }
                 }
                 Style style = null;
-                if (!this.messageCreateEvent.getMessageAttachments().isEmpty()) {
+                if (!this.messageCreateEvent.getMessage().getAttachments().isEmpty()) {
                     this.lastMessageD = this.lastMessageD.replace("%message", string_message + " (Click to open attachment URL)");
-                    style = CrossVersionHandler.getStyleWithClickEventURL(this.messageCreateEvent.getMessageAttachments().get(0).getUrl().toString());
+                    style = CrossVersionHandler.getStyleWithClickEventURL(this.messageCreateEvent.getMessage().getAttachments().get(0).getUrl());
                 } else {
                     this.lastMessageD = this.lastMessageD.replace("%message", string_message);
                 }
@@ -174,27 +160,25 @@ public class DiscordBot {
 
                 if(this.config.minecraftToDiscord.chatChannels.customChannelDescription){
                     for (String id : this.config.chatChannels) {
-                        this.api.getServerTextChannelById(id).ifPresent(channel ->
-                               channel.updateTopic(String.format(
-                             "Playercount : %d/%d,\n" +
-                                     "Uptime : %dh %dm %ds",
-                             playerNumber, maxPlayer, uptimeH, uptimeM, uptimeS
-                    )));
+//                        this.api.getTextChannelById(id).getTopic() = String.format(
+//                             "Playercount : %d/%d,\n" +
+//                                     "Uptime : %dh %dm %ds",
+//                             playerNumber, maxPlayer, uptimeH, uptimeM, uptimeS
+//                    );
                     }
                 }
                 if(this.config.minecraftToDiscord.logChannels.customChannelDescription){
                     for (String id : this.config.logChannels) {
-                        this.api.getServerTextChannelById(id).ifPresent(channel ->
-                               channel.updateTopic(String.format(
-                             "Playercount : %d/%d,\n" +
-                                     "Uptime : %dh %dm %ds",
-                             playerNumber, maxPlayer, uptimeH, uptimeM, uptimeS
-                    )));
+//                        this.api.getServerTextChannelById(id).ifPresent(channel ->
+//                               channel.updateTopic(String.format(
+//                             "Playercount : %d/%d,\n" +
+//                                     "Uptime : %dh %dm %ds",
+//                             playerNumber, maxPlayer, uptimeH, uptimeM, uptimeS
+//                    )));
                     }
                 }
             }
         }));
-        this.api.updateActivity(this.config.discordToMinecraft.commandPrefix + "commands");
     }
 
     public void sendMessage(Text text) {
@@ -226,11 +210,9 @@ public class DiscordBot {
     public List<CompletableFuture<Message>> sendToLogChannels(String message, List<CompletableFuture<Message>> list) {
         if (this.hasLogChannels) {
             for (String id : this.config.logChannels) {
-                Optional<ServerTextChannel> channel = this.api.getServerTextChannelById(id);
-                if (channel.isPresent()) {
-                    list.add(channel.get().sendMessage(message));
-                    lastMessageMs.add(message);
-                }
+                TextChannel channel = this.api.getTextChannelById(id);
+                list.add(channel.sendMessage(message).submit());
+                lastMessageMs.add(message);
             }
         }
         return list;
@@ -239,11 +221,9 @@ public class DiscordBot {
     public List<CompletableFuture<Message>> sendToChatChannels(String message, List<CompletableFuture<Message>> list) {
         if (this.hasChatChannels) {
             for (String id : this.config.chatChannels) {
-                Optional<ServerTextChannel> channel = this.api.getServerTextChannelById(id);
-                if (channel.isPresent()) {
-                    list.add(channel.get().sendMessage(message));
-                    lastMessageMs.add(message);
-                }
+                TextChannel channel = this.api.getTextChannelById(id);
+                list.add(channel.sendMessage(message).submit());
+                lastMessageMs.add(message);
             }
         }
         return list;

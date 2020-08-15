@@ -38,7 +38,7 @@ public class FDLink implements DedicatedServerModInitializer {
 	}
 
 	protected class ConfigManager {
-		private File CONFIG_PATH = FabricLoader.getInstance().getConfigDir().toFile();
+		private File CONFIG_PATH = FabricLoader.getInstance().getConfigDirectory();
 
 		private final Gson DEFAULT_GSON = new GsonBuilder().setPrettyPrinting().create();
 

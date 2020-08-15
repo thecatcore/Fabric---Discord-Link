@@ -1,30 +1,31 @@
-package fr.arthurbambou.fdlink.discordstuff.todiscord;
+package fr.arthurbambou.fdlink.discordstuff;
 
 import fr.arthurbambou.fdlink.FDLink;
 import fr.arthurbambou.fdlink.discordstuff.DiscordBot;
+import fr.arthurbambou.fdlink.discordstuff.todiscord.MinecraftToDiscordFunction;
 import fr.arthurbambou.fdlink.versionhelpers.CrossVersionHandler;
+import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.User;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
-import org.javacord.api.DiscordApi;
-import org.javacord.api.entity.channel.ServerChannel;
-import org.javacord.api.entity.server.Server;
-import org.javacord.api.entity.user.User;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public final class MinecraftToDiscordHandler {
 
-    private final DiscordApi api;
+    private final JDA api;
     private final DiscordBot discordBot;
     private final FDLink.Config config;
     private final List<TextHandler> TEXT_HANDLERS = new ArrayList<>();
 
-    public MinecraftToDiscordHandler(DiscordApi api, DiscordBot discordBot, FDLink.Config config) {
-        this.api = api;
+    public MinecraftToDiscordHandler(DiscordBot discordBot) {
+        this.api = discordBot.api;
         this.discordBot = discordBot;
-        this.config = config;
+        this.config = discordBot.config;
 
         // Literal Text not using translation key.
         registerTextHandler(new TextHandler(Text.class, text -> this.discordBot.sendToLogChannels(text.getString()
@@ -55,19 +56,19 @@ public final class MinecraftToDiscordHandler {
                     logMessage = message;
                 }
                 if (this.config.minecraftToDiscord.chatChannels.minecraftToDiscordTag ||  this.config.minecraftToDiscord.logChannels.minecraftToDiscordTag) {
-                    for (User user : this.api.getCachedUsers()) {
-                        ServerChannel serverChannel = (ServerChannel) this.api.getServerChannels().toArray()[0];
-                        Server server = serverChannel.getServer();
+                    for (User user : this.api.getUserCache()) {
+                        TextChannel serverChannel = (TextChannel) this.api.getTextChannels().toArray()[0];
+                        Guild server = serverChannel.getGuild();
                         message = message
-                                .replaceAll("@" + user.getName(), user.getMentionTag())
-                                .replaceAll("@" + user.getDisplayName(server), user.getMentionTag())
-                                .replaceAll("@" + user.getName().toLowerCase(), user.getMentionTag())
-                                .replaceAll("@" + user.getDisplayName(server).toLowerCase(), user.getMentionTag());
-                        if (user.getNickname(server).isPresent()) {
-                            message = message
-                                    .replaceAll("@" + user.getNickname(server).get(), user.getMentionTag())
-                                    .replaceAll("@" + user.getNickname(server).get().toLowerCase(), user.getMentionTag());
-                        }
+                                .replaceAll("@" + user.getName(), user.getAsTag())
+                                .replaceAll("@" + user.getName(), user.getAsTag())
+                                .replaceAll("@" + user.getName().toLowerCase(), user.getAsTag())
+                                .replaceAll("@" + user.getName().toLowerCase(), user.getAsTag());
+//                        if (user.getNickname(server).isPresent()) {
+//                            message = message
+//                                    .replaceAll("@" + user.getNickname(server).get(), user.getAsTag())
+//                                    .replaceAll("@" + user.getNickname(server).get().toLowerCase(), user.getAsTag());
+//                        }
                     }
                     if(this.config.minecraftToDiscord.chatChannels.minecraftToDiscordTag){
                         chatMessage = message;
