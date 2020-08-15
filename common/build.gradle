@@ -2,28 +2,24 @@ archivesBaseName = "common"
 version = getSubprojectVersion()
 
 dependencies {
-//    modCompile "org.javacord:javacord-api:3.0.6"
-//    modCompile "org.javacord:javacord-core:3.0.6"
-	modCompile "com.vdurmont:emoji-java:5.1.1"
-//    compile('org.apache.logging.log4j:log4j-slf4j-impl:2.13.3')
-	modCompile ('net.dv8tion:JDA:4.2.0_191') {
+	compile "com.vdurmont:emoji-java:5.1.1"
+	compile ('net.dv8tion:JDA:4.2.0_191') {
 		exclude module: 'opus-java'
 	}
+
 	include ('net.dv8tion:JDA:4.2.0_191') {
 		exclude module: 'opus-java'
 	}
-//	include "org.javacord:javacord-api:3.0.6"
-//    include "org.javacord:javacord-core:3.0.6"
-//	include "com.squareup.okhttp3:logging-interceptor:3.9.1"
-//	include "com.squareup.okhttp3:okhttp:3.9.1"
-//	include "com.squareup.okio:okio:1.13.0"
-//	include "com.fasterxml.jackson.core:jackson-databind:2.9.3"
-//	include "com.fasterxml.jackson.core:jackson-annotations:2.9.0"
-//	include "com.fasterxml.jackson.core:jackson-core:2.9.3"
-//	include "com.neovisionaries:nv-websocket-client:2.6"
-//	include "org.json:json:20170516"
-//	include "org.apache.logging.log4j:log4j-api:2.13.3"
-//	include "org.apache.logging.log4j:log4j-core:2.13.3"
+	include "net.sf.trove4j:trove4j:3.0.3"
+	include 'org.slf4j:slf4j-nop:1.7.25'
+	include 'org.slf4j:slf4j-api:1.7.25'
+	include 'org.apache.commons:commons-collections4:4.1'
+	include 'com.neovisionaries:nv-websocket-client:2.10'
+	include 'com.squareup.okhttp3:okhttp:3.13.0'
+	include 'com.squareup.okio:okio:1.17.2'
+	include 'com.fasterxml.jackson.core:jackson-databind:2.10.1'
+	include 'com.fasterxml.jackson.core:jackson-annotations:2.10.1'
+	include 'com.fasterxml.jackson.core:jackson-core:2.10.1'
 
 	include "com.vdurmont:emoji-java:5.1.1"
 }
