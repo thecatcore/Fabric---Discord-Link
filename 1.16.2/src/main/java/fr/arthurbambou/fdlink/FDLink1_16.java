@@ -1,6 +1,6 @@
 package fr.arthurbambou.fdlink;
 
-import fr.arthurbambou.fdlink.mixin_1_16_1.TranslatableTextAccessor;
+import fr.arthurbambou.fdlink.mixin_1_16.TranslatableTextAccessor;
 import fr.arthurbambou.fdlink.versionhelpers.ArgAccessor;
 import fr.arthurbambou.fdlink.versionhelpers.CrossVersionHandler;
 import fr.arthurbambou.fdlink.versionhelpers.MessageSender;
@@ -15,7 +15,7 @@ import net.minecraft.text.*;
 
 import java.util.UUID;
 
-public class FDLink1_16_1 implements DedicatedServerModInitializer {
+public class FDLink1_16 implements DedicatedServerModInitializer {
     @Override
     public void onInitializeServer() {
         FDLink.LOGGER.info("Initializing 1.16 Compat module");

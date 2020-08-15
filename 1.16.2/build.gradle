@@ -1,4 +1,4 @@
-archivesBaseName = "1.16.1"
+archivesBaseName = "1.16.2"
 version = getSubprojectVersion()
 
 dependencies {

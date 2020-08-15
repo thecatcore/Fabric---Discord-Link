@@ -1,4 +1,4 @@
-package fr.arthurbambou.fdlink.mixin_1_16_1;
+package fr.arthurbambou.fdlink.mixin_1_16;
 
 import fr.arthurbambou.fdlink.versionhelpers.CrossVersionHandler;
 import net.fabricmc.loader.api.SemanticVersion;
@@ -23,7 +23,7 @@ public class MixinPlugin implements IMixinConfigPlugin {
 
     @Override
     public boolean shouldApplyMixin(String targetClassName, String mixinClassName) {
-        if (mixinClassName.equals("fr.arthurbambou.fdlink.mixin_1_16_1.MixinMinecraftServer")) {
+        if (mixinClassName.equals("fr.arthurbambou.fdlink.mixin_1_16.MixinMinecraftServer")) {
             try {
                 if (CrossVersionHandler.getMinecraftVersion().compareTo(SemanticVersion.parse("1.16-Snapshot.20.21.a")) < 0) {
                     return false;

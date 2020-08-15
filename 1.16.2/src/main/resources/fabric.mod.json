@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "id": "fdlink_1_16_1",
+  "id": "fdlink_1_16",
   "name": "Fabric <-> Discord Link",
   "description": "A mod to link Minecraft and Discord chats for Fabric.",
   "version": "${version}",
@@ -13,7 +13,7 @@
   ],
   "entrypoints": {
     "server": [
-      "fr.arthurbambou.fdlink.FDLink1_16_1"
+      "fr.arthurbambou.fdlink.FDLink1_16"
     ]
   },
   "depends": {
@@ -21,6 +21,6 @@
     "fabric": ">=0.15"
   },
   "mixins": [
-    "fdlink_1_16_1.mixin.json"
+    "fdlink_1_16.mixin.json"
   ]
 }

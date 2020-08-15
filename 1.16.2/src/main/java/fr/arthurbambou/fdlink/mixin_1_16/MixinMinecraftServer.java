@@ -1,4 +1,4 @@
-package fr.arthurbambou.fdlink.mixin_1_16_1;
+package fr.arthurbambou.fdlink.mixin_1_16;
 
 import fr.arthurbambou.fdlink.FDLink;
 import net.minecraft.server.MinecraftServer;

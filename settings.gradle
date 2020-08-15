@@ -13,5 +13,5 @@ pluginManagement {
 rootProject.name = "Fabric-Discord-Link"
 
 include 'common'
-include '1.16.1'
+include '1.16.2'
 include '1.15.2'
