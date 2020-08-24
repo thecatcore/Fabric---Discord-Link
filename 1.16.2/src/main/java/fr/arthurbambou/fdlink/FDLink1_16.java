@@ -1,17 +1,23 @@
 package fr.arthurbambou.fdlink;
 
+import fr.arthurbambou.fdlink.compat_1_16.Message1_16;
+import fr.arthurbambou.fdlink.compat_1_16.MessagePacket1_16;
+import fr.arthurbambou.fdlink.compat_1_16.MinecraftServer1_16;
 import fr.arthurbambou.fdlink.mixin_1_16.TranslatableTextAccessor;
 import fr.arthurbambou.fdlink.versionhelpers.ArgAccessor;
 import fr.arthurbambou.fdlink.versionhelpers.CrossVersionHandler;
 import fr.arthurbambou.fdlink.versionhelpers.MessageSender;
-import fr.arthurbambou.fdlink.versionhelpers.StyleApplier;
+import fr.arthurbambou.fdlink.versionhelpers.minecraft.Message;
+import fr.arthurbambou.fdlink.versionhelpers.minecraft.MessagePacket;
+import fr.arthurbambou.fdlink.versionhelpers.minecraft.MinecraftServer;
+import fr.arthurbambou.fdlink.versionhelpers.minecraft.style.Style;
 import net.fabricmc.api.DedicatedServerModInitializer;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.loader.api.SemanticVersion;
 import net.fabricmc.loader.util.version.VersionParsingException;
-import net.minecraft.network.MessageType;
-import net.minecraft.network.packet.s2c.play.GameMessageS2CPacket;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.text.*;
+import net.minecraft.text.Text;
+import net.minecraft.text.TranslatableText;
 
 import java.util.UUID;
 
@@ -20,19 +26,7 @@ public class FDLink1_16 implements DedicatedServerModInitializer {
     public void onInitializeServer() {
         FDLink.LOGGER.info("Initializing 1.16 Compat module");
         if (canLoad(CrossVersionHandler.getMinecraftVersion(), "1.16-Snapshot.20.17.a")) {
-            CrossVersionHandler.registerStyleApplier(new StyleApplier() {
-                @Override
-                public boolean isCompatibleWithVersion(SemanticVersion semanticVersion) {
-                    return canLoad(semanticVersion, "1.16-Snapshot.20.17.a");
-                }
-
-                @Override
-                public Style getStyleWithClickEventURL(String url) {
-                    Style style = Style.EMPTY;
-                    style = style.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, url));
-                    return style;
-                }
-            });
+            ServerTickEvents.START_SERVER_TICK.register((server -> FDLink.getDiscordBot().serverTick(new MinecraftServer1_16(server))));
         }
         if (canLoad(CrossVersionHandler.getMinecraftVersion(), "1.16-Snapshot.20.21.a")) {
             CrossVersionHandler.registerMessageSender(new MessageSender() {
@@ -43,11 +37,11 @@ public class FDLink1_16 implements DedicatedServerModInitializer {
 
                 @Override
                 public void sendMessageToChat(MinecraftServer server, String message, Style style) {
-                    MutableText literalText = new LiteralText(message);
+                    Message literalText = new Message1_16(message);
                     if (style != null) {
                         literalText = literalText.setStyle(style);
                     }
-                    server.getPlayerManager().sendToAll(new GameMessageS2CPacket(literalText, MessageType.CHAT, UUID.randomUUID()));
+                    server.sendMessageToAll(new MessagePacket1_16(literalText, MessagePacket.MessageType.CHAT, UUID.randomUUID()));
                 }
             });
         }
@@ -62,12 +56,18 @@ public class FDLink1_16 implements DedicatedServerModInitializer {
                 return ((TranslatableTextAccessor)(TranslatableText)translatableText).getArgs();
             }
         });
+        if (canLoad(CrossVersionHandler.getMinecraftVersion(), "1.14")) {
+            ServerLifecycleEvents.SERVER_STARTING.register(minecraftServer -> FDLink.getDiscordBot().serverStarting());
+            ServerLifecycleEvents.SERVER_STARTED.register((server -> FDLink.getDiscordBot().serverStarted(new MinecraftServer1_16(server))));
+            ServerLifecycleEvents.SERVER_STOPPING.register(minecraftServer -> FDLink.getDiscordBot().serverStopping());
+            ServerLifecycleEvents.SERVER_STOPPED.register((server -> FDLink.getDiscordBot().serverStopped()));
+        }
     }
 
     public static boolean canLoad(SemanticVersion semanticVersion, String otherVersion) {
         try {
-            int comparaison = SemanticVersion.parse(otherVersion).compareTo(semanticVersion);
-            return comparaison <= 0;
+            int comparison = SemanticVersion.parse(otherVersion).compareTo(semanticVersion);
+            return comparison <= 0;
         } catch (VersionParsingException versionParsingException) {
             versionParsingException.printStackTrace();
         }

@@ -1,26 +1,19 @@
 package fr.arthurbambou.fdlink.versionhelpers;
 
-import fr.arthurbambou.fdlink.FDLink;
+import fr.arthurbambou.fdlink.versionhelpers.minecraft.MinecraftServer;
+import fr.arthurbambou.fdlink.versionhelpers.minecraft.style.Style;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.SemanticVersion;
 import net.fabricmc.loader.util.version.VersionParsingException;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.text.Style;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class CrossVersionHandler {
 
-    private static final List<StyleApplier> STYLE_APPLIERS = new ArrayList<>();
     private static final List<MessageSender> MESSAGE_SENDERS = new ArrayList<>();
     private static final List<ArgAccessor> ARG_ACCESSORS = new ArrayList<>();
-
-    public static void registerStyleApplier(StyleApplier styleApplier) {
-        STYLE_APPLIERS.add(styleApplier);
-    }
 
     public static void registerMessageSender(MessageSender messageSender) {
         MESSAGE_SENDERS.add(messageSender);
@@ -37,18 +30,6 @@ public class CrossVersionHandler {
             exception.printStackTrace();
         }
         return null;
-    }
-
-    public static Style getStyleWithClickEventURL(String url) {
-        StyleApplier styleApplier = null;
-        for (StyleApplier styleApplier1 : STYLE_APPLIERS) {
-            if (styleApplier1.isCompatibleWithVersion(getMinecraftVersion())) {
-                styleApplier = styleApplier1;
-                break;
-            }
-        }
-        assert styleApplier != null;
-        return styleApplier.getStyleWithClickEventURL(url);
     }
 
     public static void sendMessageToChat(MinecraftServer server, String message, Style style) {

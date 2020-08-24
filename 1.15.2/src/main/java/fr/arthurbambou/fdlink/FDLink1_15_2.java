@@ -1,38 +1,24 @@
 package fr.arthurbambou.fdlink;
 
+import fr.arthurbambou.fdlink.compat_1_15_2.Message1_15_2;
+import fr.arthurbambou.fdlink.compat_1_15_2.MessagePacket1_15_2;
+import fr.arthurbambou.fdlink.compat_1_15_2.MinecraftServer1_15_2;
 import fr.arthurbambou.fdlink.versionhelpers.CrossVersionHandler;
 import fr.arthurbambou.fdlink.versionhelpers.MessageSender;
-import fr.arthurbambou.fdlink.versionhelpers.StyleApplier;
+import fr.arthurbambou.fdlink.versionhelpers.minecraft.Message;
+import fr.arthurbambou.fdlink.versionhelpers.minecraft.MinecraftServer;
+import fr.arthurbambou.fdlink.versionhelpers.minecraft.style.Style;
 import net.fabricmc.api.DedicatedServerModInitializer;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.loader.api.SemanticVersion;
 import net.fabricmc.loader.util.version.VersionParsingException;
-import net.minecraft.network.MessageType;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.text.ClickEvent;
-import net.minecraft.text.LiteralText;
-import net.minecraft.text.Style;
-import net.minecraft.text.Text;
-
-import java.util.UUID;
 
 public class FDLink1_15_2 implements DedicatedServerModInitializer {
     @Override
     public void onInitializeServer() {
         FDLink.LOGGER.info("Initializing 1.14-1.15 Compat module");
         if (canLoad(CrossVersionHandler.getMinecraftVersion(), "1.16-Snapshot.20.17.a")) {
-            CrossVersionHandler.registerStyleApplier(new StyleApplier() {
-                @Override
-                public boolean isCompatibleWithVersion(SemanticVersion semanticVersion) {
-                    return canLoad(semanticVersion, "1.16-Snapshot.20.17.a");
-                }
-
-                @Override
-                public Style getStyleWithClickEventURL(String url) {
-                    Style style = new Style();
-                    style = style.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, url));
-                    return style;
-                }
-            });
+            ServerTickEvents.START_SERVER_TICK.register((server -> FDLink.getDiscordBot().serverTick(new MinecraftServer1_15_2(server))));
         }
         if (canLoad(CrossVersionHandler.getMinecraftVersion(), "1.16-Snapshot.20.21.a")) {
             CrossVersionHandler.registerMessageSender(new MessageSender() {
@@ -43,11 +29,11 @@ public class FDLink1_15_2 implements DedicatedServerModInitializer {
 
                 @Override
                 public void sendMessageToChat(MinecraftServer server, String message, Style style) {
-                    Text literalText = new LiteralText(message);
+                    Message literalText = new Message1_15_2(message);
                     if (style != null) {
                         literalText = literalText.setStyle(style);
                     }
-                    server.getPlayerManager().sendToAll(literalText);
+                    server.sendMessageToAll(new MessagePacket1_15_2(literalText));
                 }
             });
         }

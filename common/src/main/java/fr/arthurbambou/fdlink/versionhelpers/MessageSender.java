@@ -1,8 +1,8 @@
 package fr.arthurbambou.fdlink.versionhelpers;
 
+import fr.arthurbambou.fdlink.versionhelpers.minecraft.MinecraftServer;
+import fr.arthurbambou.fdlink.versionhelpers.minecraft.style.Style;
 import net.fabricmc.loader.api.SemanticVersion;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.text.Style;
 
 public interface MessageSender {
 

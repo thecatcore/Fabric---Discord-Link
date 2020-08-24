@@ -1,21 +1,21 @@
 package fr.arthurbambou.fdlink.discord;
 
+import fr.arthurbambou.fdlink.versionhelpers.minecraft.MinecraftServer;
+import fr.arthurbambou.fdlink.versionhelpers.minecraft.PlayerEntity;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.Util;
 
 public enum Commands {
     playercount("Show the number of player on the server.",(minecraftServer, messageCreateEvent, startTime) -> {
-        int playerNumber = minecraftServer.getPlayerManager().getPlayerList().size();
-        int maxPlayer = minecraftServer.getPlayerManager().getMaxPlayerCount();
+        int playerNumber = minecraftServer.getPlayerCount();
+        int maxPlayer = minecraftServer.getMaxPlayerCount();
         messageCreateEvent.getChannel().sendMessage("Playercount: " + playerNumber +  "/" + maxPlayer).submit();
         return false;
     }),
     playerlist("Show the list of player on the server.",(minecraftServer, messageCreateEvent, startTime) -> {
         StringBuilder playerlist = new StringBuilder();
-        for (PlayerEntity playerEntity : minecraftServer.getPlayerManager().getPlayerList()) {
-            playerlist.append(playerEntity.getName().getString()).append("\n");
+        for (PlayerEntity playerEntity : minecraftServer.getPlayers()) {
+            playerlist.append(playerEntity.getPlayerName()).append("\n");
         }
         if (playerlist.toString().endsWith("\n")) {
             int a = playerlist.lastIndexOf("\n");
@@ -25,8 +25,8 @@ public enum Commands {
         return false;
     }),
     status("Show various information about the server.", (minecraftServer, messageCreateEvent, startTime) -> {
-        int playerNumber = minecraftServer.getPlayerManager().getPlayerList().size();
-        int maxPlayer = minecraftServer.getPlayerManager().getMaxPlayerCount();
+        int playerNumber = minecraftServer.getPlayerCount();
+        int maxPlayer = minecraftServer.getMaxPlayerCount();
         int totalUptimeSeconds = (int) (Util.getMeasuringTimeMs() - startTime) / 1000;
 
         final int uptimeH = totalUptimeSeconds / 3600 ;
