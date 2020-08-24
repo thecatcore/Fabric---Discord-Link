@@ -18,12 +18,18 @@ public class FDLink implements DedicatedServerModInitializer {
 	private static ConfigManager configManager;
 	private static DiscordBot discordBot;
 	public static Logger LOGGER = LogManager.getLogger("FDlink");
+	private static boolean loaded = false;
 
 	@Override
 	public void onInitializeServer() {
+		initialize();
+	}
+
+	private static void initialize() {
 		configManager = new ConfigManager();
 		discordBot = new DiscordBot(configManager.init(), configManager.config);
 		configManager.config.token = "";
+		loaded = true;
 	}
 
 	public static void regenConfig() {
@@ -33,10 +39,11 @@ public class FDLink implements DedicatedServerModInitializer {
 	}
 
 	public static DiscordBot getDiscordBot() {
+		if (!loaded) initialize();
 		return discordBot;
 	}
 
-	protected class ConfigManager {
+	protected static class ConfigManager {
 		private File CONFIG_PATH = FabricLoader.getInstance().getConfigDirectory();
 
 		private final Gson DEFAULT_GSON = new GsonBuilder().setPrettyPrinting().create();

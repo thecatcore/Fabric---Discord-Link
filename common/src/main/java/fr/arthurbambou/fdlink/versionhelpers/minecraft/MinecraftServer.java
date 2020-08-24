@@ -4,8 +4,6 @@ import java.util.List;
 
 public interface MinecraftServer {
 
-    long getServerStartTime();
-
     int getPlayerCount();
 
     int getMaxPlayerCount();

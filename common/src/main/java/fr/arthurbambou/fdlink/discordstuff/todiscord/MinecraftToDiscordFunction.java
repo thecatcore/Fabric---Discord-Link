@@ -1,8 +1,8 @@
 package fr.arthurbambou.fdlink.discordstuff.todiscord;
 
-import net.minecraft.text.Text;
+import fr.arthurbambou.fdlink.versionhelpers.minecraft.Message;
 
 public interface MinecraftToDiscordFunction {
 
-    void handleText(Text text);
+    void handleText(Message text);
 }

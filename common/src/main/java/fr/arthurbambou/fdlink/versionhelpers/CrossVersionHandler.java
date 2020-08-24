@@ -4,8 +4,7 @@ import fr.arthurbambou.fdlink.versionhelpers.minecraft.MinecraftServer;
 import fr.arthurbambou.fdlink.versionhelpers.minecraft.style.Style;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.SemanticVersion;
-import net.fabricmc.loader.util.version.VersionParsingException;
-import net.minecraft.text.Text;
+import net.fabricmc.loader.api.VersionParsingException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,14 +12,9 @@ import java.util.List;
 public class CrossVersionHandler {
 
     private static final List<MessageSender> MESSAGE_SENDERS = new ArrayList<>();
-    private static final List<ArgAccessor> ARG_ACCESSORS = new ArrayList<>();
 
     public static void registerMessageSender(MessageSender messageSender) {
         MESSAGE_SENDERS.add(messageSender);
-    }
-
-    public static void registerArgAccessor(ArgAccessor argAccessor) {
-        ARG_ACCESSORS.add(argAccessor);
     }
 
     public static SemanticVersion getMinecraftVersion() {
@@ -42,16 +36,5 @@ public class CrossVersionHandler {
         }
         assert messageSender != null;
         messageSender.sendMessageToChat(server, message, style);
-    }
-
-    public static Object[] getArgs(Text translatableText) {
-        ArgAccessor argAccessor = null;
-        for (ArgAccessor argAccessor1 : ARG_ACCESSORS) {
-            if (argAccessor1.isCompatibleWithVersion(getMinecraftVersion())) {
-                argAccessor = argAccessor1;
-                break;
-            }
-        }
-        return argAccessor.getArgs(translatableText);
     }
 }

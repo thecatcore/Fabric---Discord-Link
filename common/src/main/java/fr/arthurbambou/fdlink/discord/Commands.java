@@ -3,7 +3,6 @@ package fr.arthurbambou.fdlink.discord;
 import fr.arthurbambou.fdlink.versionhelpers.minecraft.MinecraftServer;
 import fr.arthurbambou.fdlink.versionhelpers.minecraft.PlayerEntity;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
-import net.minecraft.util.Util;
 
 public enum Commands {
     playercount("Show the number of player on the server.",(minecraftServer, messageCreateEvent, startTime) -> {
@@ -27,7 +26,7 @@ public enum Commands {
     status("Show various information about the server.", (minecraftServer, messageCreateEvent, startTime) -> {
         int playerNumber = minecraftServer.getPlayerCount();
         int maxPlayer = minecraftServer.getMaxPlayerCount();
-        int totalUptimeSeconds = (int) (Util.getMeasuringTimeMs() - startTime) / 1000;
+        int totalUptimeSeconds = (int) (System.currentTimeMillis() - startTime) / 1000;
 
         final int uptimeH = totalUptimeSeconds / 3600 ;
         final int uptimeM = (totalUptimeSeconds % 3600) / 60;
@@ -42,7 +41,7 @@ public enum Commands {
         return false;
     }),
     uptime("Show the uptime of the server.",(minecraftServer, messageCreateEvent, startTime) -> {
-        int totalUptimeSeconds = (int) (Util.getMeasuringTimeMs() - startTime) / 1000;
+        int totalUptimeSeconds = (int) (System.currentTimeMillis() - startTime) / 1000;
 
         final int uptimeH = totalUptimeSeconds / 3600 ;
         final int uptimeM = (totalUptimeSeconds % 3600) / 60;

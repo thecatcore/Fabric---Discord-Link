@@ -1,8 +1,10 @@
 package fr.arthurbambou.fdlink.mixin_1_16;
 
 import fr.arthurbambou.fdlink.FDLink;
+import fr.arthurbambou.fdlink.compat_1_16.Message1_16;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.text.Text;
+import net.minecraft.text.TranslatableText;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -22,6 +24,7 @@ public class MixinMinecraftServer {
      */
     @Inject(at = @At("RETURN"), method = "sendSystemMessage")
     public void sendMessage(Text text, UUID uUID, CallbackInfo ci) {
-        FDLink.getDiscordBot().sendMessage(text);
+        if (text instanceof TranslatableText) FDLink.getDiscordBot().sendMessage(new Message1_16(((TranslatableText) text).getKey(), text.getString(), ((TranslatableText) text).getArgs()));
+        FDLink.getDiscordBot().sendMessage(new Message1_16(text.getString()));
     }
 }

@@ -22,11 +22,6 @@ public class MinecraftServer1_15_2 implements MinecraftServer {
     }
 
     @Override
-    public long getServerStartTime() {
-        return this.minecraftServer.getServerStartTime();
-    }
-
-    @Override
     public int getPlayerCount() {
         return this.minecraftServer.getPlayerManager().getPlayerList().size();
     }

@@ -17,14 +17,20 @@ public class FDLink1_15_2 implements DedicatedServerModInitializer {
     @Override
     public void onInitializeServer() {
         FDLink.LOGGER.info("Initializing 1.14-1.15 Compat module");
-        if (canLoad(CrossVersionHandler.getMinecraftVersion(), "1.16-Snapshot.20.17.a")) {
+        if (canLoadHigher("1.16-Snapshot.20.17.a") && canLoadSmaller("1.14")) {
             ServerTickEvents.START_SERVER_TICK.register((server -> FDLink.getDiscordBot().serverTick(new MinecraftServer1_15_2(server))));
         }
-        if (canLoad(CrossVersionHandler.getMinecraftVersion(), "1.16-Snapshot.20.21.a")) {
+        if (canLoadHigher("1.16-Snapshot.20.21.a") && canLoadSmaller("1.14")) {
             CrossVersionHandler.registerMessageSender(new MessageSender() {
                 @Override
                 public boolean isCompatibleWithVersion(SemanticVersion semanticVersion) {
-                    return canLoad(semanticVersion, "1.16-Snapshot.20.21.a");
+                    try {
+                        int comparaison = SemanticVersion.parse("1.16-Snapshot.20.21.a").compareTo(semanticVersion);
+                        return comparaison > 0;
+                    } catch (VersionParsingException versionParsingException) {
+                        versionParsingException.printStackTrace();
+                    }
+                    return false;
                 }
 
                 @Override
@@ -39,10 +45,20 @@ public class FDLink1_15_2 implements DedicatedServerModInitializer {
         }
     }
 
-    public static boolean canLoad(SemanticVersion semanticVersion, String higher) {
+    public static boolean canLoadHigher(String higher) {
         try {
-            int comparaison = SemanticVersion.parse(higher).compareTo(semanticVersion);
+            int comparaison = SemanticVersion.parse(higher).compareTo(CrossVersionHandler.getMinecraftVersion());
             return comparaison > 0;
+        } catch (VersionParsingException versionParsingException) {
+            versionParsingException.printStackTrace();
+        }
+        return false;
+    }
+
+    public static boolean canLoadSmaller(String smaller) {
+        try {
+            int comparaison = SemanticVersion.parse(smaller).compareTo(CrossVersionHandler.getMinecraftVersion());
+            return comparaison < 0;
         } catch (VersionParsingException versionParsingException) {
             versionParsingException.printStackTrace();
         }

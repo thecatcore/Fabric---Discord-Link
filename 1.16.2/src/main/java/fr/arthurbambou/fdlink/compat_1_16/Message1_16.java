@@ -16,8 +16,9 @@ public class Message1_16 implements Message {
         this.type = TextType.LITERAL;
     }
 
-    public Message1_16(String key, Object... args) {
+    public Message1_16(String key, String message, Object... args) {
         this.key = key;
+        this.message = message;
         this.args = args;
         this.type = TextType.TRANSLATABLE;
     }

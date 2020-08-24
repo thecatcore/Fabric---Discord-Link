@@ -11,9 +11,6 @@ import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
-import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
-import net.minecraft.text.Text;
-import net.minecraft.util.Util;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -84,8 +81,8 @@ public class DiscordBot {
         if (this.config.minecraftToDiscord.logChannels.serverStartingMessage) sendToLogChannels(config.minecraftToDiscord.messages.serverStarting);
     }
 
-    public void serverStarted(MinecraftServer server) {
-        startTime = server.getServerStartTime();
+    public void serverStarted() {
+        startTime = System.currentTimeMillis();
         if (this.config.minecraftToDiscord.chatChannels.serverStartMessage) sendToChatChannels(config.minecraftToDiscord.messages.serverStarted);
         if (this.config.minecraftToDiscord.logChannels.serverStartMessage) sendToLogChannels(config.minecraftToDiscord.messages.serverStarted);
     }
@@ -153,8 +150,8 @@ public class DiscordBot {
 
             this.hasReceivedMessage = false;
         }
-        if ((this.hasChatChannels || this.hasLogChannels) && (this.config.minecraftToDiscord.chatChannels.customChannelDescription ||  this.config.minecraftToDiscord.logChannels.customChannelDescription) && ((Util.getMeasuringTimeMs()/1000) % 300 == 0)) {
-            int totalUptimeSeconds = (int) (Util.getMeasuringTimeMs() - this.startTime) / 1000;
+        if ((this.hasChatChannels || this.hasLogChannels) && (this.config.minecraftToDiscord.chatChannels.customChannelDescription ||  this.config.minecraftToDiscord.logChannels.customChannelDescription) && ((System.currentTimeMillis()/1000) % 300 == 0)) {
+            int totalUptimeSeconds = (int) (System.currentTimeMillis() - this.startTime) / 1000;
             final int uptimeH = totalUptimeSeconds / 3600 ;
             final int uptimeM = (totalUptimeSeconds % 3600) / 60;
             final int uptimeS = totalUptimeSeconds % 60;
@@ -181,8 +178,8 @@ public class DiscordBot {
         }
     }
 
-    public void sendMessage(Text text) {
-        if (this.minecraftToDiscordHandler != null && !this.stopping) this.minecraftToDiscordHandler.handleTexts(text);
+    public void sendMessage(fr.arthurbambou.fdlink.versionhelpers.minecraft.Message message) {
+        if (this.minecraftToDiscordHandler != null && !this.stopping) this.minecraftToDiscordHandler.handleTexts(message);
     }
 
 /*     public List<CompletableFuture<Message>> sendToAllChannels(String message) {
@@ -222,6 +219,9 @@ public class DiscordBot {
         if (this.hasChatChannels) {
             for (String id : this.config.chatChannels) {
                 TextChannel channel = this.api.getTextChannelById(id);
+                while (channel == null) {
+                    channel = this.api.getTextChannelById(id);
+                }
                 list.add(channel.sendMessage(message).submit());
                 lastMessageMs.add(message);
             }

@@ -4,7 +4,7 @@
   "compatibilityLevel": "JAVA_8",
   "mixins": [
     "MixinMinecraftServer",
-    "TranslatableTextAccessor"
+    "MixinText"
   ],
   "injectors": {
     "defaultRequire": 1
