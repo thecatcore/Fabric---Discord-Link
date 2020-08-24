@@ -17,8 +17,6 @@
     ]
   },
   "depends": {
-    "fabricloader": ">=0.7.0",
-    "fabric": ">=0.15"
   },
   "mixins": []
 }
