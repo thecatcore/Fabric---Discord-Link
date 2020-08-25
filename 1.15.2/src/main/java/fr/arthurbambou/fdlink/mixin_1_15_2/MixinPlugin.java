@@ -2,7 +2,7 @@ package fr.arthurbambou.fdlink.mixin_1_15_2;
 
 import fr.arthurbambou.fdlink.versionhelpers.CrossVersionHandler;
 import net.fabricmc.loader.api.SemanticVersion;
-import net.fabricmc.loader.util.version.VersionParsingException;
+import net.fabricmc.loader.api.VersionParsingException;
 import org.objectweb.asm.tree.ClassNode;
 import org.spongepowered.asm.mixin.extensibility.IMixinConfigPlugin;
 import org.spongepowered.asm.mixin.extensibility.IMixinInfo;
@@ -28,7 +28,7 @@ public class MixinPlugin implements IMixinConfigPlugin {
         } catch (VersionParsingException versionParsingException) {
             versionParsingException.printStackTrace();
         }
-        return true;
+        return false;
     }
 
     @Override

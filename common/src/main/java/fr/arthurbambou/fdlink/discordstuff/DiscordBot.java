@@ -205,8 +205,13 @@ public class DiscordBot {
      * @return
      */
     public List<CompletableFuture<Message>> sendToLogChannels(String message, List<CompletableFuture<Message>> list) {
-        if (this.hasLogChannels) {
+        if (this.hasLogChannels && this.api != null) {
             for (String id : this.config.logChannels) {
+                try {
+                    this.api = this.api.awaitReady();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
                 TextChannel channel = this.api.getTextChannelById(id);
                 list.add(channel.sendMessage(message).submit());
                 lastMessageMs.add(message);
@@ -216,8 +221,13 @@ public class DiscordBot {
     }
 
     public List<CompletableFuture<Message>> sendToChatChannels(String message, List<CompletableFuture<Message>> list) {
-        if (this.hasChatChannels) {
+        if (this.hasChatChannels && this.api != null) {
             for (String id : this.config.chatChannels) {
+                try {
+                    this.api = this.api.awaitReady();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
                 TextChannel channel = this.api.getTextChannelById(id);
                 while (channel == null) {
                     channel = this.api.getTextChannelById(id);

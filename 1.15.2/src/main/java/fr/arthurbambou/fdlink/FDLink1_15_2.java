@@ -11,7 +11,7 @@ import fr.arthurbambou.fdlink.versionhelpers.minecraft.style.Style;
 import net.fabricmc.api.DedicatedServerModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.loader.api.SemanticVersion;
-import net.fabricmc.loader.util.version.VersionParsingException;
+import net.fabricmc.loader.api.VersionParsingException;
 
 public class FDLink1_15_2 implements DedicatedServerModInitializer {
     @Override
@@ -27,7 +27,7 @@ public class FDLink1_15_2 implements DedicatedServerModInitializer {
                     try {
                         int comparaison = SemanticVersion.parse("1.16-Snapshot.20.21.a").compareTo(semanticVersion);
                         return comparaison > 0;
-                    } catch (VersionParsingException versionParsingException) {
+                    } catch (net.fabricmc.loader.api.VersionParsingException versionParsingException) {
                         versionParsingException.printStackTrace();
                     }
                     return false;
@@ -49,7 +49,7 @@ public class FDLink1_15_2 implements DedicatedServerModInitializer {
         try {
             int comparaison = SemanticVersion.parse(higher).compareTo(CrossVersionHandler.getMinecraftVersion());
             return comparaison > 0;
-        } catch (VersionParsingException versionParsingException) {
+        } catch (net.fabricmc.loader.api.VersionParsingException versionParsingException) {
             versionParsingException.printStackTrace();
         }
         return false;

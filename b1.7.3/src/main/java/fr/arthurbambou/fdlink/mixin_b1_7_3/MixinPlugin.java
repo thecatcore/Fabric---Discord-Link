@@ -1,4 +1,4 @@
-package fr.arthurbambou.fdlink.mixin_1_16;
+package fr.arthurbambou.fdlink.mixin_b1_7_3;
 
 import fr.arthurbambou.fdlink.versionhelpers.CrossVersionHandler;
 import net.fabricmc.loader.api.SemanticVersion;
@@ -24,13 +24,9 @@ public class MixinPlugin implements IMixinConfigPlugin {
     @Override
     public boolean shouldApplyMixin(String targetClassName, String mixinClassName) {
         try {
-            if (mixinClassName.equals("fr.arthurbambou.fdlink.mixin_1_16.MixinMinecraftServer")) {
-                return CrossVersionHandler.getMinecraftVersion().compareTo(SemanticVersion.parse("1.16-Snapshot.20.21.a")) >= 0;
-            } else {
-                return CrossVersionHandler.getMinecraftVersion().compareTo(SemanticVersion.parse("1.14")) >= 0;
-            }
-        } catch (VersionParsingException versionParsingException) {
-            versionParsingException.printStackTrace();
+            return CrossVersionHandler.getMinecraftVersion().compareTo(SemanticVersion.parse("1.0.0-beta.7.3")) == 0;
+        } catch (VersionParsingException e) {
+            e.printStackTrace();
         }
         return false;
     }

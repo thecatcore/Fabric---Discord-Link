@@ -54,6 +54,14 @@ allprojects {
 				mappings loom.fromBranch("Blayyke/yarn", "1.2.5") { spec ->
 					spec.version = "1.2.5-1"
 				}
+			} else {
+				minecraft "com.mojang:minecraft:b1.7.3"
+
+				mappings loom.fromCommit("minecraft-cursed-legacy/Plasma", "f900cd3") {spec ->
+					spec.version = "b1.7.3-14"
+				}
+
+				modImplementation "com.github.minecraft-cursed-legacy:Cursed-Legacy-API:0.6.2"
 			}
 			modImplementation "com.github.minecraft-cursed-legacy:cursed-fabric-loader:8f014a3"
 		} else if (projectName == "1.8.9") {
@@ -78,7 +86,6 @@ allprojects {
 	}
 
 	minecraft {
-		jarMergeOrder = "server_only"
 	}
 
 	configurations {

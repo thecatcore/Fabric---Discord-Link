@@ -238,6 +238,17 @@ public final class MinecraftToDiscordHandler {
                 this.discordBot.sendToLogChannels(this.config.minecraftToDiscord.messages.deathMsgPrefix + message + this.config.minecraftToDiscord.messages.deathMsgPostfix);
             }
         }));
+
+        // Old versions
+        registerTextHandler(new StringHandler(message -> {
+            String text = message.getMessage().replaceAll("§[b0931825467adcfeklmnor]","");
+            if (this.config.minecraftToDiscord.chatChannels.playerMessages) {
+                this.discordBot.sendToChatChannels(text);
+            }
+            if (this.config.minecraftToDiscord.logChannels.playerMessages) {
+                this.discordBot.sendToLogChannels(text);
+            }
+        }));
     }
 
     public String adaptUsernameToDiscord(String string) {
@@ -263,22 +274,18 @@ public final class MinecraftToDiscordHandler {
         Message.MessageObjectType objectType = text.getType();
         String message = text.getMessage();
         if (message.equals(this.discordBot.lastMessageD)) return;
-        if (objectType == Message.MessageObjectType.TEXT) {
-            for (MessageHandler messageHandler : TEXT_HANDLERS) {
-                if (messageHandler.match(text)) {
-                    messageHandler.handle(text);
-                    return;
-                }
+        for (MessageHandler messageHandler : TEXT_HANDLERS) {
+            if (messageHandler.match(text)) {
+                messageHandler.handle(text);
+                return;
             }
-            if (this.config.minecraftToDiscord.general.enableDebugLogs) {
-                if (text.getTextType() == Message.TextType.TRANSLATABLE) {
-                    DiscordBot.LOGGER.error("[FDLink] Unhandled text \"{}\":{}", text.getKey(), text.getMessage());
-                } else {
-                    DiscordBot.LOGGER.error("[FDLink] Unhandled text \"{}\"", text.getMessage());
-                }
+        }
+        if (this.config.minecraftToDiscord.general.enableDebugLogs) {
+            if (text.getTextType() == Message.TextType.TRANSLATABLE) {
+                DiscordBot.LOGGER.error("[FDLink] Unhandled text \"{}\":{}", text.getKey(), text.getMessage());
+            } else {
+                DiscordBot.LOGGER.error("[FDLink] Unhandled text \"{}\"", text.getMessage());
             }
-        } else {
-
         }
     }
 
@@ -308,6 +315,18 @@ public final class MinecraftToDiscordHandler {
                 return text.getKey().startsWith(this.key);
             }
             return false;
+        }
+    }
+
+    public static class StringHandler extends MessageHandler {
+
+        public StringHandler(MinecraftToDiscordFunction minecraftToDiscordFunction) {
+            super(minecraftToDiscordFunction);
+        }
+
+        @Override
+        public boolean match(Message message) {
+            return message.getType() == Message.MessageObjectType.STRING;
         }
     }
 }
