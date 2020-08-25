@@ -10,7 +10,10 @@ import fr.arthurbambou.fdlink.versionhelpers.minecraft.MinecraftServer;
 import fr.arthurbambou.fdlink.versionhelpers.minecraft.style.Style;
 import io.github.minecraftcursedlegacy.api.event.DedicatedServerTickCallback;
 import net.fabricmc.api.DedicatedServerModInitializer;
+import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.SemanticVersion;
+import net.fabricmc.loader.discovery.ModResolutionException;
+import net.fabricmc.loader.gui.FabricGuiEntry;
 
 public class FDLinkb1_7_3 implements DedicatedServerModInitializer {
     @Override
@@ -31,7 +34,15 @@ public class FDLinkb1_7_3 implements DedicatedServerModInitializer {
                     server.sendMessageToAll(new MessagePacketb1_7_3(literalText));
                 }
             });
-            DedicatedServerTickCallback.EVENT.register(minecraftServer -> FDLink.getDiscordBot().serverTick(new MinecraftServerb1_7_3(minecraftServer)));
+            if (!FabricLoader.getInstance().isModLoaded("api")) {
+                try {
+                    throw new ModResolutionException("Could not find required mod: fdlink requires api");
+                } catch (ModResolutionException e) {
+                    FabricGuiEntry.displayCriticalError(e, true);
+                }
+            } else {
+                DedicatedServerTickCallback.EVENT.register(minecraftServer -> FDLink.getDiscordBot().serverTick(new MinecraftServerb1_7_3(minecraftServer)));
+            }
         }
     }
 
