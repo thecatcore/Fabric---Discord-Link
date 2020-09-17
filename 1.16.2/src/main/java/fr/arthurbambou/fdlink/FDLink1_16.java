@@ -23,8 +23,10 @@ import java.util.UUID;
 public class FDLink1_16 implements DedicatedServerModInitializer {
     @Override
     public void onInitializeServer() {
-        FDLink.LOGGER.info("Initializing 1.16 Compat module");
         if (canLoad(CrossVersionHandler.getMinecraftVersion(), "1.16-Snapshot.20.17.a")) {
+            FDLink.LOGGER.info("Initializing 1.16 Compat module");
+        }
+        if (canLoad(CrossVersionHandler.getMinecraftVersion(), "1.16")) {
             if (!FabricLoader.getInstance().isModLoaded("fabric")) {
                 try {
                     throw new ModResolutionException("Could not find required mod: fdlink requires fabric");
@@ -52,17 +54,19 @@ public class FDLink1_16 implements DedicatedServerModInitializer {
             });
         }
         if (canLoad(CrossVersionHandler.getMinecraftVersion(), "1.14")) {
-            if (!FabricLoader.getInstance().isModLoaded("fabric")) {
-                try {
-                    throw new ModResolutionException("Could not find required mod: fdlink requires fabric");
-                } catch (ModResolutionException e) {
-                    FabricGuiEntry.displayCriticalError(e, true);
+            if (canLoad(CrossVersionHandler.getMinecraftVersion(), "1.16") || CrossVersionHandler.isRelease()) {
+                if (!FabricLoader.getInstance().isModLoaded("fabric")) {
+                    try {
+                        throw new ModResolutionException("Could not find required mod: fdlink requires fabric");
+                    } catch (ModResolutionException e) {
+                        FabricGuiEntry.displayCriticalError(e, true);
+                    }
                 }
+                ServerLifecycleEvents.SERVER_STARTING.register(minecraftServer -> FDLink.getDiscordBot().serverStarting());
+                ServerLifecycleEvents.SERVER_STARTED.register((server -> FDLink.getDiscordBot().serverStarted()));
+                ServerLifecycleEvents.SERVER_STOPPING.register(minecraftServer -> FDLink.getDiscordBot().serverStopping());
+                ServerLifecycleEvents.SERVER_STOPPED.register((server -> FDLink.getDiscordBot().serverStopped()));
             }
-            ServerLifecycleEvents.SERVER_STARTING.register(minecraftServer -> FDLink.getDiscordBot().serverStarting());
-            ServerLifecycleEvents.SERVER_STARTED.register((server -> FDLink.getDiscordBot().serverStarted()));
-            ServerLifecycleEvents.SERVER_STOPPING.register(minecraftServer -> FDLink.getDiscordBot().serverStopping());
-            ServerLifecycleEvents.SERVER_STOPPED.register((server -> FDLink.getDiscordBot().serverStopped()));
         }
     }
 

@@ -24,7 +24,12 @@ public class MixinPlugin implements IMixinConfigPlugin {
     @Override
     public boolean shouldApplyMixin(String targetClassName, String mixinClassName) {
         try {
-            return CrossVersionHandler.getMinecraftVersion().compareTo(SemanticVersion.parse("1.16-Snapshot.20.21.a")) <= 0 && CrossVersionHandler.getMinecraftVersion().compareTo(SemanticVersion.parse("1.14")) >= 0;
+            boolean inRange = CrossVersionHandler.getMinecraftVersion().compareTo(SemanticVersion.parse("1.16-Snapshot.20.21.a")) <= 0 &&
+                    CrossVersionHandler.getMinecraftVersion().compareTo(SemanticVersion.parse("1.14")) >= 0;
+            if (inRange && !CrossVersionHandler.isRelease()) {
+                return mixinClassName.equals("fr.arthurbambou.fdlink.mixin_1_15_2.events.MixinMinecraftServer");
+            }
+            return inRange;
         } catch (VersionParsingException versionParsingException) {
             versionParsingException.printStackTrace();
         }

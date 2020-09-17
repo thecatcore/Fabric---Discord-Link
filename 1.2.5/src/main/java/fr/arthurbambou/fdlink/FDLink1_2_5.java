@@ -14,6 +14,7 @@ public class FDLink1_2_5 implements DedicatedServerModInitializer {
     @Override
     public void onInitializeServer() {
         if (canLoad("1.2.5")) {
+            FDLink.LOGGER.info("Initializing 1.2.5 Compat module");
             CrossVersionHandler.registerMessageSender(new MessageSender() {
                 @Override
                 public boolean isCompatibleWithVersion(SemanticVersion semanticVersion) {

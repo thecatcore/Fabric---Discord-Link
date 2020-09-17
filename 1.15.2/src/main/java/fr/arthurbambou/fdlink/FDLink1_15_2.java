@@ -19,8 +19,7 @@ import net.fabricmc.loader.gui.FabricGuiEntry;
 public class FDLink1_15_2 implements DedicatedServerModInitializer {
     @Override
     public void onInitializeServer() {
-        FDLink.LOGGER.info("Initializing 1.14-1.15 Compat module");
-        if (canLoadHigher("1.16-Snapshot.20.17.a") && canLoadSmaller("1.14")) {
+        if (canLoadHigher("1.16-Snapshot.20.17.a") && canLoadSmaller("1.14") && CrossVersionHandler.isRelease()) {
             if (!FabricLoader.getInstance().isModLoaded("fabric")) {
                 try {
                     throw new ModResolutionException("Could not find required mod: fdlink requires fabric");
@@ -31,6 +30,7 @@ public class FDLink1_15_2 implements DedicatedServerModInitializer {
             ServerTickEvents.START_SERVER_TICK.register((server -> FDLink.getDiscordBot().serverTick(new MinecraftServer1_15_2(server))));
         }
         if (canLoadHigher("1.16-Snapshot.20.21.a") && canLoadSmaller("1.14")) {
+            FDLink.LOGGER.info("Initializing 1.14-1.15 Compat module");
             CrossVersionHandler.registerMessageSender(new MessageSender() {
                 @Override
                 public boolean isCompatibleWithVersion(SemanticVersion semanticVersion) {

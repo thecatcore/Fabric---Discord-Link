@@ -19,6 +19,7 @@ public class FDLinkb1_7_3 implements DedicatedServerModInitializer {
     @Override
     public void onInitializeServer() {
         if (canLoad("1.0.0-beta.7.3")) {
+            FDLink.LOGGER.info("Initializing Beta 1.7.3 Compat module");
             CrossVersionHandler.registerMessageSender(new MessageSender() {
                 @Override
                 public boolean isCompatibleWithVersion(SemanticVersion semanticVersion) {

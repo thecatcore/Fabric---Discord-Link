@@ -3,7 +3,8 @@
   "package": "fr.arthurbambou.fdlink.mixin_1_15_2",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
-    "MixinMinecraftServer"
+    "MixinMinecraftServer",
+    "events.MixinMinecraftServer"
   ],
   "injectors": {
     "defaultRequire": 1
