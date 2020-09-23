@@ -22,7 +22,7 @@ public class MixinMinecraftServer {
      * @param uUID
      * @param ci
      */
-    @Inject(at = @At("RETURN"), method = "sendSystemMessage")
+    @Inject(at = @At("HEAD"), method = "sendSystemMessage")
     public void sendMessage(Text text, UUID uUID, CallbackInfo ci) {
         if (text instanceof TranslatableText) FDLink.getDiscordBot().sendMessage(new Message1_16(((TranslatableText) text).getKey(), text.getString(), ((TranslatableText) text).getArgs()));
         FDLink.getDiscordBot().sendMessage(new Message1_16(text.getString()));

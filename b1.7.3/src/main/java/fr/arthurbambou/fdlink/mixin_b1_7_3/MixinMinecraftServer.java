@@ -12,7 +12,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(MinecraftServer.class)
 public class MixinMinecraftServer {
 
-    @Inject(method = "sendFeedback", at = @At("RETURN"))
+    @Inject(method = "sendFeedback", at = @At("HEAD"))
     private void getMessageFromLogs(String text, CallbackInfo ci) {
         FDLink.getDiscordBot().sendMessage(new Messageb1_7_3(text));
     }
