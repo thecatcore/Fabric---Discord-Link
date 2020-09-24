@@ -77,17 +77,20 @@ public class DiscordBot {
     }
 
     public void serverStarting() {
+        if (this.api == null) return;
         if (this.config.minecraftToDiscord.chatChannels.serverStartingMessage) sendToChatChannels(config.minecraftToDiscord.messages.serverStarting);
         if (this.config.minecraftToDiscord.logChannels.serverStartingMessage) sendToLogChannels(config.minecraftToDiscord.messages.serverStarting);
     }
 
     public void serverStarted() {
+        if (this.api == null) return;
         startTime = System.currentTimeMillis();
         if (this.config.minecraftToDiscord.chatChannels.serverStartMessage) sendToChatChannels(config.minecraftToDiscord.messages.serverStarted);
         if (this.config.minecraftToDiscord.logChannels.serverStartMessage) sendToLogChannels(config.minecraftToDiscord.messages.serverStarted);
     }
 
     public void serverStopping() {
+        if (this.api == null) return;
         this.api.removeEventListener(this.messageCreateListener);
         this.stopping = true;
         if (this.config.minecraftToDiscord.chatChannels.serverStoppingMessage) sendToChatChannels(config.minecraftToDiscord.messages.serverStopping);
@@ -95,6 +98,7 @@ public class DiscordBot {
     }
 
     public void serverStopped() {
+        if (this.api == null) return;
         if (this.config.minecraftToDiscord.chatChannels.serverStopMessage || this.config.minecraftToDiscord.logChannels.serverStopMessage) {
             ArrayList<CompletableFuture<Message>> requests = new ArrayList<>();
             if(this.config.minecraftToDiscord.chatChannels.serverStopMessage && this.hasChatChannels) requests.addAll(sendToChatChannels(config.minecraftToDiscord.messages.serverStopped, requests));
@@ -110,6 +114,7 @@ public class DiscordBot {
     }
 
     public void serverTick(MinecraftServer server) {
+        if (this.api == null) return;
         int playerNumber = server.getPlayerCount();
         int maxPlayer = server.getMaxPlayerCount();
         if (this.hasReceivedMessage) {
