@@ -57,14 +57,16 @@ public class MinecraftServer1_15_2 implements MinecraftServer {
         fr.arthurbambou.fdlink.versionhelpers.minecraft.style.Style compatStyle = message.getStyle();
         vanillaStyle = vanillaStyle
                 .setBold(compatStyle.isBold())
-                .setClickEvent(new ClickEvent(ClickEvent.Action.byName(compatStyle.getClickEvent().getAction().getName()),
-                        compatStyle.getClickEvent().getValue()))
                 .setColor(Formatting.byName(TextColor.toFormatting(compatStyle.getColor()).getName()))
                 .setInsertion(compatStyle.getInsertion())
                 .setItalic(compatStyle.isItalic())
                 .setUnderline(compatStyle.isUnderlined())
                 .setObfuscated(compatStyle.isObfuscated())
                 .setStrikethrough(compatStyle.isStrikethrough());
+        if (compatStyle.getClickEvent() != null) {
+            vanillaStyle.setClickEvent(new ClickEvent(ClickEvent.Action.byName(compatStyle.getClickEvent().getAction().getName()),
+                    compatStyle.getClickEvent().getValue()));
+        }
         this.minecraftServer.getPlayerManager().sendToAll(text);
     }
 }

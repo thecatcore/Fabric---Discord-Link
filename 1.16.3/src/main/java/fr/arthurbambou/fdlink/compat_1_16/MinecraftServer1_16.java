@@ -58,15 +58,19 @@ public class MinecraftServer1_16 implements MinecraftServer {
         fr.arthurbambou.fdlink.versionhelpers.minecraft.style.Style compatStyle = message.getStyle();
         vanillaStyle = vanillaStyle
                 .withBold(compatStyle.isBold())
-                .withClickEvent(new ClickEvent(ClickEvent.Action.byName(compatStyle.getClickEvent().getAction().getName()),
-                        compatStyle.getClickEvent().getValue()))
-                .withColor(TextColor.fromRgb(compatStyle.getColor().getRgb()))
                 .withInsertion(compatStyle.getInsertion())
                 .withItalic(compatStyle.isItalic())
                 .method_30938(compatStyle.isUnderlined())
                 .withFont(new Identifier(compatStyle.getFont()));
         if (compatStyle.isObfuscated()) vanillaStyle = vanillaStyle.withFormatting(Formatting.OBFUSCATED);
         if (compatStyle.isStrikethrough()) vanillaStyle = vanillaStyle.withFormatting(Formatting.STRIKETHROUGH);
+        if (compatStyle.getClickEvent() != null) {
+            vanillaStyle = vanillaStyle.withClickEvent(new ClickEvent(ClickEvent.Action.byName(compatStyle.getClickEvent().getAction().getName()),
+                    compatStyle.getClickEvent().getValue()));
+        }
+        if (compatStyle.getColor() != null) {
+            vanillaStyle.withColor(TextColor.fromRgb(compatStyle.getColor().getRgb()));
+        }
         this.minecraftServer.getPlayerManager().sendToAll(new GameMessageS2CPacket(text, getMessageType(messagePacket.getMessageType()), messagePacket.getUUID()));
     }
 
