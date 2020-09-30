@@ -1,8 +1,6 @@
 package fr.arthurbambou.fdlink.mixin_1_2_5;
 
 import fr.arthurbambou.fdlink.versionhelpers.CrossVersionHandler;
-import net.fabricmc.loader.api.SemanticVersion;
-import net.fabricmc.loader.api.VersionParsingException;
 import org.objectweb.asm.tree.ClassNode;
 import org.spongepowered.asm.mixin.extensibility.IMixinConfigPlugin;
 import org.spongepowered.asm.mixin.extensibility.IMixinInfo;
@@ -23,12 +21,7 @@ public class MixinPlugin implements IMixinConfigPlugin {
 
     @Override
     public boolean shouldApplyMixin(String targetClassName, String mixinClassName) {
-        try {
-            return CrossVersionHandler.getMinecraftVersion().compareTo(SemanticVersion.parse("1.2.5")) == 0;
-        } catch (VersionParsingException e) {
-            e.printStackTrace();
-        }
-        return false;
+        return CrossVersionHandler.isVersion("1.2.5");
     }
 
     @Override

@@ -1,8 +1,6 @@
 package fr.arthurbambou.fdlink.mixin_1_16;
 
 import fr.arthurbambou.fdlink.versionhelpers.CrossVersionHandler;
-import net.fabricmc.loader.api.SemanticVersion;
-import net.fabricmc.loader.api.VersionParsingException;
 import org.objectweb.asm.tree.ClassNode;
 import org.spongepowered.asm.mixin.extensibility.IMixinConfigPlugin;
 import org.spongepowered.asm.mixin.extensibility.IMixinInfo;
@@ -23,19 +21,14 @@ public class MixinPlugin implements IMixinConfigPlugin {
 
     @Override
     public boolean shouldApplyMixin(String targetClassName, String mixinClassName) {
-        try {
-            if (mixinClassName.equals("fr.arthurbambou.fdlink.mixin_1_16.MixinMinecraftServer")) {
-                return CrossVersionHandler.getMinecraftVersion().compareTo(SemanticVersion.parse("1.16-Snapshot.20.21.a")) >= 0;
-            } else if (mixinClassName.equals("fr.arthurbambou.fdlink.mixin_1_16.events.MixinMinecraftServer")) {
-                return CrossVersionHandler.getMinecraftVersion().compareTo(SemanticVersion.parse("1.16.1")) < 0 &&
-                        CrossVersionHandler.getMinecraftVersion().compareTo(SemanticVersion.parse("1.16-Snapshot.20.17.a")) >= 0;
-            } else {
-                return CrossVersionHandler.getMinecraftVersion().compareTo(SemanticVersion.parse("1.14")) >= 0;
-            }
-        } catch (VersionParsingException versionParsingException) {
-            versionParsingException.printStackTrace();
+        if (mixinClassName.equals("fr.arthurbambou.fdlink.mixin_1_16.MixinMinecraftServer")) {
+            return CrossVersionHandler.compareToMinecraftVersion("1.16-alpha.20.21.a").isMoreRecentOrEqual() && !CrossVersionHandler.isVersion("1.16-20.w.14");
+        } else if (mixinClassName.equals("fr.arthurbambou.fdlink.mixin_1_16.events.MixinMinecraftServer")) {
+            return CrossVersionHandler.compareToMinecraftVersion("1.16.1").isOlder() &&
+                    CrossVersionHandler.compareToMinecraftVersion("1.16-alpha.20.17.a").isMoreRecentOrEqual() && !CrossVersionHandler.isVersion("1.16-20.w.14");
+        } else {
+            return CrossVersionHandler.compareToMinecraftVersion("1.14").isMoreRecentOrEqual();
         }
-        return false;
     }
 
     @Override

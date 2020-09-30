@@ -1,8 +1,6 @@
 package fr.arthurbambou.fdlink.mixin_1_15_2;
 
 import fr.arthurbambou.fdlink.versionhelpers.CrossVersionHandler;
-import net.fabricmc.loader.api.SemanticVersion;
-import net.fabricmc.loader.api.VersionParsingException;
 import org.objectweb.asm.tree.ClassNode;
 import org.spongepowered.asm.mixin.extensibility.IMixinConfigPlugin;
 import org.spongepowered.asm.mixin.extensibility.IMixinInfo;
@@ -23,17 +21,13 @@ public class MixinPlugin implements IMixinConfigPlugin {
 
     @Override
     public boolean shouldApplyMixin(String targetClassName, String mixinClassName) {
-        try {
-            boolean inRange = CrossVersionHandler.getMinecraftVersion().compareTo(SemanticVersion.parse("1.16-Snapshot.20.21.a")) <= 0 &&
-                    CrossVersionHandler.getMinecraftVersion().compareTo(SemanticVersion.parse("1.14")) >= 0;
-            if (inRange && !CrossVersionHandler.isRelease()) {
-                return mixinClassName.equals("fr.arthurbambou.fdlink.mixin_1_15_2.events.MixinMinecraftServer");
-            }
-            return inRange;
-        } catch (VersionParsingException versionParsingException) {
-            versionParsingException.printStackTrace();
+        boolean inRange = (CrossVersionHandler.compareToMinecraftVersion("1.16-alpha.20.21.a").isOlder() &&
+                CrossVersionHandler.compareToMinecraftVersion("1.14").isMoreRecentOrEqual()) || CrossVersionHandler.isVersion("1.16-20.w.14");
+        boolean apiSupported = CrossVersionHandler.isVersion("1.15.2") || CrossVersionHandler.isVersion("1.14.4");
+        if (mixinClassName.equals("fr.arthurbambou.fdlink.mixin_1_15_2.events.MixinMinecraftServer")) {
+            return inRange && !apiSupported;
         }
-        return false;
+        return inRange;
     }
 
     @Override
