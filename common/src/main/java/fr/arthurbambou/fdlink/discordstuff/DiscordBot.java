@@ -11,6 +11,7 @@ import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.exceptions.InsufficientPermissionException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -33,6 +34,8 @@ public class DiscordBot {
     protected JDA api = null;
     protected long startTime;
     protected boolean stopping = false;
+    // This is when we scheduled the next channel topic update. Should happen every five minutes.
+    private long nextChannelTopicUpdateTimeMilliseconds = Long.MIN_VALUE;
 
     public DiscordBot(String token, FDLink.Config config) {
         this.lastMessageD = "null";
@@ -155,30 +158,41 @@ public class DiscordBot {
 
             this.hasReceivedMessage = false;
         }
-        if ((this.hasChatChannels || this.hasLogChannels) && (this.config.minecraftToDiscord.chatChannels.customChannelDescription ||  this.config.minecraftToDiscord.logChannels.customChannelDescription) && ((System.currentTimeMillis()/1000) % 300 == 0)) {
+
+        if ((this.hasChatChannels || this.hasLogChannels) && (this.config.minecraftToDiscord.chatChannels.customChannelDescription ||  this.config.minecraftToDiscord.logChannels.customChannelDescription) && (System.currentTimeMillis() > this.nextChannelTopicUpdateTimeMilliseconds)) {
+            this.nextChannelTopicUpdateTimeMilliseconds = System.currentTimeMillis() + 5 * 60 * 1000; // Five minutes from now.
+
             int totalUptimeSeconds = (int) (System.currentTimeMillis() - this.startTime) / 1000;
             final int uptimeH = totalUptimeSeconds / 3600 ;
             final int uptimeM = (totalUptimeSeconds % 3600) / 60;
             final int uptimeS = totalUptimeSeconds % 60;
+            final String topic = String.format(
+                    "Playercount : %d/%d,\n" +
+                            "Uptime : %dh %dm %ds",
+                    playerNumber, maxPlayer, uptimeH, uptimeM, uptimeS
+            );
 
-            if(this.config.minecraftToDiscord.chatChannels.customChannelDescription){
+            if (this.config.minecraftToDiscord.chatChannels.customChannelDescription){
                 for (String id : this.config.chatChannels) {
-//                        this.api.getTextChannelById(id).getTopic() = String.format(
-//                             "Playercount : %d/%d,\n" +
-//                                     "Uptime : %dh %dm %ds",
-//                             playerNumber, maxPlayer, uptimeH, uptimeM, uptimeS
-//                    );
+                    this.updateChannelTopic(id, topic);
                 }
             }
-            if(this.config.minecraftToDiscord.logChannels.customChannelDescription){
+            if (this.config.minecraftToDiscord.logChannels.customChannelDescription){
                 for (String id : this.config.logChannels) {
-//                        this.api.getServerTextChannelById(id).ifPresent(channel ->
-//                               channel.updateTopic(String.format(
-//                             "Playercount : %d/%d,\n" +
-//                                     "Uptime : %dh %dm %ds",
-//                             playerNumber, maxPlayer, uptimeH, uptimeM, uptimeS
-//                    )));
+                    this.updateChannelTopic(id, topic);
                 }
+            }
+        }
+    }
+
+    private void updateChannelTopic(String channelId, String topic) {
+        TextChannel channel = this.api.getTextChannelById(channelId);
+        if (channel != null) {
+            try {
+                channel.getManager().setTopic(topic).queue();
+            }
+            catch (InsufficientPermissionException e) {
+                LOGGER.error(String.format("Failed to set the channel topic for channel %s. Check that the bot has the <Manage Channels> permission, or else disable custom channel descriptions.", channelId), e);
             }
         }
     }
