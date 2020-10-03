@@ -3,14 +3,14 @@ plugins {
 	id 'eclipse'
 	id 'idea'
 	id 'maven-publish'
-	id 'fabric-loom' version 'bbaa5d7' apply false
+	id 'fabric-loom' version 'v0.0.1' apply false
 	id 'net.minecrell.licenser' version '0.4.1'
 	id "org.ajoberstar.grgit" version "3.1.1"
 	id 'com.matthewprenger.cursegradle' version "1.4.0"
 }
 
 class Globals {
-	static def baseVersion = "0.7.6"
+	static def baseVersion = "0.7.7"
 	static def mcVersion = "1.16.3"
 	static def yarnVersion = "+build.7"
 	static def apiVersion = "0.20.2+build.402-1.16"
