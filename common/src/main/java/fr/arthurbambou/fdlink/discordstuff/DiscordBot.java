@@ -2,6 +2,7 @@ package fr.arthurbambou.fdlink.discordstuff;
 
 import com.vdurmont.emoji.EmojiParser;
 import fr.arthurbambou.fdlink.FDLink;
+import fr.arthurbambou.fdlink.config.Config;
 import fr.arthurbambou.fdlink.discord.Commands;
 import fr.arthurbambou.fdlink.versionhelpers.CrossVersionHandler;
 import fr.arthurbambou.fdlink.versionhelpers.minecraft.MinecraftServer;
@@ -24,7 +25,7 @@ public class DiscordBot {
     private MessageReceivedListener messageCreateListener;
     protected MinecraftToDiscordHandler minecraftToDiscordHandler = null;
 
-    protected FDLink.Config config;
+    protected Config config;
     public boolean hasChatChannels;
     public boolean hasLogChannels;
     protected MessageReceivedEvent messageCreateEvent;
@@ -37,7 +38,7 @@ public class DiscordBot {
     // This is when we scheduled the next channel topic update. Should happen every five minutes.
     private long nextChannelTopicUpdateTimeMilliseconds = Long.MIN_VALUE;
 
-    public DiscordBot(String token, FDLink.Config config) {
+    public DiscordBot(String token, Config config) {
         this.lastMessageD = "null";
 
         if (token == null) {
@@ -130,7 +131,7 @@ public class DiscordBot {
             this.lastMessageD = this.config.discordToMinecraft.message
                     .replace("%player", this.messageCreateEvent.getAuthor().getName());
             String string_message = EmojiParser.parseToAliases(this.messageCreateEvent.getMessage().getContentRaw());
-            for (FDLink.Config.EmojiEntry emojiEntry : this.config.emojiMap) {
+            for (Config.EmojiEntry emojiEntry : this.config.emojiMap) {
                 string_message = string_message.replace("<" + emojiEntry.id + ">", emojiEntry.name);
             }
             if (this.config.minecraftToDiscord.chatChannels.minecraftToDiscordTag || this.config.minecraftToDiscord.logChannels.minecraftToDiscordTag) {

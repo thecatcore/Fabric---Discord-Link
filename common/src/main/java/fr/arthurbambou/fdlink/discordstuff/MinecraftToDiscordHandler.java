@@ -1,6 +1,6 @@
 package fr.arthurbambou.fdlink.discordstuff;
 
-import fr.arthurbambou.fdlink.FDLink;
+import fr.arthurbambou.fdlink.config.Config;
 import fr.arthurbambou.fdlink.discordstuff.todiscord.MinecraftToDiscordFunction;
 import fr.arthurbambou.fdlink.versionhelpers.CompatText;
 import fr.arthurbambou.fdlink.versionhelpers.minecraft.Message;
@@ -16,7 +16,7 @@ public final class MinecraftToDiscordHandler {
 
     private final JDA api;
     private final DiscordBot discordBot;
-    private final FDLink.Config config;
+    private final Config config;
     private final List<MessageHandler> TEXT_HANDLERS = new ArrayList<>();
 
     public MinecraftToDiscordHandler(DiscordBot discordBot) {
@@ -43,7 +43,7 @@ public final class MinecraftToDiscordHandler {
             } else if (this.config.minecraftToDiscord.chatChannels.playerMessages || this.config.minecraftToDiscord.logChannels.playerMessages) {
                 chatPlayerName = adaptUsernameToDiscord(playerName);
                 logPlayerName = adaptUsernameToDiscord(playerName);
-                for (FDLink.Config.EmojiEntry emojiEntry : this.config.emojiMap) {
+                for (Config.EmojiEntry emojiEntry : this.config.emojiMap) {
                     message = message.replaceAll(emojiEntry.name, "<" + emojiEntry.id + ">");
                 }
                 if(!this.config.minecraftToDiscord.chatChannels.minecraftToDiscordTag){
