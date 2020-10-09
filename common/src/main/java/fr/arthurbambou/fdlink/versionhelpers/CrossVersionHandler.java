@@ -4,7 +4,7 @@ import fr.arthurbambou.fdlink.versionhelpers.minecraft.MinecraftServer;
 import fr.arthurbambou.fdlink.versionhelpers.minecraft.style.Style;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.SemanticVersion;
-import net.fabricmc.loader.api.VersionParsingException;
+import net.fabricmc.loader.util.version.VersionParsingException;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -61,7 +61,10 @@ public class ConfigHandler {
         for (JsonElement jsonElement : readList(
                 jsonObject.getAsJsonArray("chatChannels"))) {
             if (jsonElement.isJsonPrimitive()) {
-                chatChannels.add(jsonElement.getAsString());
+                JsonPrimitive jsonPrimitive = jsonElement.getAsJsonPrimitive();
+
+                Number number = jsonPrimitive.getAsNumber();
+                chatChannels.add(String.valueOf(number.longValue()));
             }
         }
         config.chatChannels = chatChannels;
@@ -70,7 +73,10 @@ public class ConfigHandler {
         for (JsonElement jsonElement : readList(
                 jsonObject.getAsJsonArray("logChannels"))) {
             if (jsonElement.isJsonPrimitive()) {
-                logChannels.add(jsonElement.getAsString());
+                JsonPrimitive jsonPrimitive = jsonElement.getAsJsonPrimitive();
+
+                Number number = jsonPrimitive.getAsNumber();
+                logChannels.add(String.valueOf(number.longValue()));
             }
         }
         config.logChannels = logChannels;
