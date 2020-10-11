@@ -82,7 +82,7 @@ allprojects {
 				mappings "net.fabricmc:yarn:${Globals.mcVersion}${Globals.yarnVersion}:v2"
 				modImplementation "net.fabricmc.fabric-api:fabric-api:${Globals.apiVersion}"
 			}
-			modCompile "net.fabricmc:fabric-loader:0.10.1+build.209"
+			modCompile "net.fabricmc:fabric-loader:0.9.2+build.206"
 		}
 	}
 

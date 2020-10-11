@@ -19,7 +19,7 @@ jobs:
 #      - name: Clean Gradle
 #        run: ./gradlew clean --refresh-dependencies --stacktrace
       - name: Build
-        run: ./gradlew build
+        run: ./gradlew clean build
       - name: Publish to Curseforge
         run: ./gradlew curseforge
         if: "contains(github.event.head_commit.message, '[release]')"
