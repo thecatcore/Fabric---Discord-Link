@@ -13,7 +13,7 @@ public class ConfigHandler {
 
     private static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
-    private static final int CONFIG_VERSION = 0;
+    private static final int CONFIG_VERSION = 1;
 
     private static final File OLD_CONFIG_FILE = new File(FabricLoader.getInstance().getConfigDirectory(), "fdlink.json");
 

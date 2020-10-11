@@ -138,6 +138,20 @@ public enum ConfigUpgrader {
         jsonObject.addProperty("version", 0);
 
         return jsonObject;
+    }),
+    V0_TO_V1(jsonObject -> {
+        if (!jsonObject.has("minecraftToDiscord")) jsonObject.add("minecraftToDiscord", new JsonObject());
+        JsonObject minecraftToDiscord = jsonObject.getAsJsonObject("minecraftToDiscord");
+
+        if (!minecraftToDiscord.has("messages")) minecraftToDiscord.add("messages", new JsonObject());
+        JsonObject message = minecraftToDiscord.getAsJsonObject("messages");
+
+        message.addProperty("channelDescription", "Playercount : %playercount/%maxplayercount,\n Uptime : %uptime");
+
+        jsonObject.remove("version");
+        jsonObject.addProperty("version", 1);
+
+        return jsonObject;
     });
 
     private Upgrader upgrader;

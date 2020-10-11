@@ -164,14 +164,19 @@ public class DiscordBot {
             this.nextChannelTopicUpdateTimeMilliseconds = System.currentTimeMillis() + 5 * 60 * 1000; // Five minutes from now.
 
             int totalUptimeSeconds = (int) (System.currentTimeMillis() - this.startTime) / 1000;
-            final int uptimeH = totalUptimeSeconds / 3600 ;
+            final int uptimeD = totalUptimeSeconds / 86400;
+            final int uptimeH = (totalUptimeSeconds % 86400) / 24;
             final int uptimeM = (totalUptimeSeconds % 3600) / 60;
             final int uptimeS = totalUptimeSeconds % 60;
-            final String topic = String.format(
-                    "Playercount : %d/%d,\n" +
-                            "Uptime : %dh %dm %ds",
-                    playerNumber, maxPlayer, uptimeH, uptimeM, uptimeS
-            );
+            final String topic = this.config.minecraftToDiscord.messages.channelDescription
+                    .replace("%playercount", String.valueOf(playerNumber))
+                    .replace("%maxplayercount", String.valueOf(maxPlayer))
+                    .replace("%uptime", uptimeD + "d " + uptimeH + "h " + uptimeM + "m " + uptimeS + "s")
+                    .replace("%motd", server.getMotd())
+                    .replace("%uptime_d", String.valueOf(uptimeD))
+                    .replace("%uptime_h", String.valueOf(uptimeH))
+                    .replace("%uptime_m", String.valueOf(uptimeM))
+                    .replace("%uptime_s", String.valueOf(uptimeS));
 
             if (this.config.minecraftToDiscord.chatChannels.customChannelDescription){
                 for (String id : this.config.chatChannels) {

@@ -23,6 +23,11 @@ public class MinecraftServer1_16 implements MinecraftServer {
     }
 
     @Override
+    public String getMotd() {
+        return this.minecraftServer.getServerMotd();
+    }
+
+    @Override
     public int getPlayerCount() {
         return this.minecraftServer.getPlayerManager().getPlayerList().size();
     }

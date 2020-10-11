@@ -43,6 +43,7 @@ public class Config {
         public String serverStarted = "Server Started.";
         public String serverStopping = "Server is stopping!";
         public String serverStopped = "Server Stopped.";
+        public String channelDescription = "Playercount : %playercount/%maxplayercount,\n Uptime : %uptime";
         public Config.MinecraftToDiscordMessage.ConfigMessage playerJoined = new Config.MinecraftToDiscordMessage.ConfigMessage("%player joined the game");
         public Config.MinecraftToDiscordMessage.ConfigMessage playerJoinedRenamed = new Config.MinecraftToDiscordMessage.ConfigMessage("%new (formerly known as %old) joined the game");
         public Config.MinecraftToDiscordMessage.ConfigMessage playerLeft = new Config.MinecraftToDiscordMessage.ConfigMessage("%player left the game");
