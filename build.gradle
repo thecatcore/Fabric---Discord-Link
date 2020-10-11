@@ -14,6 +14,7 @@ class Globals {
 	static def mcVersion = "1.16.3"
 	static def yarnVersion = "+build.7"
 	static def apiVersion = "0.20.2+build.402-1.16"
+	static def changelog = ""
 }
 
 version = Globals.baseVersion
@@ -198,5 +199,50 @@ dependencies {
 			compile project(path: ":${it.name}", configuration: "dev")
 			include project("${it.name}:")
 		}
+	}
+}
+
+curseforge {
+	apiKey = System.getenv('CURSEKEY') ?: "a key"
+	project {
+		id = "318315"
+		releaseType = "release"
+		changelog = Globals.changelog
+		mainArtifact(file("build/libs/${archivesBaseName}-${version}.jar")) {
+			displayName = project.mod_version
+			relations {
+				requiredDependency "fabric-api"
+			}
+		}
+
+		gameVersionStrings.clear()
+		gameVersionStrings.add("Fabric")
+
+		// 1.16.x
+		gameVersionStrings.add("1.16.3")
+		gameVersionStrings.add("1.16.2")
+		gameVersionStrings.add("1.16.1")
+		gameVersionStrings.add("1.16")
+		gameVersionStrings.add("1.16-Snapshot")
+
+		// 1.15.x
+		gameVersionStrings.add("1.15.2")
+		gameVersionStrings.add("1.15.1")
+		gameVersionStrings.add("1.15")
+		gameVersionStrings.add("1.15-Snapshot")
+
+		// 1.14.x
+		gameVersionStrings.add("1.14.4")
+		gameVersionStrings.add("1.14.3")
+		gameVersionStrings.add("1.14.2")
+		gameVersionStrings.add("1.14.1")
+		gameVersionStrings.add("1.14")
+		gameVersionStrings.add("1.14-Snapshot")
+
+		// For beta 1.7
+		gameVersionStrings.add("1.0.0")
+	}
+	options{
+		forgeGradleIntegration = false
 	}
 }
