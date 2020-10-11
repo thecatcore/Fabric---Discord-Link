@@ -209,7 +209,7 @@ curseforge {
 		releaseType = "release"
 		changelog = Globals.changelog
 		mainArtifact(file("build/libs/${archivesBaseName}-${version}.jar")) {
-			displayName = project.mod_version
+			displayName = Globals.baseVersion
 			relations {
 				requiredDependency "fabric-api"
 			}
