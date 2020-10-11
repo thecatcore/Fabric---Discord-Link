@@ -240,7 +240,7 @@ curseforge {
 		gameVersionStrings.add("1.14-Snapshot")
 
 		// For beta 1.7
-		gameVersionStrings.add("1.0.0")
+//		gameVersionStrings.add("1.0.0")
 	}
 	options{
 		forgeGradleIntegration = false
