@@ -10,11 +10,11 @@ plugins {
 }
 
 class Globals {
-	static def baseVersion = "0.7.9"
+	static def baseVersion = "0.7.10"
 	static def mcVersion = "1.16.3"
 	static def yarnVersion = "+build.31"
 	static def apiVersion = "0.23.0+build.410-1.16"
-	static def changelog = "Allow to customize channel description"
+	static def changelog = ""
 }
 
 version = Globals.baseVersion
