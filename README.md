@@ -30,7 +30,11 @@ Fabric-Discord-Link is a lightweight server mod for the fabric mod loader which 
 ## Installation
 
 ### Dependencies
+
+#### For Minecraft 1.14.4, 1.15.2 and any version higher than 1.16.1:
 Fabric-Discord-Link requires Fabric API to work. The [Fabric-API](https://github.com/FabricMC/fabric/releases) jar needs to be in your mod folder.
+#### For other Minecraft version (including snapshots):
+No dependencies required.
 
 ### Obtaining the binaries
 The release binaries are available in the [releases](https://github.com/arthurbambou/Fabric---Discord-Link/releases) section or on [curseforge](https://www.curseforge.com/minecraft/mc-mods/fabric-discord-link). 
