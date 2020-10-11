@@ -52,20 +52,21 @@ public class DiscordBot {
         }
 
         if (config.chatChannels.isEmpty()) {
-            LOGGER.info("[FDLink] Please add a game chat channel to the config file!");
             this.hasChatChannels = false;
         } else {
             this.hasChatChannels = true;
         }
 
         if (config.logChannels.isEmpty()) {
-            LOGGER.info("[FDLink] Please add a log channel to the config file!");
             this.hasLogChannels = false;
         } else {
             this.hasLogChannels = true;
         }
 
-        if (!this.hasLogChannels && !this.hasChatChannels) return;
+        if (!this.hasLogChannels && !this.hasChatChannels) {
+            LOGGER.error("[FDLink] Please add either a game chat or a log channel to the config file (or both)!");
+            return;
+        }
 
         config.logChannels.removeIf(id -> config.chatChannels.contains(id));
 
