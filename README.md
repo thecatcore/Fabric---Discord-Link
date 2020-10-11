@@ -23,6 +23,7 @@ Fabric-Discord-Link is a lightweight server mod for the fabric mod loader which 
     * Player reaching goal
     * Prefix for death messages (i.e. emojis like :skull_crossbones:)
     * Postfix for death messages
+    * Discord channel description
 * Configure Emojis
 * Configure how messages from Discord appear in the ingame chat (default is senders name in brackets to distinguish from ingame player's messages)
 
