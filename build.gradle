@@ -14,7 +14,7 @@ class Globals {
 	static def mcVersion = "1.16.3"
 	static def yarnVersion = "+build.31"
 	static def apiVersion = "0.23.0+build.410-1.16"
-	static def changelog = ""
+	static def changelog = "Allow to customize channel description"
 }
 
 version = Globals.baseVersion
