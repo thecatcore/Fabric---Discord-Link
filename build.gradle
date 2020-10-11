@@ -12,8 +12,8 @@ plugins {
 class Globals {
 	static def baseVersion = "0.7.8"
 	static def mcVersion = "1.16.3"
-	static def yarnVersion = "+build.7"
-	static def apiVersion = "0.20.2+build.402-1.16"
+	static def yarnVersion = "+build.31"
+	static def apiVersion = "0.23.0+build.410-1.16"
 	static def changelog = ""
 }
 
@@ -76,13 +76,13 @@ allprojects {
 			if (projectName == "1.15.2") {
 				minecraft "com.mojang:minecraft:1.15.2"
 				mappings "net.fabricmc:yarn:1.15.2+build.17:v2"
-				modImplementation "net.fabricmc.fabric-api:fabric-api:0.19.0+build.325-1.15"
+				modImplementation "net.fabricmc.fabric-api:fabric-api:0.23.0+build.328-1.15"
 			} else {
 				minecraft "com.mojang:minecraft:$Globals.mcVersion"
 				mappings "net.fabricmc:yarn:${Globals.mcVersion}${Globals.yarnVersion}:v2"
 				modImplementation "net.fabricmc.fabric-api:fabric-api:${Globals.apiVersion}"
 			}
-			modCompile "net.fabricmc:fabric-loader:0.9.3+build.207"
+			modCompile "net.fabricmc:fabric-loader:0.10.1+build.209"
 		}
 	}
 
