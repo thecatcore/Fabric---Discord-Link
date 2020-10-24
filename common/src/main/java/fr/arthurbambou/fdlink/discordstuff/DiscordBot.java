@@ -166,7 +166,7 @@ public class DiscordBot {
 
             int totalUptimeSeconds = (int) (System.currentTimeMillis() - this.startTime) / 1000;
             final int uptimeD = totalUptimeSeconds / 86400;
-            final int uptimeH = (totalUptimeSeconds % 86400) / 24;
+            final int uptimeH = (totalUptimeSeconds % 86400) / 3600;
             final int uptimeM = (totalUptimeSeconds % 3600) / 60;
             final int uptimeS = totalUptimeSeconds % 60;
             final String topic = this.config.minecraftToDiscord.messages.channelDescription
