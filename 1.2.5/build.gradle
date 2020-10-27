@@ -1,6 +1,0 @@
-archivesBaseName = "1.2.5"
-version = getSubprojectVersion()
-
-dependencies {
-    compile project(path: ':common')
-}
