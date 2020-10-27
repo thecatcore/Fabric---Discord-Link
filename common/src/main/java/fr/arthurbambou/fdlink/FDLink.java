@@ -1,18 +1,10 @@
 package fr.arthurbambou.fdlink;
 
-import com.google.gson.*;
-import fr.arthurbambou.fdlink.config.ConfigHandler;
+import fr.arthurbambou.fdlink.config.manager.ConfigHandler;
 import fr.arthurbambou.fdlink.discordstuff.DiscordBot;
 import net.fabricmc.api.DedicatedServerModInitializer;
-import net.fabricmc.loader.api.FabricLoader;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import java.io.*;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 
 public class FDLink implements DedicatedServerModInitializer {
 

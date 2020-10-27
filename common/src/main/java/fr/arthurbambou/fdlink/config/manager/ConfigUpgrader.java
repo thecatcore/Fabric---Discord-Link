@@ -1,4 +1,4 @@
-package fr.arthurbambou.fdlink.config;
+package fr.arthurbambou.fdlink.config.manager;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -152,9 +152,95 @@ public enum ConfigUpgrader {
         jsonObject.addProperty("version", 1);
 
         return jsonObject;
+    }),
+    V1_TO_V2(jsonObject -> {
+        JsonObject newJsonObject = new JsonObject();
+        JsonObject newMessages = new JsonObject();
+        if (jsonObject.has("minecraftToDiscord")) {
+            JsonObject minecraftToDiscord = jsonObject.getAsJsonObject("minecraftToDiscord");
+            JsonObject message = new JsonObject();
+            if (minecraftToDiscord.has("messages")) {
+                message = (JsonObject) minecraftToDiscord.remove("messages");
+            }
+
+            if (!message.has("serverStarting")) message.addProperty("serverStarting", "Server is starting!");
+            if (!message.has("serverStarted")) message.addProperty("serverStarted", "Server Started.");
+            if (!message.has("serverStopped")) message.addProperty("serverStopped", "Server Stopped.");
+            if (!message.has("serverStopping")) message.addProperty("serverStopping", "Server is stopping!");
+
+            String fieldName = "playerMessage";
+            String fieldValue = "<%player> %message";
+            if (!message.has(fieldName)) message.add(fieldName, new JsonObject());
+            if (!message.getAsJsonObject(fieldName).has("customMessage")) message.getAsJsonObject(fieldName).addProperty("customMessage", fieldValue);
+            if (!message.getAsJsonObject(fieldName).has("useCustomMessage")) message.getAsJsonObject(fieldName).addProperty("useCustomMessage", true);
+
+            fieldName = "playerJoined";
+            fieldValue = "%player joined the game";
+            if (!message.has(fieldName)) message.add(fieldName, new JsonObject());
+            if (!message.getAsJsonObject(fieldName).has("customMessage")) message.getAsJsonObject(fieldName).addProperty("customMessage", fieldValue);
+            if (!message.getAsJsonObject(fieldName).has("useCustomMessage")) message.getAsJsonObject(fieldName).addProperty("useCustomMessage", true);
+
+            fieldName = "playerJoinedRenamed";
+            fieldValue = "%new (formerly known as %old) joined the game";
+            if (!message.has(fieldName)) message.add(fieldName, new JsonObject());
+            if (!message.getAsJsonObject(fieldName).has("customMessage")) message.getAsJsonObject(fieldName).addProperty("customMessage", fieldValue);
+            if (!message.getAsJsonObject(fieldName).has("useCustomMessage")) message.getAsJsonObject(fieldName).addProperty("useCustomMessage", true);
+
+            fieldName = "playerLeft";
+            fieldValue = "%player left the game";
+            if (!message.has(fieldName)) message.add(fieldName, new JsonObject());
+            if (!message.getAsJsonObject(fieldName).has("customMessage")) message.getAsJsonObject(fieldName).addProperty("customMessage", fieldValue);
+            if (!message.getAsJsonObject(fieldName).has("useCustomMessage")) message.getAsJsonObject(fieldName).addProperty("useCustomMessage", true);
+
+            fieldName = "advancementTask";
+            fieldValue = "%player has made the advancement %advancement";
+            if (!message.has(fieldName)) message.add(fieldName, new JsonObject());
+            if (!message.getAsJsonObject(fieldName).has("customMessage")) message.getAsJsonObject(fieldName).addProperty("customMessage", fieldValue);
+            if (!message.getAsJsonObject(fieldName).has("useCustomMessage")) message.getAsJsonObject(fieldName).addProperty("useCustomMessage", true);
+
+            fieldName = "advancementChallenge";
+            fieldValue = "%player has completed the challenge %advancement";
+            if (!message.has(fieldName)) message.add(fieldName, new JsonObject());
+            if (!message.getAsJsonObject(fieldName).has("customMessage")) message.getAsJsonObject(fieldName).addProperty("customMessage", fieldValue);
+            if (!message.getAsJsonObject(fieldName).has("useCustomMessage")) message.getAsJsonObject(fieldName).addProperty("useCustomMessage", true);
+
+            fieldName = "advancementGoal";
+            fieldValue = "%player has reached the goal %advancement";
+            if (!message.has(fieldName)) message.add(fieldName, new JsonObject());
+            if (!message.getAsJsonObject(fieldName).has("customMessage")) message.getAsJsonObject(fieldName).addProperty("customMessage", fieldValue);
+            if (!message.getAsJsonObject(fieldName).has("useCustomMessage")) message.getAsJsonObject(fieldName).addProperty("useCustomMessage", true);
+
+            if (!message.has("deathMsgPrefix")) message.addProperty("deathMsgPrefix", "");
+            if (!message.has("deathMsgPostfix")) message.addProperty("deathMsgPostfix", "");
+
+            if (!message.has("channelDescription")) message.addProperty("channelDescription", "Playercount : %playercount/%maxplayercount,\n Uptime : %uptime");
+
+            newMessages.add("minecraftToDiscord", message);
+        }
+        if (jsonObject.has("discordToMinecraft")) {
+            JsonObject oldDiscordToMinecraft = jsonObject.getAsJsonObject("discordToMinecraft");
+            JsonObject newDiscordToMinecraft = new JsonObject();
+            if (oldDiscordToMinecraft.has("message")) {
+                newDiscordToMinecraft.addProperty("message", oldDiscordToMinecraft.get("message").getAsString());
+                oldDiscordToMinecraft.remove("message");
+            } else newDiscordToMinecraft.addProperty("message", "[%player] %message");
+            if (oldDiscordToMinecraft.has("commandPrefix")) {
+                newDiscordToMinecraft.addProperty("commandPrefix", oldDiscordToMinecraft.get("commandPrefix").getAsString());
+                oldDiscordToMinecraft.remove("commandPrefix");
+            } else newDiscordToMinecraft.addProperty("commandPrefix", "!");
+            newMessages.add("discordToMinecraft", newDiscordToMinecraft);
+        }
+        jsonObject.remove("version");
+
+        newJsonObject.add("main", jsonObject);
+        newJsonObject.add("messages", newMessages);
+
+        newJsonObject.addProperty("version", 2);
+
+        return newJsonObject;
     });
 
-    private Upgrader upgrader;
+    private final Upgrader upgrader;
 
     ConfigUpgrader(Upgrader upgrader) {
         this.upgrader = upgrader;
