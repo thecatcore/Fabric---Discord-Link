@@ -7,6 +7,8 @@ dependencies {
 		exclude module: 'opus-java'
 	}
 
+	compile("club.minnced:discord-webhooks:0.5.0")
+
 	include ('net.dv8tion:JDA:4.2.0_191') {
 		exclude module: 'opus-java'
 	}
@@ -21,6 +23,8 @@ dependencies {
 	include 'com.fasterxml.jackson.core:jackson-annotations:2.10.1'
 	include 'com.fasterxml.jackson.core:jackson-core:2.10.1'
 	include "org.json:json:20170516"
+
+	include("club.minnced:discord-webhooks:0.5.0")
 
 	include "com.vdurmont:emoji-java:5.1.1"
 }
