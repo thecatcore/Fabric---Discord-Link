@@ -1,5 +1,6 @@
 package fr.arthurbambou.fdlink.discordstuff;
 
+import fr.arthurbambou.fdlink.config.Config;
 import fr.arthurbambou.fdlink.config.MainConfig;
 import fr.arthurbambou.fdlink.discordstuff.todiscord.MinecraftToDiscordFunction;
 import fr.arthurbambou.fdlink.versionhelpers.CompatText;
@@ -16,7 +17,7 @@ public final class MinecraftToDiscordHandler {
 
     private final JDA api;
     private final DiscordBot discordBot;
-    private final MainConfig config;
+    private final Config config;
     private final List<MessageHandler> TEXT_HANDLERS = new ArrayList<>();
 
     public MinecraftToDiscordHandler(DiscordBot discordBot) {
@@ -38,21 +39,21 @@ public final class MinecraftToDiscordHandler {
             String logPlayerName = "";
             String chatCompleteMessage;
             String logCompleteMessage;
-            if (this.config.minecraftToDiscord.chatChannels.allowDiscordCommands && message.startsWith(this.config.minecraftToDiscord.chatChannels.commandPrefix)){
+            if (this.config.mainConfig.minecraftToDiscord.chatChannels.allowDiscordCommands && message.startsWith(this.config.mainConfig.minecraftToDiscord.chatChannels.commandPrefix)){
                 this.discordBot.sendToChatChannels(message);
-            } else if (this.config.minecraftToDiscord.chatChannels.playerMessages || this.config.minecraftToDiscord.logChannels.playerMessages) {
+            } else if (this.config.mainConfig.minecraftToDiscord.chatChannels.playerMessages || this.config.mainConfig.minecraftToDiscord.logChannels.playerMessages) {
                 chatPlayerName = adaptUsernameToDiscord(playerName);
                 logPlayerName = adaptUsernameToDiscord(playerName);
-                for (MainConfig.EmojiEntry emojiEntry : this.config.emojiMap) {
+                for (MainConfig.EmojiEntry emojiEntry : this.config.mainConfig.emojiMap) {
                     message = message.replaceAll(emojiEntry.name, "<" + emojiEntry.id + ">");
                 }
-                if(!this.config.minecraftToDiscord.chatChannels.minecraftToDiscordTag){
+                if(!this.config.mainConfig.minecraftToDiscord.chatChannels.minecraftToDiscordTag){
                     chatMessage = message;
                 }
-                if(!this.config.minecraftToDiscord.logChannels.minecraftToDiscordTag){
+                if(!this.config.mainConfig.minecraftToDiscord.logChannels.minecraftToDiscordTag){
                     logMessage = message;
                 }
-                if (this.config.minecraftToDiscord.chatChannels.minecraftToDiscordTag ||  this.config.minecraftToDiscord.logChannels.minecraftToDiscordTag) {
+                if (this.config.mainConfig.minecraftToDiscord.chatChannels.minecraftToDiscordTag ||  this.config.mainConfig.minecraftToDiscord.logChannels.minecraftToDiscordTag) {
                     for (User user : this.api.getUserCache()) {
                         TextChannel serverChannel = (TextChannel) this.api.getTextChannels().toArray()[0];
                         Guild server = serverChannel.getGuild();
@@ -67,23 +68,23 @@ public final class MinecraftToDiscordHandler {
 //                                    .replaceAll("@" + user.getNickname(server).get().toLowerCase(), user.getAsTag());
 //                        }
                     }
-                    if(this.config.minecraftToDiscord.chatChannels.minecraftToDiscordTag){
+                    if(this.config.mainConfig.minecraftToDiscord.chatChannels.minecraftToDiscordTag){
                         chatMessage = message;
                     }
-                    if(this.config.minecraftToDiscord.logChannels.minecraftToDiscordTag){
+                    if(this.config.mainConfig.minecraftToDiscord.logChannels.minecraftToDiscordTag){
                         logMessage = message;
                     }
                 }
-                if (this.config.minecraftToDiscord.messages.playerMessage.useCustomMessage) {
-                    chatCompleteMessage = this.config.minecraftToDiscord.messages.playerMessage.customMessage.replace("%player", chatPlayerName).replace("%message", chatMessage);
-                    logCompleteMessage = this.config.minecraftToDiscord.messages.playerMessage.customMessage.replace("%player", logPlayerName).replace("%message", logMessage);
+                if (this.config.messageConfig.minecraftToDiscord.playerMessage.useCustomMessage) {
+                    chatCompleteMessage = this.config.messageConfig.minecraftToDiscord.playerMessage.customMessage.replace("%player", chatPlayerName).replace("%message", chatMessage);
+                    logCompleteMessage = this.config.messageConfig.minecraftToDiscord.playerMessage.customMessage.replace("%player", logPlayerName).replace("%message", logMessage);
                 } else {
                     chatCompleteMessage = "<" + chatPlayerName + "> " + chatMessage;
                     logCompleteMessage = "<" + logPlayerName + "> " + logMessage;
                 }
-                if(this.config.minecraftToDiscord.chatChannels.playerMessages){
+                if(this.config.mainConfig.minecraftToDiscord.chatChannels.playerMessages){
                     this.discordBot.sendToChatChannels(chatCompleteMessage);
-                }else if(this.config.minecraftToDiscord.logChannels.playerMessages){
+                }else if(this.config.mainConfig.minecraftToDiscord.logChannels.playerMessages){
                     this.discordBot.sendToLogChannels(logCompleteMessage);
                 }
             }
@@ -92,10 +93,10 @@ public final class MinecraftToDiscordHandler {
         // /me command
         registerTextHandler(new TextHandler("chat.type.emote", text -> {
             String message = text.getMessage().replaceAll("§[b0931825467adcfeklmnor]", "");
-            if (this.config.minecraftToDiscord.chatChannels.sendMeCommand) {
+            if (this.config.mainConfig.minecraftToDiscord.chatChannels.sendMeCommand) {
                 this.discordBot.sendToChatChannels(message);
             }
-            if (this.config.minecraftToDiscord.logChannels.sendMeCommand) {
+            if (this.config.mainConfig.minecraftToDiscord.logChannels.sendMeCommand) {
                 this.discordBot.sendToLogChannels(message);
             }
         }));
@@ -103,10 +104,10 @@ public final class MinecraftToDiscordHandler {
         // /say command
         registerTextHandler(new TextHandler("chat.type.announcement", text -> {
             String message = text.getMessage().replaceAll("§[b0931825467adcfeklmnor]", "");
-            if (this.config.minecraftToDiscord.chatChannels.sendSayCommand) {
+            if (this.config.mainConfig.minecraftToDiscord.chatChannels.sendSayCommand) {
                 this.discordBot.sendToChatChannels(message);
             }
-            if (this.config.minecraftToDiscord.logChannels.sendSayCommand) {
+            if (this.config.mainConfig.minecraftToDiscord.logChannels.sendSayCommand) {
                 this.discordBot.sendToLogChannels(message);
             }
         }));
@@ -114,16 +115,16 @@ public final class MinecraftToDiscordHandler {
         // Advancement task
         registerTextHandler(new TextHandler("chat.type.advancement.task", text -> {
             String message = text.getMessage().replaceAll("§[b0931825467adcfeklmnor]", "");
-            if (this.config.minecraftToDiscord.chatChannels.advancementMessages || this.config.minecraftToDiscord.logChannels.advancementMessages) {
-                if (this.config.minecraftToDiscord.messages.advancementTask.useCustomMessage) {
-                    message = this.config.minecraftToDiscord.messages.advancementTask.customMessage
+            if (this.config.mainConfig.minecraftToDiscord.chatChannels.advancementMessages || this.config.mainConfig.minecraftToDiscord.logChannels.advancementMessages) {
+                if (this.config.messageConfig.minecraftToDiscord.advancementTask.useCustomMessage) {
+                    message = this.config.messageConfig.minecraftToDiscord.advancementTask.customMessage
                             .replace("%player", adaptUsernameToDiscord(getArgAsString(text.getArgs()[0])))
                             .replace("%advancement", getArgAsString(text.getArgs()[1]));
                 }
-                if (this.config.minecraftToDiscord.chatChannels.advancementMessages) {
+                if (this.config.mainConfig.minecraftToDiscord.chatChannels.advancementMessages) {
                         this.discordBot.sendToChatChannels(message);
                  }
-                if (this.config.minecraftToDiscord.logChannels.advancementMessages) {
+                if (this.config.mainConfig.minecraftToDiscord.logChannels.advancementMessages) {
                         this.discordBot.sendToLogChannels(message);
                 }
             }
@@ -132,16 +133,16 @@ public final class MinecraftToDiscordHandler {
         // Advancement challenge
         registerTextHandler(new TextHandler("chat.type.advancement.challenge", text -> {
             String message = text.getMessage().replaceAll("§[b0931825467adcfeklmnor]", "");
-            if (this.config.minecraftToDiscord.chatChannels.challengeMessages || this.config.minecraftToDiscord.logChannels.challengeMessages) {
-                if (this.config.minecraftToDiscord.messages.advancementChallenge.useCustomMessage) {
-                    message = this.config.minecraftToDiscord.messages.advancementChallenge.customMessage
+            if (this.config.mainConfig.minecraftToDiscord.chatChannels.challengeMessages || this.config.mainConfig.minecraftToDiscord.logChannels.challengeMessages) {
+                if (this.config.messageConfig.minecraftToDiscord.advancementChallenge.useCustomMessage) {
+                    message = this.config.messageConfig.minecraftToDiscord.advancementChallenge.customMessage
                             .replace("%player", adaptUsernameToDiscord(getArgAsString(text.getArgs()[0])))
                             .replace("%advancement", getArgAsString(text.getArgs()[1]));
                 }
-                if (this.config.minecraftToDiscord.chatChannels.challengeMessages) {
+                if (this.config.mainConfig.minecraftToDiscord.chatChannels.challengeMessages) {
                     this.discordBot.sendToChatChannels(message);
                 }
-                if (this.config.minecraftToDiscord.logChannels.challengeMessages) {
+                if (this.config.mainConfig.minecraftToDiscord.logChannels.challengeMessages) {
                     this.discordBot.sendToLogChannels(message);
                 }
             }
@@ -150,16 +151,16 @@ public final class MinecraftToDiscordHandler {
         // Advancement goal
         registerTextHandler(new TextHandler("chat.type.advancement.goal", text -> {
             String message = text.getMessage().replaceAll("§[b0931825467adcfeklmnor]", "");
-            if (this.config.minecraftToDiscord.chatChannels.goalMessages || this.config.minecraftToDiscord.logChannels.goalMessages) {
-                if (this.config.minecraftToDiscord.messages.advancementGoal.useCustomMessage) {
-                    message = this.config.minecraftToDiscord.messages.advancementGoal.customMessage
+            if (this.config.mainConfig.minecraftToDiscord.chatChannels.goalMessages || this.config.mainConfig.minecraftToDiscord.logChannels.goalMessages) {
+                if (this.config.messageConfig.minecraftToDiscord.advancementGoal.useCustomMessage) {
+                    message = this.config.messageConfig.minecraftToDiscord.advancementGoal.customMessage
                             .replace("%player", adaptUsernameToDiscord(getArgAsString(text.getArgs()[0])))
                             .replace("%advancement", getArgAsString(text.getArgs()[1]));
                 }
-                if (this.config.minecraftToDiscord.chatChannels.goalMessages) {
+                if (this.config.mainConfig.minecraftToDiscord.chatChannels.goalMessages) {
                     this.discordBot.sendToChatChannels(message);
                 }
-                if (this.config.minecraftToDiscord.logChannels.goalMessages) {
+                if (this.config.mainConfig.minecraftToDiscord.logChannels.goalMessages) {
                     this.discordBot.sendToLogChannels(message);
                 }
             }
@@ -168,10 +169,10 @@ public final class MinecraftToDiscordHandler {
         // Admin commands
         registerTextHandler(new TextHandler("chat.type.admin", text -> {
             String message = text.getMessage().replaceAll("§[b0931825467adcfeklmnor]", "");
-            if (this.config.minecraftToDiscord.chatChannels.adminMessages) {
+            if (this.config.mainConfig.minecraftToDiscord.chatChannels.adminMessages) {
                 this.discordBot.sendToChatChannels(message);
             }
-            if (this.config.minecraftToDiscord.logChannels.adminMessages) {
+            if (this.config.mainConfig.minecraftToDiscord.logChannels.adminMessages) {
                 this.discordBot.sendToLogChannels(message);
             }
         }));
@@ -179,16 +180,16 @@ public final class MinecraftToDiscordHandler {
         // Player join server with new username
         registerTextHandler(new TextHandler("multiplayer.player.joined.renamed", text -> {
             String message = text.getMessage().replaceAll("§[b0931825467adcfeklmnor]", "");
-            if (this.config.minecraftToDiscord.chatChannels.joinAndLeaveMessages || this.config.minecraftToDiscord.logChannels.joinAndLeaveMessages) {
-                if (this.config.minecraftToDiscord.messages.playerJoinedRenamed.useCustomMessage) {
-                    message = this.config.minecraftToDiscord.messages.playerJoinedRenamed.customMessage
+            if (this.config.mainConfig.minecraftToDiscord.chatChannels.joinAndLeaveMessages || this.config.mainConfig.minecraftToDiscord.logChannels.joinAndLeaveMessages) {
+                if (this.config.messageConfig.minecraftToDiscord.playerJoinedRenamed.useCustomMessage) {
+                    message = this.config.messageConfig.minecraftToDiscord.playerJoinedRenamed.customMessage
                             .replace("%new", adaptUsernameToDiscord(getArgAsString(text.getArgs()[0])))
                             .replace("%old", adaptUsernameToDiscord(getArgAsString(text.getArgs()[1])));
                 }
-                if (this.config.minecraftToDiscord.chatChannels.joinAndLeaveMessages) {
+                if (this.config.mainConfig.minecraftToDiscord.chatChannels.joinAndLeaveMessages) {
                     this.discordBot.sendToChatChannels(message);
                 }
-                if (this.config.minecraftToDiscord.logChannels.joinAndLeaveMessages) {
+                if (this.config.mainConfig.minecraftToDiscord.logChannels.joinAndLeaveMessages) {
                     this.discordBot.sendToLogChannels(message);
                 }
             }
@@ -197,15 +198,15 @@ public final class MinecraftToDiscordHandler {
         // Player join server
         registerTextHandler(new TextHandler("multiplayer.player.joined", text -> {
             String message = text.getMessage().replaceAll("§[b0931825467adcfeklmnor]", "");
-            if (this.config.minecraftToDiscord.chatChannels.joinAndLeaveMessages || this.config.minecraftToDiscord.logChannels.joinAndLeaveMessages) {
-                if (this.config.minecraftToDiscord.messages.playerJoined.useCustomMessage) {
-                    message = this.config.minecraftToDiscord.messages.playerJoined.customMessage
+            if (this.config.mainConfig.minecraftToDiscord.chatChannels.joinAndLeaveMessages || this.config.mainConfig.minecraftToDiscord.logChannels.joinAndLeaveMessages) {
+                if (this.config.messageConfig.minecraftToDiscord.playerJoined.useCustomMessage) {
+                    message = this.config.messageConfig.minecraftToDiscord.playerJoined.customMessage
                             .replace("%player", adaptUsernameToDiscord(getArgAsString(text.getArgs()[0])));
                 }
-                if (this.config.minecraftToDiscord.chatChannels.joinAndLeaveMessages) {
+                if (this.config.mainConfig.minecraftToDiscord.chatChannels.joinAndLeaveMessages) {
                     this.discordBot.sendToChatChannels(message);
                 }
-                if (this.config.minecraftToDiscord.logChannels.joinAndLeaveMessages) {
+                if (this.config.mainConfig.minecraftToDiscord.logChannels.joinAndLeaveMessages) {
                     this.discordBot.sendToLogChannels(message);
                 }
             }
@@ -214,15 +215,15 @@ public final class MinecraftToDiscordHandler {
         // Player leave server
         registerTextHandler(new TextHandler("multiplayer.player.left", text -> {
             String message = text.getMessage().replaceAll("§[b0931825467adcfeklmnor]", "");
-            if (this.config.minecraftToDiscord.chatChannels.joinAndLeaveMessages || this.config.minecraftToDiscord.logChannels.joinAndLeaveMessages) {
-                if (this.config.minecraftToDiscord.messages.playerLeft.useCustomMessage) {
-                    message = this.config.minecraftToDiscord.messages.playerLeft.customMessage
+            if (this.config.mainConfig.minecraftToDiscord.chatChannels.joinAndLeaveMessages || this.config.mainConfig.minecraftToDiscord.logChannels.joinAndLeaveMessages) {
+                if (this.config.messageConfig.minecraftToDiscord.playerLeft.useCustomMessage) {
+                    message = this.config.messageConfig.minecraftToDiscord.playerLeft.customMessage
                             .replace("%player", adaptUsernameToDiscord(getArgAsString(text.getArgs()[0])));
                 }
-                if (this.config.minecraftToDiscord.chatChannels.joinAndLeaveMessages) {
+                if (this.config.mainConfig.minecraftToDiscord.chatChannels.joinAndLeaveMessages) {
                     this.discordBot.sendToChatChannels(message);
                 }
-                if (this.config.minecraftToDiscord.logChannels.joinAndLeaveMessages) {
+                if (this.config.mainConfig.minecraftToDiscord.logChannels.joinAndLeaveMessages) {
                     this.discordBot.sendToLogChannels(message);
                 }
             }
@@ -231,21 +232,21 @@ public final class MinecraftToDiscordHandler {
         // Death messages
         registerTextHandler(new TextHandler("death.", text -> {
             String message = text.getMessage().replaceAll("§[b0931825467adcfeklmnor]", "");
-            if (this.config.minecraftToDiscord.chatChannels.deathMessages) {
-                this.discordBot.sendToChatChannels(this.config.minecraftToDiscord.messages.deathMsgPrefix + message + this.config.minecraftToDiscord.messages.deathMsgPostfix);
+            if (this.config.mainConfig.minecraftToDiscord.chatChannels.deathMessages) {
+                this.discordBot.sendToChatChannels(this.config.messageConfig.minecraftToDiscord.deathMsgPrefix + message + this.config.messageConfig.minecraftToDiscord.deathMsgPostfix);
             }
-            if (this.config.minecraftToDiscord.logChannels.deathMessages) {
-                this.discordBot.sendToLogChannels(this.config.minecraftToDiscord.messages.deathMsgPrefix + message + this.config.minecraftToDiscord.messages.deathMsgPostfix);
+            if (this.config.mainConfig.minecraftToDiscord.logChannels.deathMessages) {
+                this.discordBot.sendToLogChannels(this.config.messageConfig.minecraftToDiscord.deathMsgPrefix + message + this.config.messageConfig.minecraftToDiscord.deathMsgPostfix);
             }
         }));
 
         // Old versions
         registerTextHandler(new StringHandler(message -> {
             String text = message.getMessage().replaceAll("§[b0931825467adcfeklmnor]","");
-            if (this.config.minecraftToDiscord.chatChannels.playerMessages) {
+            if (this.config.mainConfig.minecraftToDiscord.chatChannels.playerMessages) {
                 this.discordBot.sendToChatChannels(text);
             }
-            if (this.config.minecraftToDiscord.logChannels.playerMessages) {
+            if (this.config.mainConfig.minecraftToDiscord.logChannels.playerMessages) {
                 this.discordBot.sendToLogChannels(text);
             }
         }));
@@ -283,7 +284,7 @@ public final class MinecraftToDiscordHandler {
                 return;
             }
         }
-        if (this.config.minecraftToDiscord.general.enableDebugLogs) {
+        if (this.config.mainConfig.minecraftToDiscord.general.enableDebugLogs) {
             if (text.getTextType() == Message.TextType.TRANSLATABLE) {
                 DiscordBot.LOGGER.error("[FDLink] Unhandled text \"{}\":{}", text.getKey(), text.getMessage());
             } else {
