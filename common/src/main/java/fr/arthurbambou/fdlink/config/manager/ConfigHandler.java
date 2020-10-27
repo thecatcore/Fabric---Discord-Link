@@ -1,6 +1,9 @@
-package fr.arthurbambou.fdlink.config;
+package fr.arthurbambou.fdlink.config.manager;
 
 import com.google.gson.*;
+import fr.arthurbambou.fdlink.config.Config;
+import fr.arthurbambou.fdlink.config.MainConfig;
+import fr.arthurbambou.fdlink.config.MessageConfig;
 import net.fabricmc.loader.api.FabricLoader;
 
 import java.io.*;
@@ -13,11 +16,15 @@ public class ConfigHandler {
 
     private static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
-    private static final int CONFIG_VERSION = 1;
+    private static final int CONFIG_VERSION = 2;
 
-    private static final File OLD_CONFIG_FILE = new File(FabricLoader.getInstance().getConfigDirectory(), "fdlink.json");
+    private static File GAME_CONFIG_FOLDER;
 
-    private static final File CONFIG_FOLDER = new File(FabricLoader.getInstance().getConfigDirectory(), "fdlink");
+    private static final File OLD_CONFIG_FILE = new File(GAME_CONFIG_FOLDER, "fdlink.json");
+
+    private static final File CONFIG_FOLDER = new File(GAME_CONFIG_FOLDER, "fdlink");
+    private static final File NEW_MAIN_FILE = new File(CONFIG_FOLDER, "fdlink.json");
+    private static final File MESSAGE_CONFIG = new File(CONFIG_FOLDER, "messages.json");
 
     public static ConfigHolder getConfig() {
         ConfigHolder configHolder = null;
@@ -31,17 +38,50 @@ public class ConfigHandler {
             }
             OLD_CONFIG_FILE.delete();
         } else {
-            if (new File(CONFIG_FOLDER, "fdlink.json").exists()) {
-                try (InputStreamReader fileReader = new InputStreamReader(new FileInputStream(new File(CONFIG_FOLDER, "fdlink.json")), StandardCharsets.UTF_8)) {
-                    JsonObject jsonObject = gson.fromJson(fileReader, JsonObject.class);
-                    configHolder = parseConfig(jsonObject);
+            if (NEW_MAIN_FILE.exists()) {
+                try (InputStreamReader mainFileReader = new InputStreamReader(new FileInputStream(NEW_MAIN_FILE), StandardCharsets.UTF_8)) {
+                    JsonObject jsonObject = new JsonObject();
+                    JsonObject mainObject = gson.fromJson(mainFileReader, JsonObject.class);
+                    int version = mainObject.get("version").getAsInt();
+                    if (version < 2) configHolder = parseConfig(mainObject);
+                    else {
+                        mainObject.remove("version");
+                        jsonObject.addProperty("version", version);
+                        jsonObject.add("main", mainObject);
+                        if (MESSAGE_CONFIG.exists()) {
+                            try (InputStreamReader messageFileReader = new InputStreamReader(new FileInputStream(MESSAGE_CONFIG), StandardCharsets.UTF_8)) {
+                                jsonObject.add("messages", gson.fromJson(messageFileReader, JsonObject.class));
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        } else {
+                            JsonObject messageConfig = (JsonObject) gson.toJsonTree(new MessageConfig());
+                            try (FileWriter fileWriter = new FileWriter(MESSAGE_CONFIG)) {
+                                fileWriter.write(gson.toJson(messageConfig));
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                            jsonObject.add("messages", messageConfig);
+                        }
+
+                        configHolder = parseConfig(jsonObject);
+                    }
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             } else {
-                Config defaultConfig = new Config();
-                saveConfig((JsonObject)gson.toJsonTree(defaultConfig));
-                configHolder = new ConfigHolder(defaultConfig, null);
+                Config config = new Config();
+                saveConfig((JsonObject)gson.toJsonTree(config.mainConfig));
+
+                if (MESSAGE_CONFIG.exists()) {
+                    try (InputStreamReader messageFileReader = new InputStreamReader(new FileInputStream(MESSAGE_CONFIG), StandardCharsets.UTF_8)) {
+                        config.messageConfig = gson.fromJson(messageFileReader, MessageConfig.class);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                configHolder = new ConfigHolder(config, null);
             }
         }
         return configHolder;
@@ -67,7 +107,7 @@ public class ConfigHandler {
                 chatChannels.add(String.valueOf(number.longValue()));
             }
         }
-        config.chatChannels = chatChannels;
+        config.mainConfig.chatChannels = chatChannels;
 
         List<String> logChannels = new ArrayList<>();
         for (JsonElement jsonElement : readList(
@@ -79,9 +119,9 @@ public class ConfigHandler {
                 logChannels.add(String.valueOf(number.longValue()));
             }
         }
-        config.logChannels = logChannels;
+        config.mainConfig.logChannels = logChannels;
 
-        List<Config.EmojiEntry> emojiEntryList = new ArrayList<>();
+        List<MainConfig.EmojiEntry> emojiEntryList = new ArrayList<>();
         for (JsonElement jsonElement : readList(
                 jsonObject.getAsJsonArray("emojiMap"))) {
             if (jsonElement.isJsonObject()) {
@@ -92,16 +132,16 @@ public class ConfigHandler {
                 String name = emojiEntryJson.get("name").getAsString();
                 String id = emojiEntryJson.get("id").getAsString();
 
-                emojiEntryList.add(new Config.EmojiEntry(name, id));
+                emojiEntryList.add(new MainConfig.EmojiEntry(name, id));
             }
         }
-        config.emojiMap = emojiEntryList;
+        config.mainConfig.emojiMap = emojiEntryList;
 
         JsonObject discordToMinecraft = jsonObject.getAsJsonObject("discordToMinecraft");
-        config.discordToMinecraft = gson.fromJson(discordToMinecraft.toString(), Config.DiscordToMinecraft.class);
+        config.mainConfig.discordToMinecraft = gson.fromJson(discordToMinecraft.toString(), MainConfig.DiscordToMinecraft.class);
 
         JsonObject minecraftToDiscord = jsonObject.getAsJsonObject("minecraftToDiscord");
-        config.minecraftToDiscord = gson.fromJson(minecraftToDiscord.toString(), Config.MinecraftToDiscord.class);
+        config.mainConfig.minecraftToDiscord = gson.fromJson(minecraftToDiscord.toString(), MainConfig.MinecraftToDiscord.class);
 
 
         String token = jsonObject.get("token").getAsString();
@@ -125,7 +165,7 @@ public class ConfigHandler {
         if (!jsonObject.has("version")) jsonObject.addProperty("version", CONFIG_VERSION);
 
         if (!CONFIG_FOLDER.exists()) CONFIG_FOLDER.mkdirs();
-        try (FileWriter fileWriter = new FileWriter(new File(CONFIG_FOLDER, "fdlink.json"))) {
+        try (FileWriter fileWriter = new FileWriter(NEW_MAIN_FILE)) {
             fileWriter.write(gson.toJson(jsonObject));
         } catch (IOException e) {
             e.printStackTrace();
@@ -148,5 +188,16 @@ public class ConfigHandler {
         public String getToken() {
             return token;
         }
+    }
+
+    static {
+        File gameConfig = null;
+        try {
+            gameConfig = FabricLoader.getInstance().getConfigDir().toFile();
+        } catch (NoSuchMethodError e) {
+            gameConfig = FabricLoader.getInstance().getConfigDirectory();
+        }
+
+        GAME_CONFIG_FOLDER = gameConfig;
     }
 }
