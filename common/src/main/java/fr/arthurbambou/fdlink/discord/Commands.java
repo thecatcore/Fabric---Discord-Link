@@ -28,14 +28,15 @@ public enum Commands {
         int maxPlayer = minecraftServer.getMaxPlayerCount();
         int totalUptimeSeconds = (int) (System.currentTimeMillis() - startTime) / 1000;
 
+        final int uptimeD = totalUptimeSeconds / 86400;
         final int uptimeH = totalUptimeSeconds / 3600 ;
         final int uptimeM = (totalUptimeSeconds % 3600) / 60;
         final int uptimeS = totalUptimeSeconds % 60;
 
         messageCreateEvent.getChannel().sendMessage(String.format(
                 "Playercount : %d/%d,\n" +
-                        "Uptime : %dh %dm %ds",
-                playerNumber, maxPlayer, uptimeH, uptimeM, uptimeS
+                        "Uptime : %dd %dh %dm %ds",
+                playerNumber, maxPlayer, uptimeD, uptimeH, uptimeM, uptimeS
                 )
         ).submit();
         return false;
@@ -43,11 +44,12 @@ public enum Commands {
     uptime("Show the uptime of the server.",(minecraftServer, messageCreateEvent, startTime) -> {
         int totalUptimeSeconds = (int) (System.currentTimeMillis() - startTime) / 1000;
 
+        final int uptimeD = totalUptimeSeconds / 86400;
         final int uptimeH = totalUptimeSeconds / 3600 ;
         final int uptimeM = (totalUptimeSeconds % 3600) / 60;
         final int uptimeS = totalUptimeSeconds % 60;
 
-        messageCreateEvent.getChannel().sendMessage("Uptime: " + uptimeH + "h " + uptimeM + "m " + uptimeS + "s").submit();
+        messageCreateEvent.getChannel().sendMessage("Uptime: " + uptimeD + "d " + uptimeH + "h " + uptimeM + "m " + uptimeS + "s").submit();
         return false;
     }),
     commands("Show the list of commands of the bot.",(minecraftServer, messageCreateEvent, startTime) -> {

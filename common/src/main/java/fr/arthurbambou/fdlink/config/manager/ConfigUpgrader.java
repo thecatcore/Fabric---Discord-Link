@@ -6,6 +6,7 @@ import com.google.gson.JsonObject;
 public enum ConfigUpgrader {
 
     // version: -1 -> 0
+    // config file moved from config/fdlink.json to config/fdlink/fdlink.json
     PRE_VERSIONED_TO_V0((jsonObject) -> {
         if (!jsonObject.has("token")) jsonObject.addProperty("token", "");
 
@@ -139,6 +140,8 @@ public enum ConfigUpgrader {
 
         return jsonObject;
     }),
+    // v0 -> v1
+    // + channel description in messages
     V0_TO_V1(jsonObject -> {
         if (!jsonObject.has("minecraftToDiscord")) jsonObject.add("minecraftToDiscord", new JsonObject());
         JsonObject minecraftToDiscord = jsonObject.getAsJsonObject("minecraftToDiscord");
@@ -153,6 +156,8 @@ public enum ConfigUpgrader {
 
         return jsonObject;
     }),
+    // v1 -> v2
+    // split of the config between fdlink.json and messages.json
     V1_TO_V2(jsonObject -> {
         JsonObject newJsonObject = new JsonObject();
         JsonObject newMessages = new JsonObject();
