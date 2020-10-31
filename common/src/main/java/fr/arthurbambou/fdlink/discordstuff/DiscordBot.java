@@ -39,6 +39,9 @@ public class DiscordBot {
     // This is when we scheduled the next channel topic update. Should happen every five minutes.
     private long nextChannelTopicUpdateTimeMilliseconds = Long.MIN_VALUE;
 
+    private boolean firstTick = true;
+    private boolean updatedActivity = false;
+
     public DiscordBot(String token, Config config) {
         this.lastMessageD = "null";
 
@@ -73,13 +76,15 @@ public class DiscordBot {
 
         this.config = config;
         try {
-            this.api = JDABuilder.createDefault(token).setActivity(Activity.playing(this.config.messageConfig.discordToMinecraft.commandPrefix + "commands")).build();
+            this.api = JDABuilder.createDefault(token).build();
         } catch (LoginException error) {
             error.printStackTrace();
         }
-        this.messageCreateListener = new MessageReceivedListener(this);
-        this.api.addEventListener(messageCreateListener);
-        this.minecraftToDiscordHandler = new MinecraftToDiscordHandler(this);
+        if (this.api != null) {
+            this.messageCreateListener = new MessageReceivedListener(this);
+            this.api.addEventListener(messageCreateListener);
+            this.minecraftToDiscordHandler = new MinecraftToDiscordHandler(this);
+        }
     }
 
     public void serverStarting() {
@@ -123,9 +128,31 @@ public class DiscordBot {
         if (this.api == null) return;
         int playerNumber = server.getPlayerCount();
         int maxPlayer = server.getMaxPlayerCount();
+        int totalUptimeSeconds = (int) (System.currentTimeMillis() - this.startTime) / 1000;
+        final int uptimeD = totalUptimeSeconds / 86400;
+        final int uptimeH = (totalUptimeSeconds % 86400) / 3600;
+        final int uptimeM = (totalUptimeSeconds % 3600) / 60;
+        final int uptimeS = totalUptimeSeconds % 60;
+        String ip = server.getIp();
+        if (this.updatedActivity) this.updatedActivity = ((int)(System.currentTimeMillis()/1000) % this.config.mainConfig.activityUpdateInterval) == 0;
+        if ((((int)(System.currentTimeMillis()/1000) % this.config.mainConfig.activityUpdateInterval) == 0 && !this.updatedActivity) || this.firstTick) {
+            String[] possibleActivities = this.config.messageConfig.discord.botActivities;
+            int rand = new Random().nextInt(possibleActivities.length);
+            String selected = possibleActivities[rand];
+            selected = selected
+                    .replace("%playercount", String.valueOf(playerNumber))
+                    .replace("%maxplayercount", String.valueOf(maxPlayer))
+                    .replace("%uptime_D", String.valueOf(uptimeD))
+                    .replace("%uptime_H", String.valueOf(uptimeH))
+                    .replace("%uptime_M", String.valueOf(uptimeM))
+                    .replace("%uptime_S", String.valueOf(uptimeS))
+                    .replace("%ip", ip);
+            this.api.getPresence().setActivity(Activity.playing(selected));
+            this.updatedActivity = true;
+        }
         if (this.hasReceivedMessage) {
             for (Commands command : Commands.values()) {
-                if (this.messageCreateEvent.getMessage().getContentRaw().toLowerCase().equals(this.config.messageConfig.discordToMinecraft.commandPrefix + command.name().toLowerCase())) {
+                if (this.messageCreateEvent.getMessage().getContentRaw().toLowerCase().equals(this.config.messageConfig.discord.commandPrefix + command.name().toLowerCase())) {
                     this.hasReceivedMessage = command.execute(server, this.messageCreateEvent, this.startTime);
                     return;
                 }
@@ -165,11 +192,6 @@ public class DiscordBot {
         if ((this.hasChatChannels || this.hasLogChannels) && (this.config.mainConfig.minecraftToDiscord.chatChannels.customChannelDescription ||  this.config.mainConfig.minecraftToDiscord.logChannels.customChannelDescription) && (System.currentTimeMillis() > this.nextChannelTopicUpdateTimeMilliseconds)) {
             this.nextChannelTopicUpdateTimeMilliseconds = System.currentTimeMillis() + 5 * 60 * 1000; // Five minutes from now.
 
-            int totalUptimeSeconds = (int) (System.currentTimeMillis() - this.startTime) / 1000;
-            final int uptimeD = totalUptimeSeconds / 86400;
-            final int uptimeH = (totalUptimeSeconds % 86400) / 3600;
-            final int uptimeM = (totalUptimeSeconds % 3600) / 60;
-            final int uptimeS = totalUptimeSeconds % 60;
             final String topic = this.config.messageConfig.minecraftToDiscord.channelDescription
                     .replace("%playercount", String.valueOf(playerNumber))
                     .replace("%maxplayercount", String.valueOf(maxPlayer))
@@ -191,6 +213,8 @@ public class DiscordBot {
                 }
             }
         }
+
+        if (this.firstTick) this.firstTick = false;
     }
 
     private void updateChannelTopic(String channelId, String topic) {

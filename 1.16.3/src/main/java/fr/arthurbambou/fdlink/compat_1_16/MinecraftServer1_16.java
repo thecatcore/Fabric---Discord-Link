@@ -89,4 +89,9 @@ public class MinecraftServer1_16 implements MinecraftServer {
                 return MessageType.CHAT;
         }
     }
+
+    @Override
+    public String getIp() {
+        return this.minecraftServer.getServerIp();
+    }
 }

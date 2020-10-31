@@ -13,4 +13,6 @@ public interface MinecraftServer {
     List<PlayerEntity> getPlayers();
 
     void sendMessageToAll(MessagePacket messagePacket);
+
+    String getIp();
 }

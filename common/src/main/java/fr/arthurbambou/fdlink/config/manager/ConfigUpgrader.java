@@ -243,6 +243,36 @@ public enum ConfigUpgrader {
         newJsonObject.addProperty("version", 2);
 
         return newJsonObject;
+    }),
+    V2_TO_V3(jsonObject -> {
+
+        jsonObject.getAsJsonObject("main").addProperty("activityUpdateInterval", 120);
+
+        JsonObject messageJson = jsonObject.getAsJsonObject("messages");
+
+        JsonObject discordOnly = new JsonObject();
+
+        if (messageJson.getAsJsonObject("discordToMinecraft").has("commandPrefix")) {
+            discordOnly.addProperty("commandPrefix",
+                    messageJson.getAsJsonObject("discordToMinecraft").remove("commandPrefix").getAsString());
+        } else {
+            discordOnly.addProperty("commandPrefix", "!");
+        }
+
+        JsonArray array = new JsonArray();
+        array.add("!commands");
+        array.add("%playercount / %maxplayercount");
+        array.add("on %ip");
+        array.add("%uptime_D day(s), %uptime_H hour(s), %uptime_M minute(s) and %uptime_S second(s)");
+
+        discordOnly.add("botActivities", array);
+
+        messageJson.add("discord", discordOnly);
+
+        jsonObject.remove("version");
+        jsonObject.addProperty("version", 3);
+
+        return jsonObject;
     });
 
     private final Upgrader upgrader;

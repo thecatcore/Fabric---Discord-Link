@@ -16,7 +16,7 @@ public class ConfigHandler {
 
     private static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
-    private static final int CONFIG_VERSION = 2;
+    private static final int CONFIG_VERSION = 3;
 
     private static File OLD_CONFIG_FILE;
 
@@ -33,7 +33,6 @@ public class ConfigHandler {
         }
 
         File GAME_CONFIG_FOLDER = gameConfig;
-        System.out.println(GAME_CONFIG_FOLDER.toPath().toAbsolutePath().toString());
 
         OLD_CONFIG_FILE = new File(GAME_CONFIG_FOLDER, "fdlink.json");
 
@@ -118,6 +117,10 @@ public class ConfigHandler {
         Config config = new Config();
 
         JsonObject mainObject = jsonObject.getAsJsonObject("main");
+
+        if (mainObject.has("ignoreBots")) config.mainConfig.ignoreBots = mainObject.get("ignoreBots").getAsBoolean();
+
+        if (mainObject.has("activityUpdateInterval")) config.mainConfig.activityUpdateInterval = mainObject.get("activityUpdateInterval").getAsInt();
 
         List<String> chatChannels = new ArrayList<>();
         for (JsonElement jsonElement : readList(

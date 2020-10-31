@@ -7,8 +7,9 @@ public class MainConfig {
     public List<String> chatChannels = new ArrayList<String>();
     public List<String> logChannels = new ArrayList<String>();
     public boolean ignoreBots = true;
-    public MainConfig.MinecraftToDiscord minecraftToDiscord = new MainConfig.MinecraftToDiscord();
-    public MainConfig.DiscordToMinecraft discordToMinecraft = new MainConfig.DiscordToMinecraft();
+    public int activityUpdateInterval = 120;
+    public MainConfig.MinecraftToDiscord minecraftToDiscord = new MinecraftToDiscord();
+    public MainConfig.DiscordToMinecraft discordToMinecraft = new DiscordToMinecraft();
     public List<MainConfig.EmojiEntry> emojiMap = new ArrayList<>();
 
     public MainConfig() {
@@ -26,17 +27,17 @@ public class MainConfig {
         }
     }
 
-    public class MinecraftToDiscord {
-        public MainConfig.MinecraftToDiscordGeneral general = new MainConfig.MinecraftToDiscordGeneral();
-        public MainConfig.MinecraftToDiscordChatChannel chatChannels = new MainConfig.MinecraftToDiscordChatChannel();
-        public MainConfig.MinecraftToDiscordLogChannel logChannels = new MainConfig.MinecraftToDiscordLogChannel();
+    public static class MinecraftToDiscord {
+        public MainConfig.MinecraftToDiscordGeneral general = new MinecraftToDiscordGeneral();
+        public MainConfig.MinecraftToDiscordChatChannel chatChannels = new MinecraftToDiscordChatChannel();
+        public MainConfig.MinecraftToDiscordLogChannel logChannels = new MinecraftToDiscordLogChannel();
     }
 
-    public class MinecraftToDiscordGeneral {
+    public static class MinecraftToDiscordGeneral {
         public boolean enableDebugLogs = false;
     }
 
-    public class MinecraftToDiscordChatChannel {
+    public static class MinecraftToDiscordChatChannel {
         public String commandPrefix = "-";
         public boolean allowDiscordCommands = false;
         public boolean serverStartingMessage = true;
@@ -57,7 +58,7 @@ public class MainConfig {
         public boolean adminMessages = false;
     }
 
-    public class MinecraftToDiscordLogChannel {
+    public static class MinecraftToDiscordLogChannel {
         public boolean serverStartingMessage = true;
         public boolean serverStartMessage = true;
         public boolean serverStopMessage = true;
@@ -76,7 +77,7 @@ public class MainConfig {
         public boolean adminMessages = true;
     }
 
-    public class DiscordToMinecraft {
+    public static class DiscordToMinecraft {
         public boolean pingLongVersion = false;
     }
 }

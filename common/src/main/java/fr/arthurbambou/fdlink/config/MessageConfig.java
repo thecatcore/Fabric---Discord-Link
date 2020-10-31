@@ -4,6 +4,7 @@ public class MessageConfig {
 
     public MinecraftToDiscord minecraftToDiscord = new MinecraftToDiscord();
     public DiscordToMinecraft discordToMinecraft = new DiscordToMinecraft();
+    public DiscordOnly discord = new DiscordOnly();
 
     public static class MinecraftToDiscord {
         public ConfigMessage playerMessage = new ConfigMessage("<%player> %message");
@@ -23,7 +24,7 @@ public class MessageConfig {
 
         public static class ConfigMessage {
             public String customMessage;
-            public boolean useCustomMessage = true;
+            public boolean useCustomMessage;
 
             protected ConfigMessage(String customMessage, boolean useCustomMessage) {
                 this.customMessage = customMessage;
@@ -31,13 +32,22 @@ public class MessageConfig {
             }
 
             protected ConfigMessage(String customMessage) {
-                this.customMessage = customMessage;
+                this(customMessage, true);
             }
         }
     }
 
     public static class DiscordToMinecraft {
         public String message = "[%player] %message";
+    }
+
+    public static class DiscordOnly {
         public String commandPrefix = "!";
+        public String[] botActivities = new String[]{
+                "!commands",
+                "%playercount / %maxplayercount",
+                "on %ip",
+                "%uptime_D day(s), %uptime_H hour(s), %uptime_M minute(s) and %uptime_S second(s)"
+        };
     }
 }

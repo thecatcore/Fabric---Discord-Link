@@ -74,4 +74,9 @@ public class MinecraftServer1_15_2 implements MinecraftServer {
         }
         this.minecraftServer.getPlayerManager().sendToAll(text);
     }
+
+    @Override
+    public String getIp() {
+        return this.minecraftServer.getServerIp();
+    }
 }
