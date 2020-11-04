@@ -4,18 +4,16 @@ plugins {
 	id 'idea'
 	id 'maven-publish'
 	id 'fabric-loom' version '0.5-SNAPSHOT' apply false
-	id 'net.minecrell.licenser' version '0.4.1'
-	id "org.ajoberstar.grgit" version "3.1.1"
 	id 'com.matthewprenger.cursegradle' version "1.4.0"
 }
 
 class Globals {
-	static def baseVersion = "0.7.14"
-	static def mcVersion = "1.16.3"
-	static def yarnVersion = "+build.47"
-	static def loaderVersion = "0.10.5+build.213"
-	static def apiVersion = "0.24.1+build.412-1.16"
-	static def changelog = "Make bot activity configurable."
+	static def baseVersion = "0.7.15"
+	static def mcVersion = "1.16.4"
+	static def yarnVersion = "3"
+	static def loaderVersion = "0.10.6+build.214"
+	static def apiVersion = "0.25.1+build.416-1.16"
+	static def changelog = "Fix a possible crash."
 }
 
 version = Globals.baseVersion
@@ -42,7 +40,7 @@ allprojects {
 			modImplementation "net.fabricmc.fabric-api:fabric-api:0.23.0+build.328-1.15"
 		} else {
 			minecraft "com.mojang:minecraft:$Globals.mcVersion"
-			mappings "net.fabricmc:yarn:${Globals.mcVersion}${Globals.yarnVersion}:v2"
+			mappings "net.fabricmc:yarn:${Globals.mcVersion}+build.${Globals.yarnVersion}:v2"
 			modImplementation "net.fabricmc.fabric-api:fabric-api:${Globals.apiVersion}"
 		}
 		modCompile "net.fabricmc:fabric-loader:${Globals.loaderVersion}"

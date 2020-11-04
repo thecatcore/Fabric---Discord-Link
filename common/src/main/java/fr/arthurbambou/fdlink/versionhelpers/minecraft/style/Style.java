@@ -286,7 +286,7 @@ public class Style {
     public boolean equals(Object obj) {
         if (this == obj) {
             return true;
-        } else if (!(obj instanceof net.minecraft.text.Style)) {
+        } else if (!(obj instanceof Style)) {
             return false;
         } else {
             Style lv = (Style)obj;

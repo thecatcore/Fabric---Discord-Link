@@ -18,5 +18,5 @@ rootProject.name = "Fabric-Discord-Link"
 
 include 'common'
 
-include '1.16.3'
+include '1.16.4'
 include '1.15.2'
