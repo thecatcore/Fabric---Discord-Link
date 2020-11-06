@@ -4,6 +4,7 @@
   "compatibilityLevel": "JAVA_8",
   "mixins": [
     "MixinMinecraftServer",
+    "MixinTellRawCommand",
     "MixinText",
     "events.MixinMinecraftServer"
   ],

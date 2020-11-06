@@ -273,6 +273,17 @@ public enum ConfigUpgrader {
         jsonObject.addProperty("version", 3);
 
         return jsonObject;
+    }),
+    V3_TO_V4(jsonObject -> {
+        jsonObject.getAsJsonObject("main").getAsJsonObject("minecraftToDiscord").getAsJsonObject("chatChannels").addProperty("atATellRaw", false);
+        jsonObject.getAsJsonObject("main").getAsJsonObject("minecraftToDiscord").getAsJsonObject("logChannels").addProperty("atATellRaw", false);
+
+        jsonObject.getAsJsonObject("messages").getAsJsonObject("minecraftToDiscord").addProperty("atATellRaw", "%message");
+
+        jsonObject.remove("version");
+        jsonObject.addProperty("version", 4);
+
+        return jsonObject;
     });
 
     private final Upgrader upgrader;

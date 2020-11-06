@@ -21,6 +21,7 @@ public class MessageConfig {
         public ConfigMessage advancementGoal = new ConfigMessage("%player has reached the goal %advancement");
         public String deathMsgPrefix = "";
         public String deathMsgPostfix = "";
+        public String atATellRaw = "%message";
 
         public static class ConfigMessage {
             public String customMessage;

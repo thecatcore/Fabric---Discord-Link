@@ -5,6 +5,8 @@ import fr.arthurbambou.fdlink.config.Config;
 import fr.arthurbambou.fdlink.config.MainConfig;
 import fr.arthurbambou.fdlink.config.MessageConfig;
 import net.fabricmc.loader.api.FabricLoader;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -16,13 +18,15 @@ public class ConfigHandler {
 
     private static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
-    private static final int CONFIG_VERSION = 3;
+    private static final int CONFIG_VERSION = 4;
 
     private static File OLD_CONFIG_FILE;
 
     private static File CONFIG_FOLDER;
     private static File NEW_MAIN_FILE;
     private static File MESSAGE_CONFIG;
+
+    private static Logger LOGGER = LogManager.getLogger("FDLink-ConfigHandler");
 
     private static void initPaths() {
         File gameConfig = null;
@@ -43,9 +47,10 @@ public class ConfigHandler {
 
     public static ConfigHolder getConfig() {
         initPaths();
-
+        LOGGER.info("Looking for config file(s).");
         ConfigHolder configHolder = null;
         if (OLD_CONFIG_FILE.exists()) {
+            LOGGER.info("Reading old config file.");
             try (InputStreamReader fileReader = new InputStreamReader(new FileInputStream(OLD_CONFIG_FILE), StandardCharsets.UTF_8)) {
                 JsonObject jsonObject = gson.fromJson(fileReader, JsonObject.class);
                 jsonObject.addProperty("version", -1);
@@ -56,6 +61,7 @@ public class ConfigHandler {
             OLD_CONFIG_FILE.delete();
         } else {
             if (NEW_MAIN_FILE.exists()) {
+                LOGGER.info("Reading config file(s).");
                 try (InputStreamReader mainFileReader = new InputStreamReader(new FileInputStream(NEW_MAIN_FILE), StandardCharsets.UTF_8)) {
                     JsonObject jsonObject = new JsonObject();
                     JsonObject mainObject = gson.fromJson(mainFileReader, JsonObject.class);
@@ -90,17 +96,21 @@ public class ConfigHandler {
                 Config config = new Config();
 
                 if (MESSAGE_CONFIG.exists()) {
+                    LOGGER.info("Reading config file.");
                     try (InputStreamReader messageFileReader = new InputStreamReader(new FileInputStream(MESSAGE_CONFIG), StandardCharsets.UTF_8)) {
                         config.messageConfig = gson.fromJson(messageFileReader, MessageConfig.class);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
+                } else {
+                    LOGGER.info("Creating config files.");
                 }
 
                 configHolder = new ConfigHolder(config, null);
             }
         }
         if (configHolder != null) {
+            LOGGER.info("Config files read.");
             saveConfig(configHolder);
         }
         return configHolder;
@@ -108,11 +118,18 @@ public class ConfigHandler {
 
     private static ConfigHolder parseConfig(JsonObject jsonObject) {
         int version = jsonObject.get("version").getAsInt();
+        boolean needUpgrade = version < CONFIG_VERSION;
+        if (needUpgrade) {
+            LOGGER.info("An old version of FDLink config has been detected! Upgrading to latest.");
+        }
         while (version < CONFIG_VERSION) {
+            LOGGER.info("Upgrading version " + version + " to version " + (version + 1));
             int i = version + 1;
-            System.out.println("version: " + version);
             jsonObject = ConfigUpgrader.values()[i].upgrade(jsonObject);
             version = jsonObject.get("version").getAsInt();
+        }
+        if (needUpgrade) {
+            LOGGER.info("Upgrade Done!");
         }
         Config config = new Config();
 
@@ -211,6 +228,7 @@ public class ConfigHandler {
     }
 
     private static void saveConfig(ConfigHolder configHolder) {
+        LOGGER.info("Saving config files.");
         JsonObject mainObject = (JsonObject) gson.toJsonTree(configHolder.config.mainConfig);
         mainObject.addProperty("version", CONFIG_VERSION);
         if (configHolder.token != null) mainObject.addProperty("token", configHolder.token);

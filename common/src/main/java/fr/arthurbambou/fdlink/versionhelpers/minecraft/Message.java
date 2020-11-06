@@ -6,17 +6,33 @@ public interface Message {
 
     String getMessage();
 
-    Style getStyle();
+    default Style getStyle() {
+        return null;
+    }
 
-    <T extends Message> T setStyle(Style style);
+    default <T extends Message> T setStyle(Style style) {
+        return (T) this;
+    }
 
     MessageObjectType getType();
 
     TextType getTextType();
 
-    String getKey();
+    default String getKey() {
+        return "";
+    }
 
-    Object[] getArgs();
+    default Object[] getArgs() {
+        return new Object[0];
+    }
+
+    default String getSource() {
+        return "";
+    }
+
+    default String getCommandName() {
+        return "";
+    }
 
     enum MessageObjectType {
         STRING,
@@ -26,6 +42,7 @@ public interface Message {
     enum TextType {
         TRANSLATABLE,
         LITERAL,
-        NULL;
+        COMMAND,
+        UNKNOWN;
     }
 }

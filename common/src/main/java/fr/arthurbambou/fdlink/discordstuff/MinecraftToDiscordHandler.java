@@ -240,6 +240,24 @@ public final class MinecraftToDiscordHandler {
             }
         }));
 
+        registerTextHandler(new CommandHandler("tellraw", text -> {
+            String message = text.getMessage();
+            String source = text.getSource();
+
+            if (this.config.mainConfig.minecraftToDiscord.chatChannels.atATellRaw) {
+                this.discordBot.sendToChatChannels(
+                        this.config.messageConfig.minecraftToDiscord.atATellRaw
+                                .replace("%message", message)
+                                .replace("%source", source));
+            }
+            if (this.config.mainConfig.minecraftToDiscord.logChannels.atATellRaw) {
+                this.discordBot.sendToLogChannels(
+                        this.config.messageConfig.minecraftToDiscord.atATellRaw
+                                .replace("%message", message)
+                                .replace("%source", source));
+            }
+        }));
+
         // Old versions
         registerTextHandler(new StringHandler(message -> {
             String text = message.getMessage().replaceAll("§[b0931825467adcfeklmnor]","");
@@ -317,6 +335,23 @@ public final class MinecraftToDiscordHandler {
         public boolean match(Message text) {
             if (text.getTextType() == Message.TextType.TRANSLATABLE) {
                 return text.getKey().startsWith(this.key);
+            }
+            return false;
+        }
+    }
+
+    public static class CommandHandler extends MessageHandler {
+        private String commandName;
+
+        public CommandHandler(String commandName, MinecraftToDiscordFunction minecraftToDiscordFunction) {
+            super(minecraftToDiscordFunction);
+            this.commandName = commandName;
+        }
+
+        @Override
+        public boolean match(Message message) {
+            if (message.getTextType() == Message.TextType.COMMAND) {
+                return this.commandName.equals(message.getCommandName());
             }
             return false;
         }
