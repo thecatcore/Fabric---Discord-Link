@@ -175,6 +175,7 @@ curseforge {
 		gameVersionStrings.add("Fabric")
 
 		// 1.16.x
+		gameVersionStrings.add("1.16.4")
 		gameVersionStrings.add("1.16.3")
 		gameVersionStrings.add("1.16.2")
 		gameVersionStrings.add("1.16.1")
