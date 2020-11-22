@@ -22,8 +22,7 @@ public class MixinPlugin implements IMixinConfigPlugin {
 
     @Override
     public boolean shouldApplyMixin(String targetClassName, String mixinClassName) {
-        if (mixinClassName.endsWith("FabricConsoleMixinMinecraftDedicatedServer")
-                && FabricLoader.getInstance().isModLoaded("fabric-console")) return true;
+        if (mixinClassName.endsWith("FabricConsoleMixinMinecraftDedicatedServer")) return FabricLoader.getInstance().isModLoaded("fabric-console");
         if (mixinClassName.equals("fr.arthurbambou.fdlink.mixin_1_16.MixinMinecraftServer")) {
             return CrossVersionHandler.compareToMinecraftVersion("1.16-alpha.20.21.a").isMoreRecentOrEqual() && !CrossVersionHandler.isVersion("1.16-20.w.14");
         } else if (mixinClassName.equals("fr.arthurbambou.fdlink.mixin_1_16.events.MixinMinecraftServer")) {
