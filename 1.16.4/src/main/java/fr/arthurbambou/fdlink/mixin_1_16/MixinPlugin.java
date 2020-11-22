@@ -1,6 +1,7 @@
 package fr.arthurbambou.fdlink.mixin_1_16;
 
 import fr.arthurbambou.fdlink.versionhelpers.CrossVersionHandler;
+import net.fabricmc.loader.api.FabricLoader;
 import org.objectweb.asm.tree.ClassNode;
 import org.spongepowered.asm.mixin.extensibility.IMixinConfigPlugin;
 import org.spongepowered.asm.mixin.extensibility.IMixinInfo;
@@ -21,6 +22,8 @@ public class MixinPlugin implements IMixinConfigPlugin {
 
     @Override
     public boolean shouldApplyMixin(String targetClassName, String mixinClassName) {
+        if (mixinClassName.endsWith("FabricConsoleMixinMinecraftDedicatedServer")
+                && FabricLoader.getInstance().isModLoaded("fabric-console")) return true;
         if (mixinClassName.equals("fr.arthurbambou.fdlink.mixin_1_16.MixinMinecraftServer")) {
             return CrossVersionHandler.compareToMinecraftVersion("1.16-alpha.20.21.a").isMoreRecentOrEqual() && !CrossVersionHandler.isVersion("1.16-20.w.14");
         } else if (mixinClassName.equals("fr.arthurbambou.fdlink.mixin_1_16.events.MixinMinecraftServer")) {

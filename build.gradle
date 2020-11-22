@@ -70,6 +70,13 @@ allprojects {
 			url = 'https://libraries.minecraft.net/'
 		}
 		maven {
+			name = "CurseMaven"
+			url = "https://www.cursemaven.com"
+			content {
+				includeGroup "curse.maven"
+			}
+		}
+		maven {
 			name = "Jitpack"
 			url "https://jitpack.io/"
 		}

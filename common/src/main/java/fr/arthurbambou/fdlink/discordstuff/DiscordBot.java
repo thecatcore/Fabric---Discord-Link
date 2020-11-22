@@ -76,7 +76,7 @@ public class DiscordBot {
 
         this.config = config;
         try {
-            this.api = JDABuilder.createDefault(token).build();
+            this.api = JDABuilder.createDefault(token).setActivity(Activity.playing("Minecraft")).build();
         } catch (LoginException error) {
             error.printStackTrace();
         }

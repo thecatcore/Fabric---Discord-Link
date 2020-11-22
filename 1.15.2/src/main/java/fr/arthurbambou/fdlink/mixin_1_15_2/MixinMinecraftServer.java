@@ -24,6 +24,6 @@ public class MixinMinecraftServer {
     @Inject(at = @At("HEAD"), method = "sendMessage")
     public void sendMessage(Text text, CallbackInfo ci) {
         if (text instanceof TranslatableText) FDLink.getDiscordBot().sendMessage(new Message1_15_2(((TranslatableText) text).getKey(), text.getString(), ((TranslatableText) text).getArgs()));
-        FDLink.getDiscordBot().sendMessage(new Message1_15_2(text.getString()));
+        else FDLink.getDiscordBot().sendMessage(new Message1_15_2(text.getString()));
     }
 }
