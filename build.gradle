@@ -8,12 +8,12 @@ plugins {
 }
 
 class Globals {
-	static def baseVersion = "0.7.16"
+	static def baseVersion = "0.7.17"
 	static def mcVersion = "1.16.4"
 	static def yarnVersion = "3"
 	static def loaderVersion = "0.10.6+build.214"
 	static def apiVersion = "0.25.1+build.416-1.16"
-	static def changelog = "Add support for @a tellraw command."
+	static def changelog = "Add compatibility with Fabric Console."
 }
 
 version = Globals.baseVersion
