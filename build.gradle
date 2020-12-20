@@ -9,12 +9,12 @@ plugins {
 }
 
 class Globals {
-	static def baseVersion = "0.7.18"
+	static def baseVersion = "0.7.19"
 	static def mcVersion = "1.16.4"
 	static def yarnVersion = "7"
 	static def loaderVersion = "0.10.8"
 	static def apiVersion = "0.28.3+1.16"
-	static def changelog = "Fix crash when Fabric Console is not present."
+	static def changelog = "Fix username formatting in discord, use server nickname when it's possible."
 }
 
 version = Globals.baseVersion
