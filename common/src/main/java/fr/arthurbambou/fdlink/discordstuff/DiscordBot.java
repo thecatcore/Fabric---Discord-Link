@@ -157,14 +157,20 @@ public class DiscordBot {
                     return;
                 }
             }
+            //Author name will always be populated, so use it as the default.
+            String playerName = messageCreateEvent.getAuthor().getName();
+            //Look for a member and nickname and use that instead.
+            if(messageCreateEvent.getMember() != null && messageCreateEvent.getMember().getNickname() != null) {
+                playerName = messageCreateEvent.getMember().getNickname();
+            }
             this.lastMessageD = this.config.messageConfig.discordToMinecraft.message
-                    .replace("%player", this.messageCreateEvent.getAuthor().getName());
+                    .replace("%player", playerName);
             String string_message = EmojiParser.parseToAliases(this.messageCreateEvent.getMessage().getContentRaw());
             for (MainConfig.EmojiEntry emojiEntry : this.config.mainConfig.emojiMap) {
                 string_message = string_message.replace("<" + emojiEntry.id + ">", emojiEntry.name);
             }
             if (this.config.mainConfig.minecraftToDiscord.chatChannels.minecraftToDiscordTag || this.config.mainConfig.minecraftToDiscord.logChannels.minecraftToDiscordTag) {
-                for (User user : this.api.getUserCache()) {
+               for (User user : this.api.getUserCache()) {
                     TextChannel serverChannel = (TextChannel) this.api.getTextChannels().toArray()[0];
                     Guild discordServer = serverChannel.getGuild();
                     String string_discriminator = "";
@@ -172,6 +178,7 @@ public class DiscordBot {
                         string_discriminator = "#" + user.getDiscriminator();
                     }
                     string_message = string_message.replace("<@!" + user.getId() + ">", "@" + user.getName() + string_discriminator);
+
 //                        if (user.(discordServer).isPresent() && this.config.discordToMinecraft.pingLongVersion) {
 //                            string_message = string_message.replace("@" + user.getName(), "@" + user.getDisplayName(discordServer) + "(" + user.getName() + string_discriminator + ")");
 //                        }
