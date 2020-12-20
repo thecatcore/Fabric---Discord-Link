@@ -8,19 +8,48 @@ plugins {
 	id "com.modrinth.minotaur" version "1.1.0"
 }
 
+class MinecraftVersion {
+	def mcVersion
+	def yarnVersion
+	def loaderVersion
+	def apiVersion
+	def origin
+
+	MinecraftVersion(mcVersion, yarnVersion, loaderVersion, apiVersion, origin = Origin.FABRICMC) {
+		this.mcVersion = mcVersion
+		this.yarnVersion = yarnVersion
+		this.loaderVersion = loaderVersion
+		this.apiVersion = apiVersion
+		this.origin = origin
+	}
+}
+
+enum Origin {
+	FABRICMC,
+	LEGACY_FABRIC
+}
+
 class Globals {
 	static def baseVersion = "0.7.19"
-	static def mcVersion = "1.16.4"
-	static def yarnVersion = "7"
-	static def loaderVersion = "0.10.8"
-	static def apiVersion = "0.28.3+1.16"
 	static def changelog = "Fix username formatting in discord, use server nickname when it's possible."
+	static def versionInfo = [
+			new MinecraftVersion("1.16.4", "7", "0.10.8", "0.28.3+1.16"),
+			new MinecraftVersion("1.15.2", "17", "0.10.8", "0.23.1+1.15")
+	]
 }
 
 version = Globals.baseVersion
 
 def getSubprojectVersion() {
 	return Globals.baseVersion
+}
+
+static def getVersionInfo(project_name) {
+	def version_info = Globals.versionInfo[0]
+	for (MinecraftVersion minecraftVersion : Globals.versionInfo) {
+		if (minecraftVersion.mcVersion == project_name) version_info = minecraftVersion
+	}
+	return version_info
 }
 
 allprojects {
@@ -33,18 +62,15 @@ allprojects {
 
 	group = "fr.catcore"
 
+	def versionInfo = getVersionInfo(projectName)
 
 	dependencies {
-		if (projectName == "1.15.2") {
-			minecraft "com.mojang:minecraft:1.15.2"
-			mappings "net.fabricmc:yarn:1.15.2+build.17:v2"
-			modImplementation "net.fabricmc.fabric-api:fabric-api:0.23.1+1.15"
-		} else {
-			minecraft "com.mojang:minecraft:$Globals.mcVersion"
-			mappings "net.fabricmc:yarn:${Globals.mcVersion}+build.${Globals.yarnVersion}:v2"
-			modImplementation "net.fabricmc.fabric-api:fabric-api:${Globals.apiVersion}"
+		if (versionInfo.origin == Origin.FABRICMC) {
+			minecraft "com.mojang:minecraft:${versionInfo.mcVersion}"
+			mappings "net.fabricmc:yarn:${versionInfo.mcVersion}+build.${versionInfo.yarnVersion}:v2"
+			modImplementation "net.fabricmc.fabric-api:fabric-api:${versionInfo.apiVersion}"
+			modCompile "net.fabricmc:fabric-loader:${versionInfo.loaderVersion}"
 		}
-		modCompile "net.fabricmc:fabric-loader:${Globals.loaderVersion}"
 	}
 
 	minecraft {
