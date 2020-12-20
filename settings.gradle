@@ -20,3 +20,4 @@ include 'common'
 
 include '1.16.4'
 include '1.15.2'
+include '1.12.2'
