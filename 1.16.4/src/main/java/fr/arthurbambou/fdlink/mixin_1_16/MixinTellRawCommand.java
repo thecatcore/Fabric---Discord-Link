@@ -17,9 +17,9 @@ public class MixinTellRawCommand {
 
     @Inject(method = "method_13777(Lcom/mojang/brigadier/context/CommandContext;)I", at = @At("RETURN"))
     private static void getTellRawOutput(CommandContext<ServerCommandSource> commandContext, CallbackInfoReturnable<?> ci) {
-        if (commandContext.getInput().replace("/tellraw ", "").startsWith("@a ")) {
+        if (commandContext.getInput().replace("/tellraw ", "").startsWith("@a")) {
             ServerCommandSource source = commandContext.getSource();
-            Text message = TextArgumentType.getTextArgument(commandContext, "message");
+            Text message = TextArgumentType.getTextArgument(commandContext, "message").copy();
             Text author = source.getDisplayName();
 
             FDLink.getDiscordBot().sendMessage(new CommandMessage1_16(author.getString(), message.getString(), "tellraw"));

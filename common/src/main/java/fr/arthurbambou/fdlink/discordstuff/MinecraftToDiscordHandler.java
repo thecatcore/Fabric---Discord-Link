@@ -25,10 +25,6 @@ public final class MinecraftToDiscordHandler {
         this.discordBot = discordBot;
         this.config = discordBot.config;
 
-        // Literal Text not using translation key.
-//        registerTextHandler(new MessageHandler(Text.class, text -> this.discordBot.sendToLogChannels(text.getString()
-//                .replaceAll("§[b0931825467adcfeklmnor]", ""))));
-
         // Chat messages
         registerTextHandler(new TextHandler("chat.type.text", text -> {
             String playerName = getArgAsString(text.getArgs()[0]).replaceAll("§[b0931825467adcfeklmnor]", "");
@@ -242,7 +238,7 @@ public final class MinecraftToDiscordHandler {
 
         registerTextHandler(new CommandHandler("tellraw", text -> {
             String message = text.getMessage();
-            String source = text.getSource();
+            String source = adaptUsernameToDiscord(text.getSource());
 
             if (this.config.mainConfig.minecraftToDiscord.chatChannels.atATellRaw) {
                 this.discordBot.sendToChatChannels(
@@ -270,7 +266,7 @@ public final class MinecraftToDiscordHandler {
         }));
     }
 
-    public String adaptUsernameToDiscord(String string) {
+    public static String adaptUsernameToDiscord(String string) {
         return string.replaceAll("§[b0931825467adcfeklmnor]", "")
                 .replaceAll("_", "\\_")
                 .replaceAll("`", "\\`")
@@ -279,9 +275,8 @@ public final class MinecraftToDiscordHandler {
                 .replaceAll("~", "\\~");
     }
 
-    public MessageHandler registerTextHandler(MessageHandler messageHandler) {
+    public void registerTextHandler(MessageHandler messageHandler) {
         this.TEXT_HANDLERS.add(messageHandler);
-        return messageHandler;
     }
 
     private String getArgAsString(Object arg) {

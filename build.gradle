@@ -10,9 +10,9 @@ plugins {
 class Globals {
 	static def baseVersion = "0.7.18"
 	static def mcVersion = "1.16.4"
-	static def yarnVersion = "3"
-	static def loaderVersion = "0.10.6+build.214"
-	static def apiVersion = "0.25.1+build.416-1.16"
+	static def yarnVersion = "7"
+	static def loaderVersion = "0.10.8"
+	static def apiVersion = "0.28.3+1.16"
 	static def changelog = "Fix crash when Fabric Console is not present."
 }
 
@@ -37,7 +37,7 @@ allprojects {
 		if (projectName == "1.15.2") {
 			minecraft "com.mojang:minecraft:1.15.2"
 			mappings "net.fabricmc:yarn:1.15.2+build.17:v2"
-			modImplementation "net.fabricmc.fabric-api:fabric-api:0.23.0+build.328-1.15"
+			modImplementation "net.fabricmc.fabric-api:fabric-api:0.23.1+1.15"
 		} else {
 			minecraft "com.mojang:minecraft:$Globals.mcVersion"
 			mappings "net.fabricmc:yarn:${Globals.mcVersion}+build.${Globals.yarnVersion}:v2"
@@ -181,6 +181,9 @@ curseforge {
 		gameVersionStrings.clear()
 		gameVersionStrings.add("Fabric")
 
+		// 1.17.x
+		gameVersionStrings.add("1.17")
+
 		// 1.16.x
 		gameVersionStrings.add("1.16.4")
 		gameVersionStrings.add("1.16.3")
@@ -203,7 +206,7 @@ curseforge {
 		gameVersionStrings.add("1.14")
 		gameVersionStrings.add("1.14-Snapshot")
 	}
-	options{
+	options {
 		forgeGradleIntegration = false
 	}
 }
