@@ -5,6 +5,7 @@ plugins {
 	id 'maven-publish'
 	id 'fabric-loom' version '0.5-SNAPSHOT' apply false
 	id 'com.matthewprenger.cursegradle' version "1.4.0"
+	id "com.modrinth.minotaur" version "1.1.0"
 }
 
 class Globals {
@@ -209,4 +210,125 @@ curseforge {
 	options {
 		forgeGradleIntegration = false
 	}
+}
+
+import com.modrinth.minotaur.TaskModrinthUpload
+
+task publishModrinth (type: TaskModrinthUpload) {
+
+	token = System.getenv('MODRINTHKEY') ?: "a key"
+	projectId = 'FCmig1C9'
+	versionNumber = Globals.baseVersion
+	uploadFile = file("build/libs/${archivesBaseName}-${version}.jar")
+
+	addLoader('fabric')
+
+	// 1.17.x
+	addGameVersion('20w51a')
+	addGameVersion('20w49a')
+	addGameVersion('20w48a')
+	addGameVersion('20w46a')
+	addGameVersion('20w45a')
+
+	// 1.16.x
+	addGameVersion('1.16.4')
+	addGameVersion('1.16.4-rc1')
+	addGameVersion('1.16.4-pre2')
+	addGameVersion('1.16.4-pre1')
+	addGameVersion('1.16.3')
+	addGameVersion('1.16.3-rc1')
+	addGameVersion('1.16.2')
+	addGameVersion('1.16.2-rc2')
+	addGameVersion('1.16.2-rc1')
+	addGameVersion('1.16.2-pre3')
+	addGameVersion('1.16.2-pre2')
+	addGameVersion('1.16.2-pre1')
+	addGameVersion('20w30a')
+	addGameVersion('20w29a')
+	addGameVersion('20w28a')
+	addGameVersion('20w27a')
+	addGameVersion('1.16.1')
+	addGameVersion('1.16')
+	addGameVersion('1.16-rc1')
+	addGameVersion('1.16-pre8')
+	addGameVersion('1.16-pre7')
+	addGameVersion('1.16-pre6')
+	addGameVersion('1.16-pre5')
+	addGameVersion('1.16-pre4')
+	addGameVersion('1.16-pre3')
+	addGameVersion('1.16-pre2')
+	addGameVersion('1.16-pre1')
+	addGameVersion('20w21a')
+	addGameVersion('20w20b')
+	addGameVersion('20w20a')
+	addGameVersion('20w19a')
+	addGameVersion('20w18a')
+	addGameVersion('20w17a')
+	addGameVersion('20w16a')
+	addGameVersion('20w15a')
+	addGameVersion('20w14a')
+	addGameVersion('20w14infinite')
+	addGameVersion('20w13b')
+	addGameVersion('20w13a')
+	addGameVersion('20w12a')
+	addGameVersion('20w11a')
+	addGameVersion('20w10a')
+	addGameVersion('20w09a')
+	addGameVersion('20w08a')
+	addGameVersion('20w07a')
+	addGameVersion('20w06a')
+
+	// 1.15.x
+	addGameVersion('1.15.2')
+	addGameVersion('1.15.2-pre2')
+	addGameVersion('1.15.2-pre1')
+	addGameVersion('1.15.1')
+	addGameVersion('1.15.1-pre1')
+	addGameVersion('1.15')
+	addGameVersion('1.15-pre7')
+	addGameVersion('1.15-pre6')
+	addGameVersion('1.15-pre5')
+	addGameVersion('1.15-pre4')
+	addGameVersion('1.15-pre3')
+	addGameVersion('1.15-pre2')
+	addGameVersion('1.15-pre1')
+	addGameVersion('19w46b')
+	addGameVersion('19w46a')
+	addGameVersion('19w45b')
+	addGameVersion('19w45a')
+	addGameVersion('19w44a')
+	addGameVersion('19w42a')
+	addGameVersion('19w41a')
+	addGameVersion('19w40a')
+	addGameVersion('19w39a')
+	addGameVersion('19w38b')
+	addGameVersion('19w38a')
+	addGameVersion('19w37a')
+	addGameVersion('19w36a')
+	addGameVersion('19w35a')
+	addGameVersion('19w34a')
+
+	// 1.14.x
+	addGameVersion('1.14.4')
+	addGameVersion('1.14.4-pre7')
+	addGameVersion('1.14.4-pre6')
+	addGameVersion('1.14.4-pre5')
+	addGameVersion('1.14.4-pre4')
+	addGameVersion('1.14.4-pre3')
+	addGameVersion('1.14.4-pre2')
+	addGameVersion('1.14.4-pre1')
+	addGameVersion('1.14.3')
+	addGameVersion('1.14.3-pre4')
+	addGameVersion('1.14.3-pre3')
+	addGameVersion('1.14.3-pre2')
+	addGameVersion('1.14.3-pre1')
+	addGameVersion('1.14.2')
+	addGameVersion('1.14.2-pre4')
+	addGameVersion('1.14.2-pre3')
+	addGameVersion('1.14.2-pre2')
+	addGameVersion('1.14.2-pre1')
+	addGameVersion('1.14.1')
+	addGameVersion('1.14.1-pre2')
+	addGameVersion('1.14.1-pre1')
+	addGameVersion('1.14')
 }

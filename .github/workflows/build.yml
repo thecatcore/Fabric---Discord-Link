@@ -25,3 +25,8 @@ jobs:
         if: "contains(github.event.head_commit.message, '[release]')"
         env:
           CURSEKEY: ${{ secrets.CURSEKEY }}
+      - name: Publish to Modrinth
+        run: ./gradlew publishModrinth
+        if: "contains(github.event.head_commit.message, '[release]')"
+        env:
+          MODRINTHKEY: ${{ secrets.MODRINTHKEY }}
