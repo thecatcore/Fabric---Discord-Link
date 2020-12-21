@@ -9,7 +9,16 @@
     "arthurbambou (aka. Cat Core)"
   ],
   "contributors": [
-    "Thedude7054","yhr0x43","BeeFox-sys","PegasusEpsilon","v-tron","MightyKnight","Ev1dentFir3"
+    "Thedude7054",
+    "yhr0x43",
+    "BeeFox-sys",
+    "PegasusEpsilon",
+    "v-tron",
+    "MightyKnight",
+    "Ev1dentFir3",
+    "kwvanderlinde",
+    "dkolb",
+    "matthias4217"
   ],
   "entrypoints": {
     "server": [
