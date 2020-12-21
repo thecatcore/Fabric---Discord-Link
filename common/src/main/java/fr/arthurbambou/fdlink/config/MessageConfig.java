@@ -22,6 +22,9 @@ public class MessageConfig {
         public String deathMsgPrefix = "";
         public String deathMsgPostfix = "";
         public String atATellRaw = "%message";
+        public ConfigMessage meMessage = new ConfigMessage("* %author %message");
+        public ConfigMessage adminMessage = new ConfigMessage("[%author: %message]");
+        public ConfigMessage sayMessage = new ConfigMessage("[%author] %message");
 
         public static class ConfigMessage {
             public String customMessage;

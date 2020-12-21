@@ -284,6 +284,30 @@ public enum ConfigUpgrader {
         jsonObject.addProperty("version", 4);
 
         return jsonObject;
+    }),
+    V4_TO_V5(jsonObject -> {
+        JsonObject messages = jsonObject.getAsJsonObject("messages");
+        JsonObject minecraftToDiscord = messages.getAsJsonObject("minecraftToDiscord");
+
+        JsonObject configMessageObject = new JsonObject();
+        configMessageObject.addProperty("customMessage", "* %author %message");
+        configMessageObject.addProperty("useCustomMessage", true);
+        minecraftToDiscord.add("meMessage", configMessageObject);
+
+        configMessageObject = new JsonObject();
+        configMessageObject.addProperty("customMessage", "[%author: %message]");
+        configMessageObject.addProperty("useCustomMessage", true);
+        minecraftToDiscord.add("adminMessage", configMessageObject);
+
+        configMessageObject = new JsonObject();
+        configMessageObject.addProperty("customMessage", "[%author] %message");
+        configMessageObject.addProperty("useCustomMessage", true);
+        minecraftToDiscord.add("sayMessage", configMessageObject);
+
+        jsonObject.remove("version");
+        jsonObject.addProperty("version", 5);
+
+        return jsonObject;
     });
 
     private final Upgrader upgrader;
