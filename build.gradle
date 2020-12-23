@@ -9,11 +9,11 @@ plugins {
 }
 
 class MinecraftVersion {
-	def mcVersion
-	def yarnVersion
-	def loaderVersion
-	def apiVersion
-	def origin
+	String mcVersion
+	String yarnVersion
+	String loaderVersion
+	String apiVersion
+	Origin origin
 
 	MinecraftVersion(mcVersion, yarnVersion, loaderVersion, apiVersion, origin = Origin.FABRICMC) {
 		this.mcVersion = mcVersion
@@ -45,7 +45,7 @@ def getSubprojectVersion() {
 	return Globals.baseVersion
 }
 
-static def getVersionInfo(project_name) {
+static MinecraftVersion getVersionInfo(project_name) {
 	def version_info = Globals.versionInfo[0]
 	for (MinecraftVersion minecraftVersion : Globals.versionInfo) {
 		if (minecraftVersion.mcVersion == project_name) version_info = minecraftVersion

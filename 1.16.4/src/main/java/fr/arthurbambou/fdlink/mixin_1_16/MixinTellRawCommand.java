@@ -22,7 +22,7 @@ public class MixinTellRawCommand {
             Text message = TextArgumentType.getTextArgument(commandContext, "message").copy();
             Text author = source.getDisplayName();
 
-            FDLink.getDiscordBot().sendMessage(new CommandMessage1_16(author.getString(), message.getString(), "tellraw"));
+            FDLink.getMessageSender().sendMessage(new CommandMessage1_16(author.getString(), message.getString(), "tellraw"));
         }
     }
 }

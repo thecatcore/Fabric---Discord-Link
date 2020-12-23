@@ -37,8 +37,8 @@ public abstract class FabricConsoleMixinMinecraftDedicatedServer extends Minecra
 
     @Override
     public void sendSystemMessage(Text message, UUID senderUuid) {
-        if (message instanceof TranslatableText) FDLink.getDiscordBot().sendMessage(new Message1_16(((TranslatableText) message).getKey(), message.getString(), ((TranslatableText) message).getArgs()));
-        else FDLink.getDiscordBot().sendMessage(new Message1_16(message.getString()));
+        if (message instanceof TranslatableText) FDLink.getMessageSender().sendMessage(new Message1_16(((TranslatableText) message).getKey(), message.getString(), ((TranslatableText) message).getArgs()));
+        else FDLink.getMessageSender().sendMessage(new Message1_16(message.getString()));
         LOGGER.info(TextToAnsi.INSTANCE.textToAnsi(message));
     }
 }

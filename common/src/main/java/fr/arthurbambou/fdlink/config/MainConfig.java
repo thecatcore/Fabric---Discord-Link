@@ -6,6 +6,7 @@ import java.util.List;
 public class MainConfig {
     public List<String> chatChannels = new ArrayList<String>();
     public List<String> logChannels = new ArrayList<String>();
+    public String webhookURL = "";
     public boolean ignoreBots = true;
     public int activityUpdateInterval = 120;
     public MainConfig.MinecraftToDiscord minecraftToDiscord = new MinecraftToDiscord();

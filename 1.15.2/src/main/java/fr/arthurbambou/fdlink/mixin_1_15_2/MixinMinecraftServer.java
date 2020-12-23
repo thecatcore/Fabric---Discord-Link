@@ -10,8 +10,6 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import java.util.UUID;
-
 @Mixin(MinecraftServer.class)
 public class MixinMinecraftServer {
 
@@ -23,7 +21,7 @@ public class MixinMinecraftServer {
      */
     @Inject(at = @At("HEAD"), method = "sendMessage")
     public void sendMessage(Text text, CallbackInfo ci) {
-        if (text instanceof TranslatableText) FDLink.getDiscordBot().sendMessage(new Message1_15_2(((TranslatableText) text).getKey(), text.getString(), ((TranslatableText) text).getArgs()));
-        else FDLink.getDiscordBot().sendMessage(new Message1_15_2(text.getString()));
+        if (text instanceof TranslatableText) FDLink.getMessageSender().sendMessage(new Message1_15_2(((TranslatableText) text).getKey(), text.getString(), ((TranslatableText) text).getArgs()));
+        else FDLink.getMessageSender().sendMessage(new Message1_15_2(text.getString()));
     }
 }

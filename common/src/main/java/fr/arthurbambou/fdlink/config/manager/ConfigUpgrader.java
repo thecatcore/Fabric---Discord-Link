@@ -308,6 +308,14 @@ public enum ConfigUpgrader {
         jsonObject.addProperty("version", 5);
 
         return jsonObject;
+    }),
+    V5_TO_V6(jsonObject -> {
+        jsonObject.getAsJsonObject("main").addProperty("webhookURL", "");
+
+        jsonObject.remove("version");
+        jsonObject.addProperty("version", 6);
+
+        return jsonObject;
     });
 
     private final Upgrader upgrader;

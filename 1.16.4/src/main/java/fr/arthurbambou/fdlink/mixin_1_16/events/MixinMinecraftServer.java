@@ -21,7 +21,7 @@ public class MixinMinecraftServer {
             method = {"runServer"}
     )
     private void beforeSetupServer(CallbackInfo info) {
-        FDLink.getDiscordBot().serverStarting();
+        FDLink.getMessageSender().serverStarting();
     }
 
     @Inject(
@@ -33,7 +33,7 @@ public class MixinMinecraftServer {
             method = {"runServer"}
     )
     private void afterSetupServer(CallbackInfo info) {
-        FDLink.getDiscordBot().serverStarted();
+        FDLink.getMessageSender().serverStarted();
     }
 
     @Inject(
@@ -41,7 +41,7 @@ public class MixinMinecraftServer {
             method = {"shutdown"}
     )
     private void beforeShutdownServer(CallbackInfo info) {
-        FDLink.getDiscordBot().serverStopping();
+        FDLink.getMessageSender().serverStopping();
     }
 
     @Inject(
@@ -49,7 +49,7 @@ public class MixinMinecraftServer {
             method = {"shutdown"}
     )
     private void afterShutdownServer(CallbackInfo info) {
-        FDLink.getDiscordBot().serverStopped();
+        FDLink.getMessageSender().serverStopped();
     }
 
     @Inject(
@@ -60,6 +60,6 @@ public class MixinMinecraftServer {
             method = {"tick"}
     )
     private void onStartTick(BooleanSupplier shouldKeepTicking, CallbackInfo ci) {
-        FDLink.getDiscordBot().serverTick(new MinecraftServer1_16((MinecraftServer)(Object) this));
+        FDLink.getMessageReceiver().serverTick(new MinecraftServer1_16((MinecraftServer)(Object) this));
     }
 }

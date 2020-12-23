@@ -3,7 +3,6 @@ package fr.arthurbambou.fdlink.mixin_1_16;
 import fr.arthurbambou.fdlink.FDLink;
 import fr.arthurbambou.fdlink.compat_1_16.Message1_16;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.dedicated.MinecraftDedicatedServer;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import org.spongepowered.asm.mixin.Mixin;
@@ -25,7 +24,7 @@ public class MixinMinecraftServer {
      */
     @Inject(at = @At("HEAD"), method = "sendSystemMessage")
     public void sendMessage(Text text, UUID uUID, CallbackInfo ci) {
-        if (text instanceof TranslatableText) FDLink.getDiscordBot().sendMessage(new Message1_16(((TranslatableText) text).getKey(), text.getString(), ((TranslatableText) text).getArgs()));
-        else FDLink.getDiscordBot().sendMessage(new Message1_16(text.getString()));
+        if (text instanceof TranslatableText) FDLink.getMessageSender().sendMessage(new Message1_16(((TranslatableText) text).getKey(), text.getString(), ((TranslatableText) text).getArgs()));
+        else FDLink.getMessageSender().sendMessage(new Message1_16(text.getString()));
     }
 }

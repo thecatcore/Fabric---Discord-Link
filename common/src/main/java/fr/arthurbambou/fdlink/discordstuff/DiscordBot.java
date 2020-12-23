@@ -42,6 +42,8 @@ public class DiscordBot implements MessageSender {
     private boolean firstTick = true;
     private boolean updatedActivity = false;
 
+    protected MinecraftServer server;
+
     public DiscordBot(String token, Config config) {
         this.lastMessageD = "null";
 
@@ -67,10 +69,10 @@ public class DiscordBot implements MessageSender {
             this.hasLogChannels = true;
         }
 
-        if (!this.hasLogChannels && !this.hasChatChannels) {
-            LOGGER.error("[FDLink] Please add either a game chat or a log channel to the config file (or both)!");
-            return;
-        }
+//        if (!this.hasLogChannels && !this.hasChatChannels) {
+//            LOGGER.error("[FDLink] Please add either a game chat or a log channel to the config file (or both)!");
+//            return;
+//        }
 
         config.mainConfig.logChannels.removeIf(id -> config.mainConfig.chatChannels.contains(id));
 
@@ -107,6 +109,7 @@ public class DiscordBot implements MessageSender {
         if (this.api == null) return;
         this.api.removeEventListener(this.messageCreateListener);
         this.stopping = true;
+        if (!this.config.mainConfig.webhookURL.isEmpty()) return;
         if (this.config.mainConfig.minecraftToDiscord.chatChannels.serverStoppingMessage) sendToChatChannels(config.messageConfig.minecraftToDiscord.serverStopping);
         if (this.config.mainConfig.minecraftToDiscord.logChannels.serverStoppingMessage) sendToLogChannels(config.messageConfig.minecraftToDiscord.serverStopping);
     }
@@ -114,7 +117,7 @@ public class DiscordBot implements MessageSender {
     @Override
     public void serverStopped() {
         if (this.api == null) return;
-        if (this.config.mainConfig.minecraftToDiscord.chatChannels.serverStopMessage || this.config.mainConfig.minecraftToDiscord.logChannels.serverStopMessage) {
+        if ((this.config.mainConfig.minecraftToDiscord.chatChannels.serverStopMessage || this.config.mainConfig.minecraftToDiscord.logChannels.serverStopMessage) && this.config.mainConfig.webhookURL.isEmpty()) {
             ArrayList<CompletableFuture<Message>> requests = new ArrayList<>();
             if(this.config.mainConfig.minecraftToDiscord.chatChannels.serverStopMessage && this.hasChatChannels) requests.addAll(sendToChatChannels(config.messageConfig.minecraftToDiscord.serverStopped, requests));
             if(this.config.mainConfig.minecraftToDiscord.logChannels.serverStopMessage && this.hasLogChannels) requests.addAll(sendToLogChannels(config.messageConfig.minecraftToDiscord.serverStopped, requests));
@@ -125,11 +128,12 @@ public class DiscordBot implements MessageSender {
                 }
             }
         }
-        this.api.shutdown();
+        this.api.shutdownNow();
     }
 
     public void serverTick(MinecraftServer server) {
         if (this.api == null) return;
+        this.server = server;
         int playerNumber = server.getPlayerCount();
         int maxPlayer = server.getMaxPlayerCount();
         int totalUptimeSeconds = (int) (System.currentTimeMillis() - this.startTime) / 1000;

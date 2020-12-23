@@ -216,7 +216,7 @@ public final class MinecraftToDiscordHandler {
         this.TEXT_HANDLERS.add(messageHandler);
     }
 
-    private String getArgAsString(Object arg) {
+    public static String getArgAsString(Object arg) {
         if (arg instanceof CompatText) {
             return ((CompatText) arg).getMessage();
         }
@@ -224,7 +224,7 @@ public final class MinecraftToDiscordHandler {
     }
 
     public MessageSender.MinecraftMessage handleTexts(Message text) {
-        if (this.api == null || (!this.discordBot.hasChatChannels && !this.discordBot.hasLogChannels)) return null;
+        if (this.api == null || (!this.discordBot.hasChatChannels && !this.discordBot.hasLogChannels && this.config.mainConfig.webhookURL.isEmpty())) return null;
         Message.MessageObjectType objectType = text.getType();
         String message = text.getMessage();
         if (message.equals(this.discordBot.lastMessageD)) return null;
