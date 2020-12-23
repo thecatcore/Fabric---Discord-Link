@@ -6,10 +6,12 @@ import fr.arthurbambou.fdlink.versionhelpers.minecraft.MinecraftServer;
 import fr.arthurbambou.fdlink.versionhelpers.minecraft.PlayerEntity;
 import fr.arthurbambou.fdlink.versionhelpers.minecraft.style.TextColor;
 import net.minecraft.network.MessageType;
+import net.minecraft.server.ServerMetadata;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.*;
 import net.minecraft.util.Formatting;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -78,5 +80,10 @@ public class MinecraftServer1_15_2 implements MinecraftServer {
     @Override
     public String getIp() {
         return this.minecraftServer.getServerIp();
+    }
+
+    @Override
+    public File getIcon() {
+        return this.minecraftServer.getFile("server-icon.png");
     }
 }

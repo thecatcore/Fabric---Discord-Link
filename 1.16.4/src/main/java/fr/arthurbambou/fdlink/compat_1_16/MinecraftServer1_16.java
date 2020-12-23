@@ -6,11 +6,13 @@ import fr.arthurbambou.fdlink.versionhelpers.minecraft.MinecraftServer;
 import fr.arthurbambou.fdlink.versionhelpers.minecraft.PlayerEntity;
 import net.minecraft.network.MessageType;
 import net.minecraft.network.packet.s2c.play.GameMessageS2CPacket;
+import net.minecraft.server.ServerMetadata;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.*;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -77,6 +79,11 @@ public class MinecraftServer1_16 implements MinecraftServer {
             vanillaStyle = vanillaStyle.withColor(TextColor.fromRgb(compatStyle.getColor().getRgb()));
         }
         this.minecraftServer.getPlayerManager().sendToAll(new GameMessageS2CPacket(text, getMessageType(messagePacket.getMessageType()), messagePacket.getUUID()));
+    }
+
+    @Override
+    public File getIcon() {
+        return this.minecraftServer.getFile("server-icon.png");
     }
 
     private MessageType getMessageType(MessagePacket.MessageType messageType) {

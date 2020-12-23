@@ -29,7 +29,7 @@ public class FDLink1_16 implements DedicatedServerModInitializer {
                     FabricGuiEntry.displayCriticalError(e, true);
                 }
             }
-            ServerTickEvents.START_SERVER_TICK.register((server -> FDLink.getDiscordBot().serverTick(new MinecraftServer1_16(server))));
+            ServerTickEvents.START_SERVER_TICK.register((server -> FDLink.getMessageReceiver().serverTick(new MinecraftServer1_16(server))));
         }
         if (CrossVersionHandler.compareToMinecraftVersion("1.16-alpha.20.21.a").isMoreRecentOrEqual() && !CrossVersionHandler.isVersion("1.16-20.w.14")) {
             CrossVersionHandler.registerMessageSender((server, message, style) -> {
@@ -51,10 +51,12 @@ public class FDLink1_16 implements DedicatedServerModInitializer {
                         FabricGuiEntry.displayCriticalError(e, true);
                     }
                 }
-                ServerLifecycleEvents.SERVER_STARTING.register(minecraftServer -> FDLink.getDiscordBot().serverStarting());
-                ServerLifecycleEvents.SERVER_STARTED.register((server -> FDLink.getDiscordBot().serverStarted()));
-                ServerLifecycleEvents.SERVER_STOPPING.register(minecraftServer -> FDLink.getDiscordBot().serverStopping());
-                ServerLifecycleEvents.SERVER_STOPPED.register((server -> FDLink.getDiscordBot().serverStopped()));
+                ServerLifecycleEvents.SERVER_STARTING.register(minecraftServer -> {
+                    FDLink.getMessageSender().serverStarting();
+                });
+                ServerLifecycleEvents.SERVER_STARTED.register((server -> FDLink.getMessageSender().serverStarted()));
+                ServerLifecycleEvents.SERVER_STOPPING.register(minecraftServer -> FDLink.getMessageSender().serverStopping());
+                ServerLifecycleEvents.SERVER_STOPPED.register((server -> FDLink.getMessageSender().serverStopped()));
             }
         }
     }

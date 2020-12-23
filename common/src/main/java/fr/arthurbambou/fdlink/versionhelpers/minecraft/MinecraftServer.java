@@ -1,5 +1,6 @@
 package fr.arthurbambou.fdlink.versionhelpers.minecraft;
 
+import java.io.File;
 import java.util.List;
 
 public interface MinecraftServer {
@@ -15,4 +16,6 @@ public interface MinecraftServer {
     void sendMessageToAll(MessagePacket messagePacket);
 
     String getIp();
+
+    File getIcon();
 }

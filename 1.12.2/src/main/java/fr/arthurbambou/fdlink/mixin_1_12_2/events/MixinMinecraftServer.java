@@ -8,8 +8,6 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import java.util.function.BooleanSupplier;
-
 @Mixin({MinecraftServer.class})
 public class MixinMinecraftServer {
 
@@ -21,7 +19,7 @@ public class MixinMinecraftServer {
             method = {"run"}
     )
     private void beforeSetupServer(CallbackInfo info) {
-        FDLink.getDiscordBot().serverStarting();
+        FDLink.getMessageSender().serverStarting();
     }
 
     @Inject(
@@ -33,7 +31,7 @@ public class MixinMinecraftServer {
             method = {"run"}
     )
     private void afterSetupServer(CallbackInfo info) {
-        FDLink.getDiscordBot().serverStarted();
+        FDLink.getMessageSender().serverStarted();
     }
 
     @Inject(
@@ -41,7 +39,7 @@ public class MixinMinecraftServer {
             method = {"shutdown"}
     )
     private void beforeShutdownServer(CallbackInfo info) {
-        FDLink.getDiscordBot().serverStopping();
+        FDLink.getMessageSender().serverStopping();
     }
 
     @Inject(
@@ -49,7 +47,7 @@ public class MixinMinecraftServer {
             method = {"shutdown"}
     )
     private void afterShutdownServer(CallbackInfo info) {
-        FDLink.getDiscordBot().serverStopped();
+        FDLink.getMessageSender().serverStopped();
     }
 
     @Inject(
@@ -60,6 +58,6 @@ public class MixinMinecraftServer {
             method = {"method_33182"}
     )
     private void onStartTick(CallbackInfo ci) {
-        FDLink.getDiscordBot().serverTick(new MinecraftServer1_12_2((MinecraftServer)(Object) this));
+        FDLink.getMessageReceiver().serverTick(new MinecraftServer1_12_2((MinecraftServer)(Object) this));
     }
 }

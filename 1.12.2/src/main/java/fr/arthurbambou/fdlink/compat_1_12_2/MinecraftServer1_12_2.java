@@ -9,6 +9,7 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.*;
 import net.minecraft.util.Formatting;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -77,5 +78,10 @@ public class MinecraftServer1_12_2 implements MinecraftServer {
     @Override
     public String getIp() {
         return this.minecraftServer.getServerIp();
+    }
+
+    @Override
+    public File getIcon() {
+        return this.minecraftServer.getLevelStorage().method_28330(this.minecraftServer.getLevelName(), "icon.png");
     }
 }

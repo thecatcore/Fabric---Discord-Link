@@ -15,9 +15,9 @@ public class MessageReceivedListener extends ListenerAdapter {
 
     @Override
     public void onMessageReceived(@NotNull MessageReceivedEvent event) {
+        if (event.isWebhookMessage()) return;
         if (event.getAuthor().isBot() && this.discordBot.config.mainConfig.ignoreBots) return;
         if (!this.discordBot.hasChatChannels) return;
-//        if (event.getAuthor().isYourself()) return;
         if (!this.discordBot.config.mainConfig.chatChannels.contains(event.getChannel().getId())) return;
         if (event.getMessage().getType() != MessageType.DEFAULT) return;
         if (!this.discordBot.lastMessageMs.isEmpty()) {
@@ -26,6 +26,7 @@ public class MessageReceivedListener extends ListenerAdapter {
                 return;
             }
         }
+
         this.discordBot.messageCreateEvent = event;
         this.discordBot.hasReceivedMessage = true;
         super.onMessageReceived(event);

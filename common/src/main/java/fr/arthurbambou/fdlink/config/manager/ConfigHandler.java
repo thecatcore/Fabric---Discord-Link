@@ -18,7 +18,7 @@ public class ConfigHandler {
 
     private static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
-    private static final int CONFIG_VERSION = 5;
+    private static final int CONFIG_VERSION = 6;
 
     private static File OLD_CONFIG_FILE;
 
@@ -138,6 +138,8 @@ public class ConfigHandler {
         if (mainObject.has("ignoreBots")) config.mainConfig.ignoreBots = mainObject.get("ignoreBots").getAsBoolean();
 
         if (mainObject.has("activityUpdateInterval")) config.mainConfig.activityUpdateInterval = mainObject.get("activityUpdateInterval").getAsInt();
+
+        config.mainConfig.webhookURL = mainObject.get("webhookURL").getAsString();
 
         List<String> chatChannels = new ArrayList<>();
         for (JsonElement jsonElement : readList(

@@ -22,7 +22,7 @@ public class FDLink1_15_2 implements DedicatedServerModInitializer {
                     FabricGuiEntry.displayCriticalError(e, true);
                 }
             }
-            ServerTickEvents.START_SERVER_TICK.register((server -> FDLink.getDiscordBot().serverTick(new MinecraftServer1_15_2(server))));
+            ServerTickEvents.START_SERVER_TICK.register((server -> FDLink.getMessageReceiver().serverTick(new MinecraftServer1_15_2(server))));
         }
         if ((CrossVersionHandler.compareToMinecraftVersion("1.16-alpha.20.21.a").isOlder()
                 && CrossVersionHandler.compareToMinecraftVersion("1.14").isMoreRecentOrEqual()) || CrossVersionHandler.isVersion("1.16-20.w.14")) {
