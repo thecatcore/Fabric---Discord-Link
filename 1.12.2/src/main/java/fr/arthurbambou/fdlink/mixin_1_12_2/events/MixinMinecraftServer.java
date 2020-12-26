@@ -43,7 +43,7 @@ public class MixinMinecraftServer {
     }
 
     @Inject(
-            at = {@At("TAIL")},
+            at = {@At("RETURN")},
             method = {"shutdown"}
     )
     private void afterShutdownServer(CallbackInfo info) {

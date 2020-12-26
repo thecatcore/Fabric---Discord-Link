@@ -1,8 +1,6 @@
 package fr.arthurbambou.fdlink.versionhelpers.minecraft.style;
 
 import com.google.common.collect.Lists;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -115,7 +113,6 @@ public enum Formatting {
     }
 
     @Nullable
-    @Environment(EnvType.CLIENT)
     public static Formatting byCode(char code) {
         char c1 = Character.toString(code).toLowerCase(Locale.ROOT).charAt(0);
 

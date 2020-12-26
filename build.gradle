@@ -68,12 +68,16 @@ allprojects {
 	dependencies {
 		minecraft "com.mojang:minecraft:${versionInfo.mcVersion}"
 		mappings "net.fabricmc:yarn:${versionInfo.mcVersion}+build.${versionInfo.yarnVersion}:v2"
-		if (versionInfo.origin == Origin.FABRICMC) {
-			modImplementation "net.fabricmc.fabric-api:fabric-api:${versionInfo.apiVersion}"
-			modCompile "net.fabricmc:fabric-loader:${versionInfo.loaderVersion}"
+		if (projectName != "common") {
+			if (versionInfo.origin == Origin.FABRICMC) {
+				modImplementation "net.fabricmc.fabric-api:fabric-api:${versionInfo.apiVersion}"
+				modCompile "net.fabricmc:fabric-loader:${versionInfo.loaderVersion}"
+			} else {
+				implementation "com.google.guava:guava:23.5-jre"
+				if (versionInfo.mcVersion == "1.12.2") modCompile "com.github.shedaniel:fabric-loader:${versionInfo.loaderVersion}"
+			}
 		} else {
-			implementation "com.google.guava:guava:23.5-jre"
-			if (versionInfo.mcVersion == "1.12.2") modCompile "com.github.shedaniel:fabric-loader:${versionInfo.loaderVersion}"
+			modCompile "net.fabricmc:fabric-loader:${versionInfo.loaderVersion}"
 		}
 	}
 

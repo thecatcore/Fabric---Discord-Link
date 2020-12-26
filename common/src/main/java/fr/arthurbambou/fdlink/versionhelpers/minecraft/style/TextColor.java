@@ -1,8 +1,6 @@
 package fr.arthurbambou.fdlink.versionhelpers.minecraft.style;
 
 import com.google.common.collect.ImmutableMap;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 
 import javax.annotation.Nullable;
 import java.util.Map;
@@ -33,7 +31,6 @@ public class TextColor {
      * <p>The red bits can be obtained by {@code (rgb >> 16) & 0xFF}, green bits
      * by {@code (rgb >> 8) & 0xFF}, blue bits by {@code rgb & 0xFF}.</p>
      */
-    @Environment(EnvType.CLIENT)
     public int getRgb() {
         return this.rgb;
     }

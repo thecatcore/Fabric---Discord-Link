@@ -2,10 +2,14 @@ package fr.arthurbambou.fdlink.discordstuff;
 
 import club.minnced.discord.webhook.WebhookClient;
 import club.minnced.discord.webhook.WebhookClientBuilder;
+import club.minnced.discord.webhook.receive.ReadonlyMessage;
 import club.minnced.discord.webhook.send.AllowedMentions;
 import club.minnced.discord.webhook.send.WebhookMessageBuilder;
 import fr.arthurbambou.fdlink.config.Config;
 import fr.arthurbambou.fdlink.versionhelpers.minecraft.Message;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.concurrent.CompletableFuture;
 
 public class DiscordWebhook implements MessageSender {
 
@@ -21,7 +25,7 @@ public class DiscordWebhook implements MessageSender {
         this.messageReader = messageReader;
     }
 
-    public void sendMessage(String author, String message) {
+    public @NotNull CompletableFuture<ReadonlyMessage> sendMessage(String author, String message) {
         WebhookMessageBuilder builder = new WebhookMessageBuilder();
         if (author != null) builder.setUsername(author);
         else builder.setUsername("Server");
@@ -30,7 +34,7 @@ public class DiscordWebhook implements MessageSender {
 
         builder.setContent(message);
 
-        this.webhookClient.send(builder.build());
+        return this.webhookClient.send(builder.build());
     }
 
     @Override
@@ -51,8 +55,14 @@ public class DiscordWebhook implements MessageSender {
 
     @Override
     public void serverStopped() {
-        if (this.config.mainConfig.minecraftToDiscord.chatChannels.serverStopMessage) this.sendMessage(null, this.config.messageConfig.minecraftToDiscord.serverStopped);
-        this.webhookClient.close();
+        if (this.config.mainConfig.minecraftToDiscord.chatChannels.serverStopMessage) this.sendMessage(null, this.config.messageConfig.minecraftToDiscord.serverStopped)
+                .thenRun(new Runnable() {
+                    @Override
+                    public void run() {
+                        DiscordWebhook.this.webhookClient.close();
+                    }
+                });
+        else this.webhookClient.close();
         if (this.messageReader != null) this.messageReader.serverStopped();
     }
 
