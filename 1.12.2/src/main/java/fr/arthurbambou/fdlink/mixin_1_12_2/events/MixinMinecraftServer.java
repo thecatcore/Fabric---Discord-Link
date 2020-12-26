@@ -53,7 +53,7 @@ public class MixinMinecraftServer {
     @Inject(
             at = {@At(
                     value = "INVOKE",
-                    target = "Lnet/minecraft/server/MinecraftServer;method_33183()V"
+                    target = "Lnet/minecraft/server/MinecraftServer;tick()V"
             )},
             method = {"method_33182"}
     )

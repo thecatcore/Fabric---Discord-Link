@@ -35,7 +35,7 @@ class Globals {
 	static def versionInfo = [
 			new MinecraftVersion("1.16.4", "7", "0.10.8", "0.28.3+1.16"),
 			new MinecraftVersion("1.15.2", "17", "0.10.8", "0.23.1+1.15"),
-			new MinecraftVersion("1.12.2", "202012170747", "patch-1-SNAPSHOT", "", Origin.LEGACY_FABRIC)
+			new MinecraftVersion("1.12.2", "202012241947", "patch-1-SNAPSHOT", "", Origin.LEGACY_FABRIC)
 	]
 }
 
