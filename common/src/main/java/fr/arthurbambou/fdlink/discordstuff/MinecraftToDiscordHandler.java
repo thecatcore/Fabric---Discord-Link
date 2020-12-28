@@ -205,11 +205,7 @@ public final class MinecraftToDiscordHandler {
 
     public static String adaptUsernameToDiscord(String string) {
         return string.replaceAll("§[b0931825467adcfeklmnor]", "")
-                .replaceAll("_", "\\_")
-                .replaceAll("`", "\\`")
-//                .replaceAll(Character.toString('\\'), "\\\\")
-//                .replaceAll(Character.toString('*'),"\\*")
-                .replaceAll("~", "\\~");
+                .replaceAll("([_`~*>])", "\\\\$1");
     }
 
     public void registerTextHandler(MessageHandler messageHandler) {
