@@ -339,6 +339,14 @@ public class DiscordBot implements MessageSender {
                             this.sendToLogChannels(stringMessage);
                         }
                         break;
+                    case ACHIEVEMENT:
+                        if (this.config.mainConfig.minecraftToDiscord.chatChannels.achievementMessages) {
+                            this.sendToChatChannels(stringMessage);
+                        }
+                        if (this.config.mainConfig.minecraftToDiscord.logChannels.achievementMessages) {
+                            this.sendToLogChannels(stringMessage);
+                        }
+                        break;
                     case STRING_OLD:
                         if (this.config.mainConfig.minecraftToDiscord.chatChannels.playerMessages) {
                             this.sendToChatChannels(stringMessage);

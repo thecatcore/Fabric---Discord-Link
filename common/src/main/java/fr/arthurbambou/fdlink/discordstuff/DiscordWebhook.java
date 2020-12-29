@@ -132,6 +132,11 @@ public class DiscordWebhook implements MessageSender {
                             this.sendMessage(MinecraftToDiscordHandler.getArgAsString(message.getArgs()[0]), stringMessage);
                         }
                         break;
+                    case ACHIEVEMENT:
+                        if (this.config.mainConfig.minecraftToDiscord.chatChannels.achievementMessages) {
+                            this.sendMessage(null, stringMessage);
+                        }
+                        break;
                     case STRING_OLD:
                         if (this.config.mainConfig.minecraftToDiscord.chatChannels.playerMessages) {
                             this.sendMessage(null, stringMessage);

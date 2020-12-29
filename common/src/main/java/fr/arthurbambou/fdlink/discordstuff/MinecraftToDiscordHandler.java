@@ -196,6 +196,17 @@ public final class MinecraftToDiscordHandler {
             return new MessageSender.MinecraftMessage(stringMessage, MessageSender.MinecraftMessage.Type.TELLRAW);
         }));
 
+        // Old versions achievement
+        registerTextHandler(new TextHandler("chat.type.achievement", text -> {
+            String message = text.getMessage().replaceAll("§[b0931825467adcfeklmnor]", "");
+            if (this.config.messageConfig.minecraftToDiscord.achievement.useCustomMessage) {
+                message = this.config.messageConfig.minecraftToDiscord.achievement.customMessage
+                        .replace("%player", adaptUsernameToDiscord(getArgAsString(text.getArgs()[0])))
+                        .replace("%achievement", getArgAsString(text.getArgs()[1]));
+            }
+            return new MessageSender.MinecraftMessage(message, MessageSender.MinecraftMessage.Type.ACHIEVEMENT);
+        }));
+
         // Old versions
         registerTextHandler(new StringHandler(message -> {
             String text = message.getMessage().replaceAll("§[b0931825467adcfeklmnor]","");

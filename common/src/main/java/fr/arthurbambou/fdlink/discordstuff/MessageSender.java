@@ -73,6 +73,7 @@ public interface MessageSender {
             LEAVE,
             DEATH,
             TELLRAW,
+            ACHIEVEMENT,
             STRING_OLD,
             CUSTOM
         }

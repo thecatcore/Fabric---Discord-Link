@@ -316,6 +316,23 @@ public enum ConfigUpgrader {
         jsonObject.addProperty("version", 6);
 
         return jsonObject;
+    }),
+    V6_TO_V7(jsonObject -> {
+        JsonObject messageConfig = new JsonObject();
+        messageConfig.addProperty("customMessage", "%player has just earned the achievement %achievement");
+        messageConfig.addProperty("useCustomMessage", true);
+
+        jsonObject.getAsJsonObject("messages").getAsJsonObject("minecraftToDiscord").add("achievement", messageConfig);
+
+        jsonObject.getAsJsonObject("main").getAsJsonObject("minecraftToDiscord")
+                .getAsJsonObject("chatChannels").addProperty("achievementMessages", true);
+        jsonObject.getAsJsonObject("main").getAsJsonObject("minecraftToDiscord")
+                .getAsJsonObject("logChannels").addProperty("achievementMessages", true);
+
+        jsonObject.remove("version");
+        jsonObject.addProperty("version", 7);
+
+        return jsonObject;
     });
 
     private final Upgrader upgrader;

@@ -25,6 +25,7 @@ public class MessageConfig {
         public ConfigMessage meMessage = new ConfigMessage("* %author %message");
         public ConfigMessage adminMessage = new ConfigMessage("[%author: %message]");
         public ConfigMessage sayMessage = new ConfigMessage("[%author] %message");
+        public ConfigMessage achievement = new ConfigMessage("%player has just earned the achievement %achievement");
 
         public static class ConfigMessage {
             public String customMessage;

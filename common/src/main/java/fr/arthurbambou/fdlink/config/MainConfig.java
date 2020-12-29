@@ -58,6 +58,7 @@ public class MainConfig {
         public boolean sendSayCommand = true;
         public boolean adminMessages = false;
         public boolean atATellRaw = false;
+        public boolean achievementMessages = true;
     }
 
     public static class MinecraftToDiscordLogChannel {
@@ -78,6 +79,7 @@ public class MainConfig {
         public boolean sendSayCommand = true;
         public boolean adminMessages = true;
         public boolean atATellRaw = false;
+        public boolean achievementMessages = true;
     }
 
     public static class DiscordToMinecraft {

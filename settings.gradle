@@ -18,6 +18,10 @@ rootProject.name = "Fabric-Discord-Link"
 
 include 'common'
 
+// FabricMC
 include '1.16.4'
 include '1.15.2'
+
+// Legacy Fabric
 include '1.12.2'
+include '1.8.9'
