@@ -42,8 +42,8 @@ enum Origin {
 }
 
 class Globals {
-	static def baseVersion = "0.8.1"
-	static def changelog = "Allow to use a webhook instead of a bot by simply putting the webhook url in the config\nNote: The mod still require a bot token to work correctly\nWhen using a webhook, channel ids are mandatory."
+	static def baseVersion = "0.8.2"
+	static def changelog = "Fix minecraft messages being sent back when ignoreBots is set to false.\nAdd support for Legacy Fabric 1.8.9."
 	static def versionInfo = [
 			new MinecraftVersion("1.16.4", "7", "0.10.8", "0.28.3+1.16"),
 			new MinecraftVersion("1.15.2", "17", "0.10.8", "0.23.1+1.15"),
@@ -277,6 +277,7 @@ curseforge {
 
 		// Fabric Legacy
 		gameVersionStrings.add("1.12.2")
+		gameVersionStrings.add("1.8.9")
 	}
 	options {
 		forgeGradleIntegration = false
@@ -405,4 +406,5 @@ task publishModrinth (type: TaskModrinthUpload) {
 
 	// Fabric Legacy
 	addGameVersion("1.12.2")
+	addGameVersion("1.8.9")
 }
