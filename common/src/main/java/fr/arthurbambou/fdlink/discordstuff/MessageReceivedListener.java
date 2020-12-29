@@ -16,13 +16,14 @@ public class MessageReceivedListener extends ListenerAdapter {
     @Override
     public void onMessageReceived(@NotNull MessageReceivedEvent event) {
         if (event.isWebhookMessage()) return;
-        if (event.getAuthor().isBot() && this.discordBot.config.mainConfig.ignoreBots) return;
+        if ((event.getAuthor().isBot() && this.discordBot.config.mainConfig.ignoreBots)
+                || this.discordBot.api.getSelfUser().getId().equals(event.getAuthor().getId())) return;
         if (!this.discordBot.hasChatChannels) return;
         if (!this.discordBot.config.mainConfig.chatChannels.contains(event.getChannel().getId())) return;
         if (event.getMessage().getType() != MessageType.DEFAULT) return;
-        if (!this.discordBot.lastMessageMs.isEmpty()) {
-            if (event.getMessage().getContentRaw().equals(this.discordBot.lastMessageMs.get(0))) {
-                this.discordBot.lastMessageMs.remove(0);
+        if (!DiscordBot.lastMessageMs.isEmpty()) {
+            if (event.getMessage().getContentRaw().equals(DiscordBot.lastMessageMs.get(0))) {
+                DiscordBot.lastMessageMs.remove(0);
                 return;
             }
         }
