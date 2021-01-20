@@ -265,6 +265,14 @@ public class DiscordBot implements MessageSender {
                             this.sendToLogChannels(stringMessages[1]);
                         }
                         break;
+                    case TEAM_CHAT:
+                        if (this.config.mainConfig.minecraftToDiscord.chatChannels.teamPlayerMessages){
+                            this.sendToChatChannels(stringMessages[0]);
+                        }
+                        if(this.config.mainConfig.minecraftToDiscord.logChannels.teamPlayerMessages){
+                            this.sendToLogChannels(stringMessages[1]);
+                        }
+                        break;
                     case ME:
                         if (this.config.mainConfig.minecraftToDiscord.chatChannels.sendMeCommand) {
                             this.sendToChatChannels(stringMessage);

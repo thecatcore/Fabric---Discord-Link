@@ -85,6 +85,11 @@ public class DiscordWebhook implements MessageSender {
                             this.sendMessage(MinecraftToDiscordHandler.getArgAsString(message.getArgs()[0]), stringMessages[0]);
                         }
                         break;
+                    case TEAM_CHAT:
+                        if (this.config.mainConfig.minecraftToDiscord.chatChannels.teamPlayerMessages){
+                            this.sendMessage(MinecraftToDiscordHandler.getArgAsString(message.getArgs()[1]), stringMessages[0]);
+                        }
+                        break;
                     case ME:
                         if (this.config.mainConfig.minecraftToDiscord.chatChannels.sendMeCommand) {
                             this.sendMessage(MinecraftToDiscordHandler.getArgAsString(message.getArgs()[0]), stringMessage);

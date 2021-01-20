@@ -8,6 +8,7 @@ public class MessageConfig {
 
     public static class MinecraftToDiscord {
         public ConfigMessage playerMessage = new ConfigMessage("<%player> %message");
+        public ConfigMessage teamPlayerMessage = new ConfigMessage("%team <%player> %message");
         public String serverStarting = "Server is starting!";
         public String serverStarted = "Server Started.";
         public String serverStopping = "Server is stopping!";

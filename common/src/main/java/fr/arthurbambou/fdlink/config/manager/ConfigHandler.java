@@ -18,7 +18,7 @@ public class ConfigHandler {
 
     private static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
-    private static final int CONFIG_VERSION = 7;
+    private static final int CONFIG_VERSION = 8;
 
     private static File OLD_CONFIG_FILE;
 

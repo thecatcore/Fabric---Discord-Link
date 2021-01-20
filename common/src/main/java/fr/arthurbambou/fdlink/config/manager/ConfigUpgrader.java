@@ -375,6 +375,23 @@ public enum ConfigUpgrader {
         jsonObject.addProperty("version", 7);
 
         return jsonObject;
+    }),
+    V7_TO_V8(jsonObject -> {
+        JsonObject messageConfig = new JsonObject();
+        messageConfig.addProperty("customMessage", "%team <%player> %message");
+        messageConfig.addProperty("useCustomMessage", true);
+
+        jsonObject.getAsJsonObject("messages").getAsJsonObject("minecraftToDiscord").add("teamPlayerMessage", messageConfig);
+
+        jsonObject.getAsJsonObject("main").getAsJsonObject("minecraftToDiscord")
+                .getAsJsonObject("chatChannels").addProperty("teamPlayerMessages", true);
+        jsonObject.getAsJsonObject("main").getAsJsonObject("minecraftToDiscord")
+                .getAsJsonObject("logChannels").addProperty("teamPlayerMessages", false);
+
+        jsonObject.remove("version");
+        jsonObject.addProperty("version", 8);
+
+        return jsonObject;
     });
 
     private final Upgrader upgrader;

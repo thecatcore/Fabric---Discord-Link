@@ -49,6 +49,7 @@ public class MainConfig {
         public boolean minecraftToDiscordTag = false;
         public boolean minecraftToDiscordDiscriminator = false;
         public boolean playerMessages = true;
+        public boolean teamPlayerMessages = true;
         public boolean joinAndLeaveMessages = true;
         public boolean advancementMessages = true;
         public boolean challengeMessages = true;
@@ -70,6 +71,7 @@ public class MainConfig {
         public boolean minecraftToDiscordTag = false;
         public boolean minecraftToDiscordDiscriminator = false;
         public boolean playerMessages = false;
+        public boolean teamPlayerMessages = false;
         public boolean joinAndLeaveMessages = true;
         public boolean advancementMessages = false;
         public boolean challengeMessages = false;

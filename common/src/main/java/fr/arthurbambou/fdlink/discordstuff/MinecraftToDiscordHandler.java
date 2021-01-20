@@ -82,6 +82,65 @@ public final class MinecraftToDiscordHandler {
             }
         }));
 
+        registerTextHandler(new TextHandler("chat.type.team.text", text -> {
+            String teamName = adaptUsernameToDiscord(getArgAsString(text.getArgs()[0]).replaceAll("§[b0931825467adcfeklmnor]", ""));
+            String playerName = adaptUsernameToDiscord(getArgAsString(text.getArgs()[1]).replaceAll("§[b0931825467adcfeklmnor]", ""));
+            String message = getArgAsString(text.getArgs()[2]).replaceAll("§[b0931825467adcfeklmnor]", "");
+            String chatMessage = text.getMessage().replaceAll("§[b0931825467adcfeklmnor]", "");
+            String logMessage = text.getMessage().replaceAll("§[b0931825467adcfeklmnor]", "");
+            String chatCompleteMessage;
+            String logCompleteMessage;
+            if (this.config.mainConfig.minecraftToDiscord.chatChannels.allowDiscordCommands && message.startsWith(this.config.mainConfig.minecraftToDiscord.chatChannels.commandPrefix)){
+                return new MessageSender.MinecraftMessage(message, MessageSender.MinecraftMessage.Type.CHAT_COMMAND);
+            } else {
+                for (MainConfig.EmojiEntry emojiEntry : this.config.mainConfig.emojiMap) {
+                    message = message.replaceAll(emojiEntry.name, "<" + emojiEntry.id + ">");
+                }
+                if(!this.config.mainConfig.minecraftToDiscord.chatChannels.minecraftToDiscordTag){
+                    chatMessage = message;
+                }
+                if(!this.config.mainConfig.minecraftToDiscord.logChannels.minecraftToDiscordTag){
+                    logMessage = message;
+                }
+                if (this.config.mainConfig.minecraftToDiscord.chatChannels.minecraftToDiscordTag ||  this.config.mainConfig.minecraftToDiscord.logChannels.minecraftToDiscordTag) {
+                    for (User user : this.api.getUserCache()) {
+                        TextChannel serverChannel = (TextChannel) this.api.getTextChannels().toArray()[0];
+                        Guild server = serverChannel.getGuild();
+                        message = message
+                                .replaceAll("@" + user.getName(), "<@!" + user.getId() + ">")
+                                .replaceAll("@" + user.getName(), "<@!" + user.getId() + ">")
+                                .replaceAll("@" + user.getName().toLowerCase(), "<@!" + user.getId() + ">")
+                                .replaceAll("@" + user.getName().toLowerCase(), "<@!" + user.getId() + ">");
+//                        if (user.getNickname(server).isPresent()) {
+//                            message = message
+//                                    .replaceAll("@" + user.getNickname(server).get(), user.getAsTag())
+//                                    .replaceAll("@" + user.getNickname(server).get().toLowerCase(), user.getAsTag());
+//                        }
+                    }
+                    if(this.config.mainConfig.minecraftToDiscord.chatChannels.minecraftToDiscordTag){
+                        chatMessage = message;
+                    }
+                    if(this.config.mainConfig.minecraftToDiscord.logChannels.minecraftToDiscordTag){
+                        logMessage = message;
+                    }
+                }
+                if (this.config.messageConfig.minecraftToDiscord.teamPlayerMessage.useCustomMessage) {
+                    chatCompleteMessage = this.config.messageConfig.minecraftToDiscord.teamPlayerMessage.customMessage
+                            .replace("%player", playerName)
+                            .replace("%team", teamName)
+                            .replace("%message", chatMessage);
+                    logCompleteMessage = this.config.messageConfig.minecraftToDiscord.teamPlayerMessage.customMessage
+                            .replace("%player", playerName)
+                            .replace("%team", teamName)
+                            .replace("%message", logMessage);
+                } else {
+                    chatCompleteMessage = teamName + " <" + playerName + "> " + chatMessage;
+                    logCompleteMessage = teamName + " <" + playerName + "> " + logMessage;
+                }
+                return new MessageSender.MinecraftMessage(chatCompleteMessage, logCompleteMessage, MessageSender.MinecraftMessage.Type.TEAM_CHAT);
+            }
+        }));
+
         // /me command
         registerTextHandler(new TextHandler("chat.type.emote", text -> {
             String message = text.getMessage().replaceAll("§[b0931825467adcfeklmnor]", "");

@@ -31,8 +31,15 @@ public interface MessageSender {
             this.type = Type.CUSTOM;
             this.messageSender = messageSender;
         }
+
         public MinecraftMessage(String message1, String message2, Type type) {
             this.message = new String[]{message1, message2};
+            this.type = type;
+            this.messageSender = null;
+        }
+
+        public MinecraftMessage(String message1, String message2, String message3, Type type) {
+            this.message = new String[]{message1, message2, message3};
             this.type = type;
             this.messageSender = null;
         }
@@ -61,6 +68,7 @@ public interface MessageSender {
 
         enum Type {
             CHAT,
+            TEAM_CHAT,
             CHAT_COMMAND,
             ME,
             SAY,
