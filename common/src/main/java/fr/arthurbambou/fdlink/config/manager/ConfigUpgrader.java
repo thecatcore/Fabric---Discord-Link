@@ -43,42 +43,84 @@ public enum ConfigUpgrader {
         String fieldName = "playerMessage";
         String fieldValue = "<%player> %message";
         if (!message.has(fieldName)) message.add(fieldName, new JsonObject());
+        else if (message.get(fieldName).isJsonPrimitive()) {
+            String msg = message.get(fieldName).getAsString();
+            message.remove(fieldName);
+            message.add(fieldName, new JsonObject());
+            message.getAsJsonObject(fieldName).addProperty("cutomMessage", msg);
+        }
         if (!message.getAsJsonObject(fieldName).has("customMessage")) message.getAsJsonObject(fieldName).addProperty("customMessage", fieldValue);
         if (!message.getAsJsonObject(fieldName).has("useCustomMessage")) message.getAsJsonObject(fieldName).addProperty("useCustomMessage", true);
 
         fieldName = "playerJoined";
         fieldValue = "%player joined the game";
         if (!message.has(fieldName)) message.add(fieldName, new JsonObject());
+        else if (message.get(fieldName).isJsonPrimitive()) {
+            String msg = message.get(fieldName).getAsString();
+            message.remove(fieldName);
+            message.add(fieldName, new JsonObject());
+            message.getAsJsonObject(fieldName).addProperty("cutomMessage", msg);
+        }
         if (!message.getAsJsonObject(fieldName).has("customMessage")) message.getAsJsonObject(fieldName).addProperty("customMessage", fieldValue);
         if (!message.getAsJsonObject(fieldName).has("useCustomMessage")) message.getAsJsonObject(fieldName).addProperty("useCustomMessage", true);
 
         fieldName = "playerJoinedRenamed";
         fieldValue = "%new (formerly known as %old) joined the game";
         if (!message.has(fieldName)) message.add(fieldName, new JsonObject());
+        else if (message.get(fieldName).isJsonPrimitive()) {
+            String msg = message.get(fieldName).getAsString();
+            message.remove(fieldName);
+            message.add(fieldName, new JsonObject());
+            message.getAsJsonObject(fieldName).addProperty("cutomMessage", msg);
+        }
         if (!message.getAsJsonObject(fieldName).has("customMessage")) message.getAsJsonObject(fieldName).addProperty("customMessage", fieldValue);
         if (!message.getAsJsonObject(fieldName).has("useCustomMessage")) message.getAsJsonObject(fieldName).addProperty("useCustomMessage", true);
 
         fieldName = "playerLeft";
         fieldValue = "%player left the game";
         if (!message.has(fieldName)) message.add(fieldName, new JsonObject());
+        else if (message.get(fieldName).isJsonPrimitive()) {
+            String msg = message.get(fieldName).getAsString();
+            message.remove(fieldName);
+            message.add(fieldName, new JsonObject());
+            message.getAsJsonObject(fieldName).addProperty("cutomMessage", msg);
+        }
         if (!message.getAsJsonObject(fieldName).has("customMessage")) message.getAsJsonObject(fieldName).addProperty("customMessage", fieldValue);
         if (!message.getAsJsonObject(fieldName).has("useCustomMessage")) message.getAsJsonObject(fieldName).addProperty("useCustomMessage", true);
 
         fieldName = "advancementTask";
         fieldValue = "%player has made the advancement %advancement";
         if (!message.has(fieldName)) message.add(fieldName, new JsonObject());
+        else if (message.get(fieldName).isJsonPrimitive()) {
+            String msg = message.get(fieldName).getAsString();
+            message.remove(fieldName);
+            message.add(fieldName, new JsonObject());
+            message.getAsJsonObject(fieldName).addProperty("cutomMessage", msg);
+        }
         if (!message.getAsJsonObject(fieldName).has("customMessage")) message.getAsJsonObject(fieldName).addProperty("customMessage", fieldValue);
         if (!message.getAsJsonObject(fieldName).has("useCustomMessage")) message.getAsJsonObject(fieldName).addProperty("useCustomMessage", true);
 
         fieldName = "advancementChallenge";
         fieldValue = "%player has completed the challenge %advancement";
         if (!message.has(fieldName)) message.add(fieldName, new JsonObject());
+        else if (message.get(fieldName).isJsonPrimitive()) {
+            String msg = message.get(fieldName).getAsString();
+            message.remove(fieldName);
+            message.add(fieldName, new JsonObject());
+            message.getAsJsonObject(fieldName).addProperty("cutomMessage", msg);
+        }
         if (!message.getAsJsonObject(fieldName).has("customMessage")) message.getAsJsonObject(fieldName).addProperty("customMessage", fieldValue);
         if (!message.getAsJsonObject(fieldName).has("useCustomMessage")) message.getAsJsonObject(fieldName).addProperty("useCustomMessage", true);
 
         fieldName = "advancementGoal";
         fieldValue = "%player has reached the goal %advancement";
         if (!message.has(fieldName)) message.add(fieldName, new JsonObject());
+        else if (message.get(fieldName).isJsonPrimitive()) {
+            String msg = message.get(fieldName).getAsString();
+            message.remove(fieldName);
+            message.add(fieldName, new JsonObject());
+            message.getAsJsonObject(fieldName).addProperty("cutomMessage", msg);
+        }
         if (!message.getAsJsonObject(fieldName).has("customMessage")) message.getAsJsonObject(fieldName).addProperty("customMessage", fieldValue);
         if (!message.getAsJsonObject(fieldName).has("useCustomMessage")) message.getAsJsonObject(fieldName).addProperty("useCustomMessage", true);
 
