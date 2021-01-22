@@ -53,9 +53,9 @@ public class MixinMinecraftServer {
     @Inject(
             at = {@At(
                     value = "INVOKE",
-                    target = "Lnet/minecraft/server/MinecraftServer;tick()V"
+                    target = "Lnet/minecraft/server/MinecraftServer;tickWorlds()V"
             )},
-            method = {"method_33182"}
+            method = {"tick"}
     )
     private void onStartTick(CallbackInfo ci) {
         FDLink.getMessageReceiver().serverTick(new MinecraftServer1_12_2((MinecraftServer)(Object) this));

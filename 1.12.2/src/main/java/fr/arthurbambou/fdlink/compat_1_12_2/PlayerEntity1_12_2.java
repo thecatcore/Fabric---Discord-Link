@@ -13,6 +13,6 @@ public class PlayerEntity1_12_2 implements PlayerEntity {
 
     @Override
     public String getPlayerName() {
-        return this.playerEntity.method_29611();
+        return this.playerEntity.getName();
     }
 }
