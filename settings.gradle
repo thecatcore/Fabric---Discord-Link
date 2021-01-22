@@ -25,3 +25,4 @@ include '1.15.2'
 // Legacy Fabric
 include '1.12.2'
 include '1.8.9'
+include '1.7.10'
