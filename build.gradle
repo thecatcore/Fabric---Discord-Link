@@ -254,6 +254,7 @@ curseforge {
 		gameVersionStrings.add("1.17")
 
 		// 1.16.x
+		gameVersionStrings.add("1.16.5")
 		gameVersionStrings.add("1.16.4")
 		gameVersionStrings.add("1.16.3")
 		gameVersionStrings.add("1.16.2")
@@ -297,6 +298,7 @@ task publishModrinth (type: TaskModrinthUpload) {
 	addLoader('fabric')
 
 	// 1.17.x
+	addGameVersion('21w03a')
 	addGameVersion('20w51a')
 	addGameVersion('20w49a')
 	addGameVersion('20w48a')
@@ -304,6 +306,8 @@ task publishModrinth (type: TaskModrinthUpload) {
 	addGameVersion('20w45a')
 
 	// 1.16.x
+	addGameVersion('1.16.5')
+	addGameVersion('1.16.5-rc1')
 	addGameVersion('1.16.4')
 	addGameVersion('1.16.4-rc1')
 	addGameVersion('1.16.4-pre2')
