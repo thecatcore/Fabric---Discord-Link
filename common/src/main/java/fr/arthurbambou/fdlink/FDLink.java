@@ -12,7 +12,7 @@ public class FDLink implements DedicatedServerModInitializer {
 
 	private static DiscordBot messageReceiver;
 	private static MessageSender messageSender;
-	public static Logger LOGGER = LogManager.getLogger("FDlink");
+	public static Logger LOGGER = LogManager.getLogger("FDLink");
 	private static boolean loaded = false;
 
 	@Override
