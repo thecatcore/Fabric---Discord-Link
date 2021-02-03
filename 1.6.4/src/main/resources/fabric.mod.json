@@ -19,6 +19,6 @@
   "depends": {
   },
   "mixins": [
-    "fdlink_1_7_10.mixin.json"
+    "fdlink_1_6_4.mixin.json"
   ]
 }
