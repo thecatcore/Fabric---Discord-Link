@@ -1,0 +1,14 @@
+{
+  "required": true,
+  "package": "fr.arthurbambou.fdlink.mixin_1_5_2",
+  "compatibilityLevel": "JAVA_8",
+  "mixins": [
+    "MixinLogManager",
+    "MixinText",
+    "events.MixinMinecraftServer"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "plugin": "fr.arthurbambou.fdlink.mixin_1_5_2.MixinPlugin"
+}

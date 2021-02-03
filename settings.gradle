@@ -27,3 +27,6 @@ include '1.12.2'
 include '1.8.9'
 include '1.7.10'
 include '1.6.4'
+
+// Rigmarole
+include '1.5.2'

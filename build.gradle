@@ -32,7 +32,8 @@ class MinecraftVersion {
 
 enum Origin {
 	FABRICMC,
-	LEGACY_FABRIC("https://dl.bintray.com/legacy-fabric/Legacy-Fabric-Maven/net/fabricmc/intermediary/#mcversion/intermediary-#mcversion-v2.jar");
+	LEGACY_FABRIC("https://dl.bintray.com/legacy-fabric/Legacy-Fabric-Maven/net/fabricmc/intermediary/#mcversion/intermediary-#mcversion-v2.jar"),
+	PALAVER("https://jitpack.io/com/github/PalaverMC/intermediary/0bc1261625/intermediary-0bc1261625-v2.jar");
 
 	String customIntermediaryURL
 
@@ -50,7 +51,8 @@ class Globals {
 			new MinecraftVersion("1.12.2", "202101222025", "patch-1-SNAPSHOT", Origin.LEGACY_FABRIC),
 			new MinecraftVersion("1.8.9", "202101221000", "0.9.3+build.202009100647", "0.10.3", Origin.LEGACY_FABRIC, true),
 			new MinecraftVersion("1.7.10", "202012300332", "0.9.3+build.202009100647", Origin.LEGACY_FABRIC, true),
-			new MinecraftVersion("1.6.4", "202012200910", "0.9.3+build.202009100647", Origin.LEGACY_FABRIC, true)
+			new MinecraftVersion("1.6.4", "202101280853", "0.9.3+build.202009100647", Origin.LEGACY_FABRIC, true),
+			new MinecraftVersion("1.5.2", "0cc4453afe", "0.9.3+build.202009100647", Origin.PALAVER, true)
 	]
 }
 
@@ -82,7 +84,8 @@ allprojects {
 
 	dependencies {
 		minecraft "com.mojang:minecraft:${versionInfo.mcVersion}"
-		mappings "net.fabricmc:yarn:${versionInfo.mcVersion}+build.${versionInfo.yarnVersion}:v2"
+		if (versionInfo.origin == Origin.PALAVER) mappings "com.github.PalaverMC:rigmarole:${versionInfo.yarnVersion}"
+		else mappings "net.fabricmc:yarn:${versionInfo.mcVersion}+build.${versionInfo.yarnVersion}:v2"
 		if (projectName != "common") {
 			if (versionInfo.origin == Origin.FABRICMC) {
 				modImplementation "net.fabricmc:fabric-loader:${versionInfo.loaderVersion}"
@@ -134,13 +137,14 @@ allprojects {
 			url = 'http://maven.fabricmc.net/'
 		}
 		maven {
-			name = 'SpongePowered'
-			url = 'http://repo.spongepowered.org/maven'
+			name = 'legacy-fabric'
+			url = 'https://dl.bintray.com/legacy-fabric/Legacy-Fabric-Maven'
 		}
 		maven {
 			name = 'mojang'
 			url = 'https://libraries.minecraft.net/'
 		}
+
 		maven {
 			name = "CurseMaven"
 			url = "https://www.cursemaven.com"
@@ -148,13 +152,13 @@ allprojects {
 				includeGroup "curse.maven"
 			}
 		}
+//		maven {
+//			name = 'SpongePowered'
+//			url = 'http://repo.spongepowered.org/maven'
+//		}
 		maven {
 			name = "Jitpack"
 			url = "https://jitpack.io/"
-		}
-		maven {
-			name = 'legacy-fabric'
-			url = 'https://dl.bintray.com/legacy-fabric/Legacy-Fabric-Maven'
 		}
 	}
 
