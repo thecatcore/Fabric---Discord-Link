@@ -30,7 +30,7 @@ public class DiscordWebhook implements MessageSender {
         if (author != null) builder.setUsername(author);
         else builder.setUsername("Server");
 
-        if (author != null) builder.setAvatarUrl("https://minotar.net/avatar/" + author);
+        if (author != null) builder.setAvatarUrl("https://crafatar.com/avatars/" + author);
 
         builder.setContent(message);
 
