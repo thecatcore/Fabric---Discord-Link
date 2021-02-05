@@ -6,7 +6,8 @@
   "version": "${version}",
   "environment": "server",
   "authors": [
-    "arthurbambou (aka. Cat Core)"
+    "arthurbambou (aka. Cat Core)",
+    "Special Thanks to AlanFoster"
   ],
   "contributors": [
     "Thedude7054",
