@@ -134,6 +134,7 @@ public class DiscordBot implements MessageSender {
     public void serverTick(MinecraftServer server) {
         if (this.api == null) return;
         this.server = server;
+        if (this.server == null) return;
         int playerNumber = server.getPlayerCount();
         int maxPlayer = server.getMaxPlayerCount();
         int totalUptimeSeconds = (int) (System.currentTimeMillis() - this.startTime) / 1000;
