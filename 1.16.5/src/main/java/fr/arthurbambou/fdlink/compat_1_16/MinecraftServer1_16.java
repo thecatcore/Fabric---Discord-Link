@@ -86,6 +86,11 @@ public class MinecraftServer1_16 implements MinecraftServer {
         return this.minecraftServer.getFile("server-icon.png");
     }
 
+    @Override
+    public PlayerEntity getPlayerFromUsername(String username) {
+        return new PlayerEntity1_16(this.minecraftServer.getPlayerManager().getPlayer(username));
+    }
+
     private MessageType getMessageType(MessagePacket.MessageType messageType) {
         switch (messageType) {
             case INFO:

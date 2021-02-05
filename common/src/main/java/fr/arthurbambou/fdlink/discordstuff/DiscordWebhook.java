@@ -5,8 +5,11 @@ import club.minnced.discord.webhook.WebhookClientBuilder;
 import club.minnced.discord.webhook.receive.ReadonlyMessage;
 import club.minnced.discord.webhook.send.AllowedMentions;
 import club.minnced.discord.webhook.send.WebhookMessageBuilder;
+import fr.arthurbambou.fdlink.FDLink;
 import fr.arthurbambou.fdlink.config.Config;
 import fr.arthurbambou.fdlink.versionhelpers.minecraft.Message;
+import fr.arthurbambou.fdlink.versionhelpers.minecraft.MinecraftServer;
+import fr.arthurbambou.fdlink.versionhelpers.minecraft.PlayerEntity;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.CompletableFuture;
@@ -30,7 +33,19 @@ public class DiscordWebhook implements MessageSender {
         if (author != null) builder.setUsername(author);
         else builder.setUsername("Server");
 
-        if (author != null) builder.setAvatarUrl("https://minotar.net/avatar/" + author);
+        if (author != null) {
+            if (FDLink.getMessageReceiver() != null && FDLink.getMessageReceiver().getServer() != null) {
+                try {
+                    MinecraftServer minecraftServer = FDLink.getMessageReceiver().getServer();
+                    PlayerEntity playerEntity = minecraftServer.getPlayerFromUsername(author);
+                    builder.setAvatarUrl("https://crafatar.com/avatars/" + playerEntity.getUUID().toString());
+                } catch (NullPointerException e) {
+                    builder.setAvatarUrl("https://minotar.net/avatar/" + author);
+                }
+            } else {
+                builder.setAvatarUrl("https://minotar.net/avatar/" + author);
+            }
+        }
 
         builder.setContent(message);
 

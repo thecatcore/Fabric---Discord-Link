@@ -429,4 +429,8 @@ public class DiscordBot implements MessageSender {
         }
         return list;
     }
+
+    public MinecraftServer getServer() {
+        return server;
+    }
 }

@@ -45,6 +45,11 @@ public class MinecraftServer1_5_2 implements MinecraftServer {
     }
 
     @Override
+    public PlayerEntity getPlayerFromUsername(String username) {
+        return new PlayerEntity1_5_2(this.minecraftServer.method_4158().method_3359(username));
+    }
+
+    @Override
     public void sendMessageToAll(MessagePacket messagePacket) {
         Message message = messagePacket.getMessage();
 //        class_2828 text = null;

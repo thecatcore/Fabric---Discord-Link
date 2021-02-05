@@ -18,4 +18,6 @@ public interface MinecraftServer {
     String getIp();
 
     File getIcon();
+
+    PlayerEntity getPlayerFromUsername(String username);
 }

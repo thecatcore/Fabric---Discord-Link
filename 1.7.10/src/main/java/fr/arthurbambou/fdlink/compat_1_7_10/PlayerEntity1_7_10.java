@@ -3,6 +3,8 @@ package fr.arthurbambou.fdlink.compat_1_7_10;
 import fr.arthurbambou.fdlink.versionhelpers.minecraft.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
 
+import java.util.UUID;
+
 public class PlayerEntity1_7_10 implements PlayerEntity {
 
     private final ServerPlayerEntity playerEntity;
@@ -14,5 +16,10 @@ public class PlayerEntity1_7_10 implements PlayerEntity {
     @Override
     public String getPlayerName() {
         return this.playerEntity.getGameProfile().getName();
+    }
+
+    @Override
+    public UUID getUUID() {
+        return this.playerEntity.getUuid();
     }
 }
