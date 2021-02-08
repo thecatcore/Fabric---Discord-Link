@@ -11,6 +11,7 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class MinecraftServer1_6_4 implements MinecraftServer {
 
@@ -47,6 +48,18 @@ public class MinecraftServer1_6_4 implements MinecraftServer {
     @Override
     public PlayerEntity getPlayerFromUsername(String username) {
         return new PlayerEntity1_6_4(this.minecraftServer.getPlayerManager().method_10419(username));
+    }
+
+    @Override
+    public String getUsernameFromUUID(UUID uuid) {
+        String username = "";
+        for (PlayerEntity playerEntity : this.getPlayers()) {
+            if (playerEntity.getUUID() == uuid) {
+                username = playerEntity.getPlayerName();
+                break;
+            }
+        }
+        return username;
     }
 
     @Override

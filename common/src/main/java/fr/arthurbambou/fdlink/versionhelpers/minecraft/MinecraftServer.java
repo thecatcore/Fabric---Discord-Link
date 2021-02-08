@@ -2,6 +2,7 @@ package fr.arthurbambou.fdlink.versionhelpers.minecraft;
 
 import java.io.File;
 import java.util.List;
+import java.util.UUID;
 
 public interface MinecraftServer {
 
@@ -20,4 +21,6 @@ public interface MinecraftServer {
     File getIcon();
 
     PlayerEntity getPlayerFromUsername(String username);
+
+    String getUsernameFromUUID(UUID uuid);
 }

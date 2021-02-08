@@ -11,6 +11,7 @@ import net.minecraft.server.DedicatedMinecraftServer;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class MinecraftServer1_5_2 implements MinecraftServer {
 
@@ -47,6 +48,18 @@ public class MinecraftServer1_5_2 implements MinecraftServer {
     @Override
     public PlayerEntity getPlayerFromUsername(String username) {
         return new PlayerEntity1_5_2(this.minecraftServer.method_4158().method_3359(username));
+    }
+
+    @Override
+    public String getUsernameFromUUID(UUID uuid) {
+        String username = "";
+        for (PlayerEntity playerEntity : this.getPlayers()) {
+            if (playerEntity.getUUID() == uuid) {
+                username = playerEntity.getPlayerName();
+                break;
+            }
+        }
+        return username;
     }
 
     @Override

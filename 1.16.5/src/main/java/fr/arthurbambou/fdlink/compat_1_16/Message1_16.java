@@ -3,6 +3,11 @@ package fr.arthurbambou.fdlink.compat_1_16;
 import fr.arthurbambou.fdlink.versionhelpers.minecraft.Message;
 import fr.arthurbambou.fdlink.versionhelpers.minecraft.style.Style;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.UUID;
+
 public class Message1_16 implements Message {
 
     private String message;
@@ -10,6 +15,8 @@ public class Message1_16 implements Message {
     private TextType type;
     private String key;
     private Object[] args;
+    private List<Message> sibblings = new ArrayList<>();
+    private UUID authorUUID;
 
     public Message1_16(String message) {
         this.message = message;
@@ -17,10 +24,27 @@ public class Message1_16 implements Message {
     }
 
     public Message1_16(String key, String message, Object... args) {
+        System.out.println(Arrays.toString(args));
         this.key = key;
         this.message = message;
         this.args = args;
         this.type = TextType.TRANSLATABLE;
+    }
+
+    @Override
+    public Message1_16 setAuthorUUID(UUID uuid) {
+        this.authorUUID = uuid;
+        return this;
+    }
+
+    @Override
+    public boolean hasAuthorUUID() {
+        return false; // Why mojang why
+    }
+
+    @Override
+    public UUID getAuthorUUID() {
+        return this.authorUUID;
     }
 
     @Override
@@ -57,5 +81,16 @@ public class Message1_16 implements Message {
     @Override
     public Object[] getArgs() {
         return this.args;
+    }
+
+    @Override
+    public List<Message> getSibblings() {
+        return this.sibblings;
+    }
+
+    @Override
+    public Message1_16 addSibbling(Message message) {
+        this.sibblings.add(message);
+        return this;
     }
 }

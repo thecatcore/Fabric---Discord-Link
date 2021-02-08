@@ -15,4 +15,6 @@ public interface CompatText {
     default List getArgs() {
         return Lists.newArrayList();
     }
+
+
 }

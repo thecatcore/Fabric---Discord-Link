@@ -1,5 +1,6 @@
 package fr.arthurbambou.fdlink.discordstuff;
 
+import fr.arthurbambou.fdlink.FDLink;
 import fr.arthurbambou.fdlink.config.Config;
 import fr.arthurbambou.fdlink.config.MainConfig;
 import fr.arthurbambou.fdlink.discordstuff.todiscord.MinecraftToDiscordFunction;
@@ -11,6 +12,7 @@ import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public final class MinecraftToDiscordHandler {
@@ -27,7 +29,22 @@ public final class MinecraftToDiscordHandler {
 
         // Chat messages
         registerTextHandler(new TextHandler("chat.type.text", text -> {
-            String playerName = getArgAsString(text.getArgs()[0]).replaceAll("§[b0931825467adcfeklmnor]", "");
+            Object arg1 = text.getArgs()[0];
+            String teamPrefix = "";
+            String teamSuffix = "";
+            String playerName = "";
+            if (arg1 instanceof Message) {
+                Message argMessage = (Message) arg1;
+                if (argMessage.getSibblings().isEmpty()) {
+                    playerName = argMessage.getMessage().replaceAll("§[b0931825467adcfeklmnor]", "");
+                } else if (argMessage.getSibblings().size() == 2) {
+                    teamPrefix = argMessage.getSibblings().get(0).getMessage().replaceAll("§[b0931825467adcfeklmnor]", "");
+                    playerName = argMessage.getSibblings().get(1).getMessage().replaceAll("§[b0931825467adcfeklmnor]", "");
+                    teamSuffix = argMessage.getSibblings().get(2).getMessage().replaceAll("§[b0931825467adcfeklmnor]", "");
+                }
+            } else {
+                playerName = getArgAsString(text.getArgs()[0]).replaceAll("§[b0931825467adcfeklmnor]", "");
+            }
             String message = getArgAsString(text.getArgs()[1]).replaceAll("§[b0931825467adcfeklmnor]", "");
             String chatMessage = text.getMessage().replaceAll("§[b0931825467adcfeklmnor]", "");
             String logMessage = text.getMessage().replaceAll("§[b0931825467adcfeklmnor]", "");
@@ -72,13 +89,23 @@ public final class MinecraftToDiscordHandler {
                     }
                 }
                 if (this.config.messageConfig.minecraftToDiscord.playerMessage.useCustomMessage) {
-                    chatCompleteMessage = this.config.messageConfig.minecraftToDiscord.playerMessage.customMessage.replace("%player", chatPlayerName).replace("%message", chatMessage);
-                    logCompleteMessage = this.config.messageConfig.minecraftToDiscord.playerMessage.customMessage.replace("%player", logPlayerName).replace("%message", logMessage);
+                    chatCompleteMessage = this.config.messageConfig.minecraftToDiscord.playerMessage.customMessage
+                            .replace("%teamprefix", teamPrefix)
+                            .replace("%teamsuffix", teamSuffix)
+                            .replace("%player", chatPlayerName)
+                            .replace("%message", chatMessage);
+                    logCompleteMessage = this.config.messageConfig.minecraftToDiscord.playerMessage.customMessage
+                            .replace("%teamprefix", teamPrefix)
+                            .replace("%teamsuffix", teamSuffix)
+                            .replace("%player", logPlayerName)
+                            .replace("%message", logMessage);
                 } else {
                     chatCompleteMessage = "<" + chatPlayerName + "> " + chatMessage;
                     logCompleteMessage = "<" + logPlayerName + "> " + logMessage;
                 }
-                return new MessageSender.MinecraftMessage(chatCompleteMessage, logCompleteMessage, MessageSender.MinecraftMessage.Type.CHAT);
+                MessageSender.MinecraftMessage minecraftMessage = new MessageSender.MinecraftMessage(chatCompleteMessage, logCompleteMessage, MessageSender.MinecraftMessage.Type.CHAT);
+                if (text.hasAuthorUUID()) minecraftMessage.setAuthor(text.getAuthorUUID());
+                return minecraftMessage;
             }
         }));
 
@@ -137,7 +164,9 @@ public final class MinecraftToDiscordHandler {
                     chatCompleteMessage = teamName + " <" + playerName + "> " + chatMessage;
                     logCompleteMessage = teamName + " <" + playerName + "> " + logMessage;
                 }
-                return new MessageSender.MinecraftMessage(chatCompleteMessage, logCompleteMessage, MessageSender.MinecraftMessage.Type.TEAM_CHAT);
+                MessageSender.MinecraftMessage minecraftMessage = new MessageSender.MinecraftMessage(chatCompleteMessage, logCompleteMessage, MessageSender.MinecraftMessage.Type.TEAM_CHAT);
+                if (text.hasAuthorUUID()) minecraftMessage.setAuthor(text.getAuthorUUID());
+                return minecraftMessage;
             }
         }));
 
@@ -149,7 +178,9 @@ public final class MinecraftToDiscordHandler {
                         .replace("%author", adaptUsernameToDiscord(getArgAsString(text.getArgs()[0])))
                         .replace("%message", getArgAsString(text.getArgs()[1]));
             }
-            return new MessageSender.MinecraftMessage(message, MessageSender.MinecraftMessage.Type.ME);
+            MessageSender.MinecraftMessage minecraftMessage = new MessageSender.MinecraftMessage(message, MessageSender.MinecraftMessage.Type.ME);
+            if (text.hasAuthorUUID()) minecraftMessage.setAuthor(text.getAuthorUUID());
+            return minecraftMessage;
         }));
 
         // /say command
@@ -160,7 +191,9 @@ public final class MinecraftToDiscordHandler {
                         .replace("%author", adaptUsernameToDiscord(getArgAsString(text.getArgs()[0])))
                         .replace("%message", getArgAsString(text.getArgs()[1]));
             }
-            return new MessageSender.MinecraftMessage(message, MessageSender.MinecraftMessage.Type.SAY);
+            MessageSender.MinecraftMessage minecraftMessage = new MessageSender.MinecraftMessage(message, MessageSender.MinecraftMessage.Type.SAY);
+            if (text.hasAuthorUUID()) minecraftMessage.setAuthor(text.getAuthorUUID());
+            return minecraftMessage;
         }));
 
         // Advancement task
@@ -171,7 +204,9 @@ public final class MinecraftToDiscordHandler {
                         .replace("%player", adaptUsernameToDiscord(getArgAsString(text.getArgs()[0])))
                         .replace("%advancement", getArgAsString(text.getArgs()[1]));
             }
-            return new MessageSender.MinecraftMessage(message, MessageSender.MinecraftMessage.Type.ADVANCEMENT_TASK);
+            MessageSender.MinecraftMessage minecraftMessage = new MessageSender.MinecraftMessage(message, MessageSender.MinecraftMessage.Type.ADVANCEMENT_TASK);
+            if (text.hasAuthorUUID()) minecraftMessage.setAuthor(text.getAuthorUUID());
+            return minecraftMessage;
         }));
 
         // Advancement challenge
@@ -182,7 +217,9 @@ public final class MinecraftToDiscordHandler {
                         .replace("%player", adaptUsernameToDiscord(getArgAsString(text.getArgs()[0])))
                         .replace("%advancement", getArgAsString(text.getArgs()[1]));
             }
-            return new MessageSender.MinecraftMessage(message, MessageSender.MinecraftMessage.Type.ADVANCEMENT_CHALLENGE);
+            MessageSender.MinecraftMessage minecraftMessage = new MessageSender.MinecraftMessage(message, MessageSender.MinecraftMessage.Type.ADVANCEMENT_CHALLENGE);
+            if (text.hasAuthorUUID()) minecraftMessage.setAuthor(text.getAuthorUUID());
+            return minecraftMessage;
         }));
 
         // Advancement goal
@@ -193,7 +230,9 @@ public final class MinecraftToDiscordHandler {
                         .replace("%player", adaptUsernameToDiscord(getArgAsString(text.getArgs()[0])))
                         .replace("%advancement", getArgAsString(text.getArgs()[1]));
             }
-            return new MessageSender.MinecraftMessage(message, MessageSender.MinecraftMessage.Type.ADVANCEMENT_GOAL);
+            MessageSender.MinecraftMessage minecraftMessage = new MessageSender.MinecraftMessage(message, MessageSender.MinecraftMessage.Type.ADVANCEMENT_GOAL);
+            if (text.hasAuthorUUID()) minecraftMessage.setAuthor(text.getAuthorUUID());
+            return minecraftMessage;
         }));
 
         // Admin commands
@@ -204,7 +243,9 @@ public final class MinecraftToDiscordHandler {
                         .replace("%author", adaptUsernameToDiscord(getArgAsString(text.getArgs()[0])))
                         .replace("%message", getArgAsString(text.getArgs()[1]));
             }
-            return new MessageSender.MinecraftMessage(message, MessageSender.MinecraftMessage.Type.ADMIN);
+            MessageSender.MinecraftMessage minecraftMessage = new MessageSender.MinecraftMessage(message, MessageSender.MinecraftMessage.Type.ADMIN);
+            if (text.hasAuthorUUID()) minecraftMessage.setAuthor(text.getAuthorUUID());
+            return minecraftMessage;
         }));
 
         // Player join server with new username
@@ -215,7 +256,9 @@ public final class MinecraftToDiscordHandler {
                         .replace("%new", adaptUsernameToDiscord(getArgAsString(text.getArgs()[0])))
                         .replace("%old", adaptUsernameToDiscord(getArgAsString(text.getArgs()[1])));
             }
-            return new MessageSender.MinecraftMessage(message, MessageSender.MinecraftMessage.Type.JOIN_RENAMED);
+            MessageSender.MinecraftMessage minecraftMessage = new MessageSender.MinecraftMessage(message, MessageSender.MinecraftMessage.Type.JOIN_RENAMED);
+            if (text.hasAuthorUUID()) minecraftMessage.setAuthor(text.getAuthorUUID());
+            return minecraftMessage;
         }));
 
         // Player join server
@@ -225,7 +268,9 @@ public final class MinecraftToDiscordHandler {
                 message = this.config.messageConfig.minecraftToDiscord.playerJoined.customMessage
                         .replace("%player", adaptUsernameToDiscord(getArgAsString(text.getArgs()[0])));
             }
-            return new MessageSender.MinecraftMessage(message, MessageSender.MinecraftMessage.Type.JOIN);
+            MessageSender.MinecraftMessage minecraftMessage = new MessageSender.MinecraftMessage(message, MessageSender.MinecraftMessage.Type.JOIN);
+            if (text.hasAuthorUUID()) minecraftMessage.setAuthor(text.getAuthorUUID());
+            return minecraftMessage;
         }));
 
         // Player leave server
@@ -235,13 +280,17 @@ public final class MinecraftToDiscordHandler {
                 message = this.config.messageConfig.minecraftToDiscord.playerLeft.customMessage
                         .replace("%player", adaptUsernameToDiscord(getArgAsString(text.getArgs()[0])));
             }
-            return new MessageSender.MinecraftMessage(message, MessageSender.MinecraftMessage.Type.LEAVE);
+            MessageSender.MinecraftMessage minecraftMessage = new MessageSender.MinecraftMessage(message, MessageSender.MinecraftMessage.Type.LEAVE);
+            if (text.hasAuthorUUID()) minecraftMessage.setAuthor(text.getAuthorUUID());
+            return minecraftMessage;
         }));
 
         // Death messages
         registerTextHandler(new TextHandler("death.", text -> {
             String message = text.getMessage().replaceAll("§[b0931825467adcfeklmnor]", "");
-            return new MessageSender.MinecraftMessage(this.config.messageConfig.minecraftToDiscord.deathMsgPrefix + message + this.config.messageConfig.minecraftToDiscord.deathMsgPostfix, MessageSender.MinecraftMessage.Type.DEATH);
+            MessageSender.MinecraftMessage minecraftMessage = new MessageSender.MinecraftMessage(this.config.messageConfig.minecraftToDiscord.deathMsgPrefix + message + this.config.messageConfig.minecraftToDiscord.deathMsgPostfix, MessageSender.MinecraftMessage.Type.DEATH);
+            if (text.hasAuthorUUID()) minecraftMessage.setAuthor(text.getAuthorUUID());
+            return minecraftMessage;
         }));
 
         registerTextHandler(new CommandHandler("tellraw", text -> {
@@ -252,7 +301,9 @@ public final class MinecraftToDiscordHandler {
                     .replace("%message", message)
                     .replace("%source", source);
 
-            return new MessageSender.MinecraftMessage(stringMessage, MessageSender.MinecraftMessage.Type.TELLRAW);
+            MessageSender.MinecraftMessage minecraftMessage = new MessageSender.MinecraftMessage(stringMessage, MessageSender.MinecraftMessage.Type.TELLRAW);
+            if (text.hasAuthorUUID()) minecraftMessage.setAuthor(text.getAuthorUUID());
+            return minecraftMessage;
         }));
 
         // Old versions achievement
@@ -263,13 +314,17 @@ public final class MinecraftToDiscordHandler {
                         .replace("%player", adaptUsernameToDiscord(getArgAsString(text.getArgs()[0])))
                         .replace("%achievement", getArgAsString(text.getArgs()[1]));
             }
-            return new MessageSender.MinecraftMessage(message, MessageSender.MinecraftMessage.Type.ACHIEVEMENT);
+            MessageSender.MinecraftMessage minecraftMessage = new MessageSender.MinecraftMessage(message, MessageSender.MinecraftMessage.Type.ACHIEVEMENT);
+            if (text.hasAuthorUUID()) minecraftMessage.setAuthor(text.getAuthorUUID());
+            return minecraftMessage;
         }));
 
         // Old versions
         registerTextHandler(new StringHandler(message -> {
             String text = message.getMessage().replaceAll("§[b0931825467adcfeklmnor]","");
-            return new MessageSender.MinecraftMessage(text, MessageSender.MinecraftMessage.Type.STRING_OLD);
+            MessageSender.MinecraftMessage minecraftMessage = new MessageSender.MinecraftMessage(text, MessageSender.MinecraftMessage.Type.STRING_OLD);
+            if (message.hasAuthorUUID()) minecraftMessage.setAuthor(message.getAuthorUUID());
+            return minecraftMessage;
         }));
     }
 
@@ -290,6 +345,12 @@ public final class MinecraftToDiscordHandler {
     }
 
     public MessageSender.MinecraftMessage handleTexts(Message text) {
+        if (this.config.mainConfig.minecraftToDiscord.general.enableDebugLogs) {
+            if (text.getTextType() == Message.TextType.TRANSLATABLE)
+                FDLink.LOGGER.info(text.getKey() + " : " + Arrays.toString(text.getArgs()) + " = " + text.getMessage());
+            else FDLink.LOGGER.info(text.getMessage());
+            FDLink.LOGGER.info(text.hasAuthorUUID() ? text.getAuthorUUID() : null);
+        }
         if (this.api == null || (!this.discordBot.hasChatChannels && !this.discordBot.hasLogChannels && this.config.mainConfig.webhookURL.isEmpty())) return null;
         Message.MessageObjectType objectType = text.getType();
         String message = text.getMessage();

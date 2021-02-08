@@ -3,12 +3,16 @@ package fr.arthurbambou.fdlink.compat_1_12_2;
 import fr.arthurbambou.fdlink.versionhelpers.minecraft.Message;
 import fr.arthurbambou.fdlink.versionhelpers.minecraft.style.Style;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Message1_12_2 implements Message {
 
     private String message;
     private Style style = Style.EMPTY;
     private TextType type;
     private String key;
+    private List<Message> sibblings = new ArrayList<>();
     private Object[] args;
 
     public Message1_12_2(String message) {
@@ -57,5 +61,16 @@ public class Message1_12_2 implements Message {
     @Override
     public Object[] getArgs() {
         return this.args;
+    }
+
+    @Override
+    public List<Message> getSibblings() {
+        return this.sibblings;
+    }
+
+    @Override
+    public Message1_12_2 addSibbling(Message message) {
+        this.sibblings.add(message);
+        return this;
     }
 }

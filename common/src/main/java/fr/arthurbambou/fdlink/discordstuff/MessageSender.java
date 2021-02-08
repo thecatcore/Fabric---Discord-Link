@@ -3,6 +3,8 @@ package fr.arthurbambou.fdlink.discordstuff;
 import fr.arthurbambou.fdlink.config.Config;
 import fr.arthurbambou.fdlink.versionhelpers.minecraft.Message;
 
+import java.util.UUID;
+
 public interface MessageSender {
 
     void serverStarting();
@@ -19,6 +21,7 @@ public interface MessageSender {
         private final String[] message;
         private final Type type;
         private final Sender messageSender;
+        private UUID author = null;
 
         public MinecraftMessage(String message, Type type) {
             this.message = new String[]{message};
@@ -64,6 +67,15 @@ public interface MessageSender {
 
         public Sender getMessageSender() {
             return messageSender;
+        }
+
+        public UUID getAuthor() {
+            return author;
+        }
+
+        public MinecraftMessage setAuthor(UUID author) {
+            this.author = author;
+            return this;
         }
 
         enum Type {

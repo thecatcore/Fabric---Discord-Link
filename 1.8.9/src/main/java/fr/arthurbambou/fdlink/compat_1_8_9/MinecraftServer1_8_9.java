@@ -12,6 +12,7 @@ import net.minecraft.util.Formatting;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class MinecraftServer1_8_9 implements MinecraftServer {
 
@@ -48,6 +49,11 @@ public class MinecraftServer1_8_9 implements MinecraftServer {
     @Override
     public PlayerEntity getPlayerFromUsername(String username) {
         return new PlayerEntity1_8_9(this.minecraftServer.getPlayerManager().getPlayer(username));
+    }
+
+    @Override
+    public String getUsernameFromUUID(UUID uuid) {
+        return this.minecraftServer.getPlayerManager().getPlayer(uuid).getGameProfile().getName();
     }
 
     @Override

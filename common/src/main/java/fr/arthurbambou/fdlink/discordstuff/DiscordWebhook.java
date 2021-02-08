@@ -12,6 +12,7 @@ import fr.arthurbambou.fdlink.versionhelpers.minecraft.MinecraftServer;
 import fr.arthurbambou.fdlink.versionhelpers.minecraft.PlayerEntity;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 public class DiscordWebhook implements MessageSender {
@@ -28,24 +29,22 @@ public class DiscordWebhook implements MessageSender {
         this.messageReader = messageReader;
     }
 
-    public @NotNull CompletableFuture<ReadonlyMessage> sendMessage(String author, String message) {
+    public @NotNull CompletableFuture<ReadonlyMessage> sendMessage(UUID author, String message) {
         WebhookMessageBuilder builder = new WebhookMessageBuilder();
-        if (author != null) builder.setUsername(author);
-        else builder.setUsername("Server");
 
         if (author != null) {
-            if (FDLink.getMessageReceiver() != null && FDLink.getMessageReceiver().getServer() != null) {
-                try {
+            try {
+                if (FDLink.getMessageReceiver() != null && FDLink.getMessageReceiver().getServer() != null) {
                     MinecraftServer minecraftServer = FDLink.getMessageReceiver().getServer();
-                    PlayerEntity playerEntity = minecraftServer.getPlayerFromUsername(author);
-                    builder.setAvatarUrl("https://crafatar.com/avatars/" + playerEntity.getUUID().toString());
-                } catch (NullPointerException e) {
-                    builder.setAvatarUrl("https://minotar.net/avatar/" + author);
+                    builder.setUsername(minecraftServer.getUsernameFromUUID(author));
+                } else {
+                    builder.setUsername("Could not get player username");
                 }
-            } else {
-                builder.setAvatarUrl("https://minotar.net/avatar/" + author);
+            } catch (NullPointerException e) {
+                builder.setUsername("Could not get player username");
             }
-        }
+            builder.setAvatarUrl("https://crafatar.com/avatars/" + author.toString());
+        } else builder.setUsername("Server");
 
         builder.setContent(message);
 
@@ -92,27 +91,29 @@ public class DiscordWebhook implements MessageSender {
                 switch (minecraftMessage.getType()) {
                     case CHAT_COMMAND:
                         if (this.config.mainConfig.minecraftToDiscord.chatChannels.allowDiscordCommands) {
-                            this.sendMessage(MinecraftToDiscordHandler.getArgAsString(message.getArgs()[0]), stringMessage);
+                            this.sendMessage(
+                                    message.hasAuthorUUID() ? message.getAuthorUUID() : getPlayerUUIDFromText(message.getArgs()[0]),
+                                    stringMessage);
                         }
                         break;
                     case CHAT:
                         if (this.config.mainConfig.minecraftToDiscord.chatChannels.playerMessages){
-                            this.sendMessage(MinecraftToDiscordHandler.getArgAsString(message.getArgs()[0]), stringMessages[0]);
+                            this.sendMessage(message.hasAuthorUUID() ? message.getAuthorUUID() : getPlayerUUIDFromText(message.getArgs()[0]), stringMessages[0]);
                         }
                         break;
                     case TEAM_CHAT:
                         if (this.config.mainConfig.minecraftToDiscord.chatChannels.teamPlayerMessages){
-                            this.sendMessage(MinecraftToDiscordHandler.getArgAsString(message.getArgs()[1]), stringMessages[0]);
+                            this.sendMessage(message.hasAuthorUUID() ? message.getAuthorUUID() : getPlayerUUIDFromText(message.getArgs()[1]), stringMessages[0]);
                         }
                         break;
                     case ME:
                         if (this.config.mainConfig.minecraftToDiscord.chatChannels.sendMeCommand) {
-                            this.sendMessage(MinecraftToDiscordHandler.getArgAsString(message.getArgs()[0]), stringMessage);
+                            this.sendMessage(message.hasAuthorUUID() ? message.getAuthorUUID() : getPlayerUUIDFromText(message.getArgs()[0]), stringMessage);
                         }
                         break;
                     case SAY:
                         if (this.config.mainConfig.minecraftToDiscord.chatChannels.sendSayCommand) {
-                            this.sendMessage(MinecraftToDiscordHandler.getArgAsString(message.getArgs()[0]), stringMessage);
+                            this.sendMessage(message.hasAuthorUUID() ? message.getAuthorUUID() : getPlayerUUIDFromText(message.getArgs()[0]), stringMessage);
                         }
                         break;
                     case ADVANCEMENT_TASK:
@@ -149,7 +150,7 @@ public class DiscordWebhook implements MessageSender {
                         break;
                     case TELLRAW:
                         if (this.config.mainConfig.minecraftToDiscord.chatChannels.atATellRaw) {
-                            this.sendMessage(MinecraftToDiscordHandler.getArgAsString(message.getArgs()[0]), stringMessage);
+                            this.sendMessage(message.hasAuthorUUID() ? message.getAuthorUUID() : getPlayerUUIDFromText(message.getArgs()[0]), stringMessage);
                         }
                         break;
                     case ACHIEVEMENT:
@@ -170,5 +171,35 @@ public class DiscordWebhook implements MessageSender {
                 }
             }
         }
+    }
+
+    private UUID getPlayerUUIDFromText(Object arg) {
+        String playerName = "";
+        if (arg instanceof Message) {
+            Message message = (Message) arg;
+            if (message.getSibblings().isEmpty()) {
+                playerName = message.getMessage();
+            } else if (message.getSibblings().size() == 2) {
+                playerName = message.getSibblings().get(1).getMessage();
+            }
+        }
+
+        if (playerName.isEmpty()) {
+            playerName = MinecraftToDiscordHandler.getArgAsString(arg);
+        }
+        if (this.config.mainConfig.minecraftToDiscord.general.enableDebugLogs) {
+            FDLink.LOGGER.info(playerName + " : " + arg.toString());
+        }
+        try {
+            if (!playerName.isEmpty() && FDLink.getMessageReceiver() != null && FDLink.getMessageReceiver().getServer() != null) {
+                MinecraftServer minecraftServer = FDLink.getMessageReceiver().getServer();
+                PlayerEntity playerEntity = minecraftServer.getPlayerFromUsername(playerName);
+                return playerEntity.getUUID();
+            }
+        } catch (NullPointerException ignored) {
+            ignored.printStackTrace();
+        }
+
+        return null;
     }
 }
