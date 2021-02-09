@@ -37,7 +37,7 @@ Fabric-Discord-Link requires Fabric API to work. The [Fabric-API](https://github
 No dependencies required.
 
 ### Obtaining the binaries
-The release binaries are available in the [releases](https://github.com/arthurbambou/Fabric---Discord-Link/releases) section or on [curseforge](https://www.curseforge.com/minecraft/mc-mods/fabric-discord-link). 
+The release binaries are available on [curseforge](https://www.curseforge.com/minecraft/mc-mods/fabric-discord-link). 
 
 After downloading the latest version, just drop the jar into the mods folder.
 
