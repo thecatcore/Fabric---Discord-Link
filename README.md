@@ -50,7 +50,7 @@ After downloading the latest version, just drop the jar into the mods folder.
 
 1. Go to the [discord developer portal](https://discord.com/developers/applications) and register a new Application
 2. Register a new Bot for the application in the `<Bot>` tab to the left
-3. Toogle `<Server Members Intent>` to on under `<Priviledged Gateway Intents>` after creating a bot
+3. Toggle `<Server Members Intent>` to on under `<Priviledged Gateway Intents>` after creating a bot
 4. In the `<OAuth2>` Tab to the left, select the `<Bot>` option under `<Scopes>` and select the options `<View Channels>` and `<Send Messages>`
     - Also select the `<Manage Channels>` permissions if you intend to enable custom channel descriptions.
 5. Copy the URL generated under `<Scopes>` and open it in a new tab to add the bot to your discord server
