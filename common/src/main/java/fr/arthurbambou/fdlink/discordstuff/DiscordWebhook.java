@@ -179,16 +179,13 @@ public class DiscordWebhook implements MessageSender {
             Message message = (Message) arg;
             if (message.getSibblings().isEmpty()) {
                 playerName = message.getMessage();
-            } else if (message.getSibblings().size() == 2) {
+            } else if (message.getSibblings().size() == 3) {
                 playerName = message.getSibblings().get(1).getMessage();
             }
         }
 
         if (playerName.isEmpty()) {
             playerName = MinecraftToDiscordHandler.getArgAsString(arg);
-        }
-        if (this.config.mainConfig.minecraftToDiscord.general.enableDebugLogs) {
-            FDLink.LOGGER.info(playerName + " : " + arg.toString());
         }
         try {
             if (!playerName.isEmpty() && FDLink.getMessageReceiver() != null && FDLink.getMessageReceiver().getServer() != null) {

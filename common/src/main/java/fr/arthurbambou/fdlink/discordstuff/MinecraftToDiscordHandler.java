@@ -37,7 +37,7 @@ public final class MinecraftToDiscordHandler {
                 Message argMessage = (Message) arg1;
                 if (argMessage.getSibblings().isEmpty()) {
                     playerName = argMessage.getMessage().replaceAll("§[b0931825467adcfeklmnor]", "");
-                } else if (argMessage.getSibblings().size() == 2) {
+                } else if (argMessage.getSibblings().size() == 3) {
                     teamPrefix = argMessage.getSibblings().get(0).getMessage().replaceAll("§[b0931825467adcfeklmnor]", "");
                     playerName = argMessage.getSibblings().get(1).getMessage().replaceAll("§[b0931825467adcfeklmnor]", "");
                     teamSuffix = argMessage.getSibblings().get(2).getMessage().replaceAll("§[b0931825467adcfeklmnor]", "");
@@ -340,17 +340,13 @@ public final class MinecraftToDiscordHandler {
     public static String getArgAsString(Object arg) {
         if (arg instanceof CompatText) {
             return ((CompatText) arg).getMessage();
+        } else if (arg instanceof Message) {
+            return ((Message) arg).getMessage();
         }
         return (String) arg;
     }
 
     public MessageSender.MinecraftMessage handleTexts(Message text) {
-        if (this.config.mainConfig.minecraftToDiscord.general.enableDebugLogs) {
-            if (text.getTextType() == Message.TextType.TRANSLATABLE)
-                FDLink.LOGGER.info(text.getKey() + " : " + Arrays.toString(text.getArgs()) + " = " + text.getMessage());
-            else FDLink.LOGGER.info(text.getMessage());
-            FDLink.LOGGER.info(text.hasAuthorUUID() ? text.getAuthorUUID() : null);
-        }
         if (this.api == null || (!this.discordBot.hasChatChannels && !this.discordBot.hasLogChannels && this.config.mainConfig.webhookURL.isEmpty())) return null;
         Message.MessageObjectType objectType = text.getType();
         String message = text.getMessage();

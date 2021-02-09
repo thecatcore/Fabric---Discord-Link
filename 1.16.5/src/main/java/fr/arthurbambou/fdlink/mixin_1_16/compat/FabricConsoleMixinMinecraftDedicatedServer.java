@@ -4,6 +4,7 @@ import com.mojang.authlib.GameProfileRepository;
 import com.mojang.authlib.minecraft.MinecraftSessionService;
 import com.mojang.datafixers.DataFixer;
 import fr.arthurbambou.fdlink.FDLink;
+import fr.arthurbambou.fdlink.FDLink1_16;
 import fr.arthurbambou.fdlink.compat_1_16.Message1_16;
 import net.logandark.fabricconsole.TextToAnsi;
 import net.minecraft.resource.ResourcePackManager;
@@ -37,8 +38,7 @@ public abstract class FabricConsoleMixinMinecraftDedicatedServer extends Minecra
 
     @Override
     public void sendSystemMessage(Text message, UUID senderUuid) {
-        if (message instanceof TranslatableText) FDLink.getMessageSender().sendMessage(new Message1_16(((TranslatableText) message).getKey(), message.getString(), ((TranslatableText) message).getArgs()));
-        else FDLink.getMessageSender().sendMessage(new Message1_16(message.getString()));
+        FDLink1_16.handleText(message, senderUuid);
         LOGGER.info(TextToAnsi.INSTANCE.textToAnsi(message));
     }
 }

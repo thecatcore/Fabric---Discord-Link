@@ -24,7 +24,6 @@ public class Message1_16 implements Message {
     }
 
     public Message1_16(String key, String message, Object... args) {
-        System.out.println(Arrays.toString(args));
         this.key = key;
         this.message = message;
         this.args = args;
@@ -39,7 +38,7 @@ public class Message1_16 implements Message {
 
     @Override
     public boolean hasAuthorUUID() {
-        return false; // Why mojang why
+        return true;
     }
 
     @Override

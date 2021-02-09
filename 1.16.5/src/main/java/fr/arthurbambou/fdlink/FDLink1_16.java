@@ -12,7 +12,11 @@ import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.discovery.ModResolutionException;
 import net.fabricmc.loader.gui.FabricGuiEntry;
+import net.minecraft.text.BaseText;
+import net.minecraft.text.Text;
+import net.minecraft.text.TranslatableText;
 
+import java.util.List;
 import java.util.UUID;
 
 public class FDLink1_16 implements DedicatedServerModInitializer {
@@ -59,5 +63,35 @@ public class FDLink1_16 implements DedicatedServerModInitializer {
                 ServerLifecycleEvents.SERVER_STOPPED.register((server -> FDLink.getMessageSender().serverStopped()));
             }
         }
+    }
+
+    public static void handleText(Text text, UUID uUID) {
+        if (text instanceof BaseText) FDLink.getMessageSender().sendMessage(getMessageFromText((BaseText) text).setAuthorUUID(uUID));
+        else FDLink.getMessageSender().sendMessage(new Message1_16(text.getString()).setAuthorUUID(uUID));
+    }
+
+    private static Message getMessageFromText(BaseText text) {
+        List<Text> sibblings = text.getSiblings();
+        Message message = null;
+        if (text instanceof TranslatableText) {
+            Object[] args = ((TranslatableText) text).getArgs();
+            Object[] argsList = new Object[args.length];
+            for (int i = 0; i < args.length; i++) {
+                Object arg = args[i];
+                if (arg instanceof BaseText) {
+                    argsList[i] = getMessageFromText((BaseText) arg);
+                } else {
+                    argsList[i] = arg;
+                }
+            }
+            message = new Message1_16(((TranslatableText) text).getKey(), text.getString(), argsList);
+        }
+        else message = new Message1_16(text.getString());
+        for (Text sib : sibblings) {
+            if (sib instanceof BaseText) message.addSibbling(getMessageFromText((BaseText) sib));
+            else message.addSibbling(new Message1_16(sib.getString()));
+        }
+
+        return message;
     }
 }
