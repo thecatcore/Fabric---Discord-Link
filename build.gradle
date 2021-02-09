@@ -46,7 +46,7 @@ class Globals {
 	static def baseVersion = "0.8.8"
 	static def changelog = "Use crafatar instead of minotar when it's possible."
 	static def versionInfo = [
-			new MinecraftVersion("1.16.5", "3", "0.11.1", "0.29.4+1.16"),
+			new MinecraftVersion("1.16.5", "4", "0.11.1", "0.30.0+1.16"),
 			new MinecraftVersion("1.15.2", "17", "0.11.1", "0.28.5+1.15"),
 			new MinecraftVersion("1.12.2", "202101222025", "patch-1-SNAPSHOT", Origin.LEGACY_FABRIC),
 			new MinecraftVersion("1.8.9", "202101221000", "0.9.3+build.202009100647", "0.10.3", Origin.LEGACY_FABRIC, true),
