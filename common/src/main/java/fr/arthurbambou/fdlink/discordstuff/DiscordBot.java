@@ -201,6 +201,7 @@ public class DiscordBot implements MessageSender {
                 this.lastMessageD = this.lastMessageD.replace("%message", string_message);
             }
             CrossVersionHandler.sendMessageToChat(server, this.lastMessageD, style);
+            FDLink.MESSAGE_LOGGER.info(this.lastMessageD);
 
             this.hasReceivedMessage = false;
         }

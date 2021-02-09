@@ -13,6 +13,7 @@ public class FDLink implements DedicatedServerModInitializer {
 	private static DiscordBot messageReceiver;
 	private static MessageSender messageSender;
 	public static Logger LOGGER = LogManager.getLogger("FDLink");
+	public static Logger MESSAGE_LOGGER = LogManager.getLogger("Discord->Minecraft");
 	private static boolean loaded = false;
 
 	@Override
