@@ -302,6 +302,9 @@ curseforge {
 		gameVersionStrings.add("1.8.9")
 		gameVersionStrings.add("1.7.10")
 		gameVersionStrings.add("1.6.4")
+
+		// PalaverMC
+		gameVersionStrings.add("1.5.2")
 	}
 	options {
 		forgeGradleIntegration = false
@@ -320,6 +323,10 @@ task publishModrinth (type: TaskModrinthUpload) {
 	addLoader('fabric')
 
 	// 1.17.x
+	addGameVersion('21w07a')
+	addGameVersion('21w06a')
+	addGameVersion('21w05b')
+	addGameVersion('21w05a')
 	addGameVersion('21w03a')
 	addGameVersion('20w51a')
 	addGameVersion('20w49a')
@@ -436,4 +443,7 @@ task publishModrinth (type: TaskModrinthUpload) {
 	addGameVersion("1.8.9")
 	addGameVersion("1.7.10")
 	addGameVersion("1.6.4")
+
+	// PalaverMC
+	addGameVersion("1.5.2")
 }
