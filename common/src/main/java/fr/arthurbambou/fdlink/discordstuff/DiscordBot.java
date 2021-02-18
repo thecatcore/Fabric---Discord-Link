@@ -56,6 +56,7 @@ public class DiscordBot implements MessageSender {
             LOGGER.error("[FDLink] Please add a bot token to the config file!");
             return;
         }
+        this.startTime = System.currentTimeMillis();
 
         if (config.mainConfig.chatChannels.isEmpty()) {
             this.hasChatChannels = false;
@@ -99,7 +100,7 @@ public class DiscordBot implements MessageSender {
     @Override
     public void serverStarted() {
         if (this.api == null) return;
-        startTime = System.currentTimeMillis();
+        this.startTime = System.currentTimeMillis();
         if (this.config.mainConfig.minecraftToDiscord.chatChannels.serverStartMessage) sendToChatChannels(config.messageConfig.minecraftToDiscord.serverStarted);
         if (this.config.mainConfig.minecraftToDiscord.logChannels.serverStartMessage) sendToLogChannels(config.messageConfig.minecraftToDiscord.serverStarted);
     }
