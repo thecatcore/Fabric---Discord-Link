@@ -3,7 +3,7 @@ plugins {
 	id 'eclipse'
 	id 'idea'
 	id 'maven-publish'
-	id 'fabric-loom' version '0.5-SNAPSHOT' apply false
+	id 'fabric-loom' version '0.6-SNAPSHOT' apply false
 	id 'com.matthewprenger.cursegradle' version "1.4.0"
 	id "com.modrinth.minotaur" version "1.1.0"
 }
@@ -32,8 +32,7 @@ class MinecraftVersion {
 
 enum Origin {
 	FABRICMC,
-	LEGACY_FABRIC("https://dl.bintray.com/legacy-fabric/Legacy-Fabric-Maven/net/fabricmc/intermediary/#mcversion/intermediary-#mcversion-v2.jar"),
-	PALAVER("https://jitpack.io/com/github/PalaverMC/intermediary/#mcversion-v1.1/intermediary-#mcversion-v1.1-v2.jar");
+	LEGACY_FABRIC("https://maven.legacyfabric.net/net/fabricmc/intermediary/#mcversion/intermediary-#mcversion-v2.jar");
 
 	String customIntermediaryURL
 
@@ -43,16 +42,16 @@ enum Origin {
 }
 
 class Globals {
-	static def baseVersion = "0.8.10"
-	static def changelog = "Fix uptime being negative in some case."
+	static def baseVersion = "0.8.11"
+	static def changelog = "Webhook:\n-Player head now includes overlay\n-When a message is not sent by a player, the webhook name is not set to 'Server' anymore\n\n1.8.9 and 1.6.4 broke so they are not included in this version.\n1.5.2 compat was removed."
 	static def versionInfo = [
-			new MinecraftVersion("1.16.5", "4", "0.11.1", "0.30.0+1.16"),
-			new MinecraftVersion("1.15.2", "17", "0.11.1", "0.28.5+1.15"),
-			new MinecraftVersion("1.12.2", "202101222025", "patch-1-SNAPSHOT", Origin.LEGACY_FABRIC),
-			new MinecraftVersion("1.8.9", "202101221000", "0.9.3+build.202009100647", "0.10.3", Origin.LEGACY_FABRIC, true),
-			new MinecraftVersion("1.7.10", "202012300332", "0.9.3+build.202009100647", Origin.LEGACY_FABRIC, true),
-			new MinecraftVersion("1.6.4", "202101280853", "0.9.3+build.202009100647", Origin.LEGACY_FABRIC, true),
-			new MinecraftVersion("1.5.2", "954cd9c9d4", "0.9.3+build.202009100647", Origin.PALAVER, true)
+			new MinecraftVersion("21w10a", "13", "0.11.3", "0.32.2+1.17"),
+			new MinecraftVersion("1.16.5", "5", "0.11.3", "0.32.0+1.16"),
+			new MinecraftVersion("1.15.2", "17", "0.11.3", "0.28.5+1.15"),
+			new MinecraftVersion("1.12.2", "202103011608", "0.11.3", Origin.LEGACY_FABRIC),
+			new MinecraftVersion("1.8.9", "202103100810", "0.11.1+build.202102220648", "0.10.3", Origin.LEGACY_FABRIC, true),
+			new MinecraftVersion("1.7.10", "202102271416", "0.11.1+build.202102220648", Origin.LEGACY_FABRIC, true),
+			new MinecraftVersion("1.6.4", "202101280853", "0.11.1+build.202102220648", Origin.LEGACY_FABRIC, true)
 	]
 }
 
@@ -84,15 +83,13 @@ allprojects {
 
 	dependencies {
 		minecraft "com.mojang:minecraft:${versionInfo.mcVersion}"
-		if (versionInfo.origin == Origin.PALAVER) mappings "com.github.PalaverMC:rigmarole:${versionInfo.yarnVersion}"
-		else mappings "net.fabricmc:yarn:${versionInfo.mcVersion}+build.${versionInfo.yarnVersion}:v2"
+		mappings "net.fabricmc:yarn:${versionInfo.mcVersion}+build.${versionInfo.yarnVersion}:v2"
 		if (projectName != "common") {
-			if (versionInfo.origin == Origin.FABRICMC) {
+			if (versionInfo.origin == Origin.FABRICMC || versionInfo.mcVersion == "1.12.2") {
 				modImplementation "net.fabricmc:fabric-loader:${versionInfo.loaderVersion}"
 			} else {
 				implementation "com.google.guava:guava:23.5-jre"
-				if (versionInfo.mcVersion == "1.12.2") modImplementation "com.github.shedaniel:fabric-loader:${versionInfo.loaderVersion}"
-				else modImplementation ("net.fabricmc:fabric-loader-1.8.9:${versionInfo.loaderVersion}") {
+				modImplementation ("net.fabricmc:fabric-loader-1.8.9:${versionInfo.loaderVersion}") {
 					exclude module: "guava"
 				}
 
@@ -102,21 +99,11 @@ allprojects {
 					implementation 'org.lwjgl.lwjgl:lwjgl-platform:2.9.4-nightly-20150209'
 				}
 
-				if (versionInfo.mcVersion == "1.6.4" || versionInfo.mcVersion == "1.5.2") {
+				if (versionInfo.mcVersion == "1.6.4") {
 					implementation "org.apache.logging.log4j:log4j-core:2.13.3"
 					implementation "org.apache.logging.log4j:log4j-api:2.13.3"
 					annotationProcessor "org.apache.logging.log4j:log4j-core:2.13.3"
 					annotationProcessor "org.apache.logging.log4j:log4j-api:2.13.3"
-				}
-
-				if (versionInfo.mcVersion == "1.5.2") {
-					implementation "com.google.code.gson:gson:2.8.6"
-
-					implementation "org.ow2.asm:asm:9.0"
-					implementation "org.ow2.asm:asm-commons:9.0"
-					implementation "org.ow2.asm:asm-util:9.0"
-					implementation "org.ow2.asm:asm-tree:9.0"
-					implementation "org.ow2.asm:asm-analysis:9.0"
 				}
 			}
 
@@ -146,10 +133,12 @@ allprojects {
 			name = 'Fabric'
 			url = 'http://maven.fabricmc.net/'
 		}
+
 		maven {
 			name = 'legacy-fabric'
-			url = 'https://dl.bintray.com/legacy-fabric/Legacy-Fabric-Maven'
+			url = 'https://maven.legacyfabric.net/'
 		}
+
 		maven {
 			name = 'mojang'
 			url = 'https://libraries.minecraft.net/'
@@ -162,10 +151,7 @@ allprojects {
 				includeGroup "curse.maven"
 			}
 		}
-//		maven {
-//			name = 'SpongePowered'
-//			url = 'http://repo.spongepowered.org/maven'
-//		}
+
 		maven {
 			name = "Jitpack"
 			url = "https://jitpack.io/"
@@ -299,12 +285,9 @@ curseforge {
 
 		// Fabric Legacy
 		gameVersionStrings.add("1.12.2")
-		gameVersionStrings.add("1.8.9")
+//		gameVersionStrings.add("1.8.9")
 		gameVersionStrings.add("1.7.10")
-		gameVersionStrings.add("1.6.4")
-
-		// PalaverMC
-		gameVersionStrings.add("1.5.2")
+//		gameVersionStrings.add("1.6.4")
 	}
 	options {
 		forgeGradleIntegration = false
@@ -323,6 +306,9 @@ task publishModrinth (type: TaskModrinthUpload) {
 	addLoader('fabric')
 
 	// 1.17.x
+	addGameVersion('21w10a')
+	addGameVersion('21w08b')
+	addGameVersion('21w08a')
 	addGameVersion('21w07a')
 	addGameVersion('21w06a')
 	addGameVersion('21w05b')
@@ -440,10 +426,7 @@ task publishModrinth (type: TaskModrinthUpload) {
 
 	// Fabric Legacy
 	addGameVersion("1.12.2")
-	addGameVersion("1.8.9")
+//	addGameVersion("1.8.9")
 	addGameVersion("1.7.10")
-	addGameVersion("1.6.4")
-
-	// PalaverMC
-	addGameVersion("1.5.2")
+//	addGameVersion("1.6.4")
 }

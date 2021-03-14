@@ -93,6 +93,6 @@ public class MinecraftServer1_12_2 implements MinecraftServer {
 
     @Override
     public File getIcon() {
-        return this.minecraftServer.getLevelStorage().method_28330(this.minecraftServer.getLevelName(), "icon.png");
+        return this.minecraftServer.getLevelStorage().getFile(this.minecraftServer.getLevelName(), "icon.png");
     }
 }
