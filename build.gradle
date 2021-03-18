@@ -42,10 +42,10 @@ enum Origin {
 }
 
 class Globals {
-	static def baseVersion = "0.8.11"
-	static def changelog = "Webhook:\n-Player head now includes overlay\n-When a message is not sent by a player, the webhook name is not set to 'Server' anymore\n\n1.8.9 and 1.6.4 broke so they are not included in this version.\n1.5.2 compat was removed."
+	static def baseVersion = "0.8.12"
+	static def changelog = "Fix crash when status list is empty."
 	static def versionInfo = [
-			new MinecraftVersion("21w10a", "13", "0.11.3", "0.32.2+1.17"),
+			new MinecraftVersion("21w11a", "5", "0.11.3", "0.32.4+1.17"),
 			new MinecraftVersion("1.16.5", "5", "0.11.3", "0.32.0+1.16"),
 			new MinecraftVersion("1.15.2", "17", "0.11.3", "0.28.5+1.15"),
 			new MinecraftVersion("1.12.2", "202103011608", "0.11.3", Origin.LEGACY_FABRIC),
@@ -116,7 +116,7 @@ allprojects {
 	minecraft {
 		if (!versionInfo.origin.customIntermediaryURL.isEmpty()) {
 			intermediaryUrl = {
-				return versionInfo.origin.customIntermediaryURL.replaceAll("#mcversion", versionInfo.mcVersion);
+				return versionInfo.origin.customIntermediaryURL.replaceAll("#mcversion", versionInfo.mcVersion)
 			}
 		}
 	}
@@ -235,7 +235,7 @@ subprojects.each { remapJar.dependsOn("${it.path}:remapJar") }
 dependencies {
 	afterEvaluate {
 		subprojects.each {
-			compile project(path: ":${it.name}", configuration: "dev")
+			implementation project(path: ":${it.name}", configuration: "dev")
 			include project("${it.name}:")
 		}
 	}

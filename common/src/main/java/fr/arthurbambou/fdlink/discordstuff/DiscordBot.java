@@ -147,18 +147,20 @@ public class DiscordBot implements MessageSender {
         if (this.updatedActivity) this.updatedActivity = ((int)(System.currentTimeMillis()/1000) % this.config.mainConfig.activityUpdateInterval) == 0;
         if ((((int)(System.currentTimeMillis()/1000) % this.config.mainConfig.activityUpdateInterval) == 0 && !this.updatedActivity) || this.firstTick) {
             String[] possibleActivities = this.config.messageConfig.discord.botActivities;
-            int rand = new Random().nextInt(possibleActivities.length);
-            String selected = possibleActivities[rand];
-            selected = selected
-                    .replace("%playercount", String.valueOf(playerNumber))
-                    .replace("%maxplayercount", String.valueOf(maxPlayer))
-                    .replace("%uptime_D", String.valueOf(uptimeD))
-                    .replace("%uptime_H", String.valueOf(uptimeH))
-                    .replace("%uptime_M", String.valueOf(uptimeM))
-                    .replace("%uptime_S", String.valueOf(uptimeS))
-                    .replace("%ip", ip);
-            this.api.getPresence().setActivity(Activity.playing(selected));
-            this.updatedActivity = true;
+            if (possibleActivities.length > 0) {
+                int rand = new Random().nextInt(possibleActivities.length);
+                String selected = possibleActivities[rand];
+                selected = selected
+                        .replace("%playercount", String.valueOf(playerNumber))
+                        .replace("%maxplayercount", String.valueOf(maxPlayer))
+                        .replace("%uptime_D", String.valueOf(uptimeD))
+                        .replace("%uptime_H", String.valueOf(uptimeH))
+                        .replace("%uptime_M", String.valueOf(uptimeM))
+                        .replace("%uptime_S", String.valueOf(uptimeS))
+                        .replace("%ip", ip);
+                this.api.getPresence().setActivity(Activity.playing(selected));
+                this.updatedActivity = true;
+            }
         }
         if (this.hasReceivedMessage) {
             for (Commands command : Commands.values()) {
