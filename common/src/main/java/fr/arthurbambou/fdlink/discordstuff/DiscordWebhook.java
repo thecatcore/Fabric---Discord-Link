@@ -10,8 +10,11 @@ import fr.arthurbambou.fdlink.config.Config;
 import fr.arthurbambou.fdlink.versionhelpers.minecraft.Message;
 import fr.arthurbambou.fdlink.versionhelpers.minecraft.MinecraftServer;
 import fr.arthurbambou.fdlink.versionhelpers.minecraft.PlayerEntity;
+import okhttp3.OkHttpClient;
+import okhttp3.Protocol;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collections;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
@@ -23,8 +26,12 @@ public class DiscordWebhook implements MessageSender {
 
     public DiscordWebhook(String webhookURL, Config config, DiscordBot messageReader) {
         this.config = config;
-        WebhookClientBuilder builder = new WebhookClientBuilder(webhookURL);
-        builder.setAllowedMentions(AllowedMentions.all().withParseEveryone(false));
+        WebhookClientBuilder builder = new WebhookClientBuilder(webhookURL)
+                .setAllowedMentions(AllowedMentions.all().withParseEveryone(false))
+                // Fix found by Tom_The_Geek (Geek202), creator of TomsServerUtils.
+                .setHttpClient(new OkHttpClient.Builder()
+                    .protocols(Collections.singletonList(Protocol.HTTP_1_1))
+                    .build());
         this.webhookClient = builder.build();
         this.messageReader = messageReader;
     }
