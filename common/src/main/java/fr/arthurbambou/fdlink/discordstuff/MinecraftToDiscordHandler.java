@@ -347,7 +347,7 @@ public final class MinecraftToDiscordHandler {
     }
 
     public MessageSender.MinecraftMessage handleTexts(Message text) {
-        if (this.api == null || (!this.discordBot.hasChatChannels && !this.discordBot.hasLogChannels && this.config.mainConfig.webhookURL.isEmpty())) return null;
+        if (this.api == null || (!this.discordBot.hasChatChannels && !this.discordBot.hasLogChannels && this.config.mainConfig.webhook.url.isEmpty())) return null;
         Message.MessageObjectType objectType = text.getType();
         String message = text.getMessage();
         if (message.equals(this.discordBot.lastMessageD)) return null;

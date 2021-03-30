@@ -6,7 +6,7 @@ import java.util.List;
 public class MainConfig {
     public List<String> chatChannels = new ArrayList<String>();
     public List<String> logChannels = new ArrayList<String>();
-    public String webhookURL = "";
+    public WebhookSettings webhook = new WebhookSettings();
     public boolean ignoreBots = true;
     public int activityUpdateInterval = 120;
     public MainConfig.MinecraftToDiscord minecraftToDiscord = new MinecraftToDiscord();
@@ -26,6 +26,17 @@ public class MainConfig {
             this.name = name;
             this.id = id;
         }
+    }
+
+    public static class WebhookSettings {
+        public String url = "";
+        public WebhookMentions mentions = new WebhookMentions();
+    }
+
+    public static class WebhookMentions {
+        public boolean everyone = false;
+        public boolean roles = false;
+        public boolean users = true;
     }
 
     public static class MinecraftToDiscord {

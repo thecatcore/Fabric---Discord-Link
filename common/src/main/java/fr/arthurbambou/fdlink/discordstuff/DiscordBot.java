@@ -110,7 +110,7 @@ public class DiscordBot implements MessageSender {
         if (this.api == null) return;
         this.api.removeEventListener(this.messageCreateListener);
         this.stopping = true;
-        if (!this.config.mainConfig.webhookURL.isEmpty()) return;
+        if (!this.config.mainConfig.webhook.url.isEmpty()) return;
         if (this.config.mainConfig.minecraftToDiscord.chatChannels.serverStoppingMessage) sendToChatChannels(config.messageConfig.minecraftToDiscord.serverStopping);
         if (this.config.mainConfig.minecraftToDiscord.logChannels.serverStoppingMessage) sendToLogChannels(config.messageConfig.minecraftToDiscord.serverStopping);
     }
@@ -118,7 +118,7 @@ public class DiscordBot implements MessageSender {
     @Override
     public void serverStopped() {
         if (this.api == null) return;
-        if ((this.config.mainConfig.minecraftToDiscord.chatChannels.serverStopMessage || this.config.mainConfig.minecraftToDiscord.logChannels.serverStopMessage) && this.config.mainConfig.webhookURL.isEmpty()) {
+        if ((this.config.mainConfig.minecraftToDiscord.chatChannels.serverStopMessage || this.config.mainConfig.minecraftToDiscord.logChannels.serverStopMessage) && this.config.mainConfig.webhook.url.isEmpty()) {
             ArrayList<CompletableFuture<Message>> requests = new ArrayList<>();
             if(this.config.mainConfig.minecraftToDiscord.chatChannels.serverStopMessage && this.hasChatChannels) requests.addAll(sendToChatChannels(config.messageConfig.minecraftToDiscord.serverStopped, requests));
             if(this.config.mainConfig.minecraftToDiscord.logChannels.serverStopMessage && this.hasLogChannels) requests.addAll(sendToLogChannels(config.messageConfig.minecraftToDiscord.serverStopped, requests));

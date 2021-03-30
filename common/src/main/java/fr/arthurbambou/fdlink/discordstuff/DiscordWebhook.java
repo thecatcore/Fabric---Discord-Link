@@ -27,7 +27,11 @@ public class DiscordWebhook implements MessageSender {
     public DiscordWebhook(String webhookURL, Config config, DiscordBot messageReader) {
         this.config = config;
         WebhookClientBuilder builder = new WebhookClientBuilder(webhookURL)
-                .setAllowedMentions(AllowedMentions.all().withParseEveryone(false))
+                .setAllowedMentions(AllowedMentions.none()
+                        .withParseEveryone(config.mainConfig.webhook.mentions.everyone)
+                        .withParseRoles(config.mainConfig.webhook.mentions.roles)
+                        .withParseUsers(config.mainConfig.webhook.mentions.users)
+                )
                 // Fix found by Tom_The_Geek (Geek202), creator of TomsServerUtils.
                 .setHttpClient(new OkHttpClient.Builder()
                     .protocols(Collections.singletonList(Protocol.HTTP_1_1))

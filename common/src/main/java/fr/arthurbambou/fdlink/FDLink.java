@@ -24,11 +24,11 @@ public class FDLink implements DedicatedServerModInitializer {
 	private static void initialize() {
 		ConfigHandler.ConfigHolder configHolder = ConfigHandler.getConfig();
 		messageReceiver = new DiscordBot(configHolder.getToken(), configHolder.getConfig());
-		if (configHolder.getConfig().mainConfig.webhookURL.isEmpty()) {
+		if (configHolder.getConfig().mainConfig.webhook.url.isEmpty()) {
 			messageSender = messageReceiver;
 		} else {
 			LOGGER.info("Found a webhook URL, using Webhook instead of Bot to send message.");
-			messageSender = new DiscordWebhook(configHolder.getConfig().mainConfig.webhookURL, configHolder.getConfig(), messageReceiver);
+			messageSender = new DiscordWebhook(configHolder.getConfig().mainConfig.webhook.url, configHolder.getConfig(), messageReceiver);
 		}
 		loaded = true;
 	}
@@ -36,10 +36,10 @@ public class FDLink implements DedicatedServerModInitializer {
 	public static void regenConfig() {
 		ConfigHandler.ConfigHolder configHolder = ConfigHandler.getConfig();
 		messageReceiver = new DiscordBot(configHolder.getToken(), configHolder.getConfig());
-		if (configHolder.getConfig().mainConfig.webhookURL.isEmpty()) {
+		if (configHolder.getConfig().mainConfig.webhook.url.isEmpty()) {
 			messageSender = messageReceiver;
 		} else {
-			messageSender = new DiscordWebhook(configHolder.getConfig().mainConfig.webhookURL, configHolder.getConfig(), messageReceiver);
+			messageSender = new DiscordWebhook(configHolder.getConfig().mainConfig.webhook.url, configHolder.getConfig(), messageReceiver);
 		}
 	}
 

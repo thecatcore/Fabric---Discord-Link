@@ -392,6 +392,30 @@ public enum ConfigUpgrader {
         jsonObject.addProperty("version", 8);
 
         return jsonObject;
+    }),
+    V8_TO_V9(jsonObject -> {
+        JsonObject webhookSettings = new JsonObject();
+
+        JsonObject webhookMentions = new JsonObject();
+        webhookMentions.addProperty("everyone", false);
+        webhookMentions.addProperty("roles", false);
+        webhookMentions.addProperty("users", true);
+
+        if (jsonObject.getAsJsonObject("main").has("webhookURL")) {
+            webhookSettings.addProperty("url", jsonObject.getAsJsonObject("main").get("webhookURL").getAsString());
+            jsonObject.getAsJsonObject("main").remove("webhookURL");
+        } else {
+            webhookSettings.addProperty("url", "");
+        }
+
+        webhookSettings.add("mentions", webhookMentions);
+
+        jsonObject.getAsJsonObject("main").add("webhook", webhookSettings);
+
+        jsonObject.remove("version");
+        jsonObject.addProperty("version", 9);
+
+        return jsonObject;
     });
 
     private final Upgrader upgrader;
