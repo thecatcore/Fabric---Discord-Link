@@ -139,7 +139,7 @@ public class ConfigHandler {
 
         if (mainObject.has("activityUpdateInterval")) config.mainConfig.activityUpdateInterval = mainObject.get("activityUpdateInterval").getAsInt();
 
-        config.mainConfig.webhook = gson.fromJson(mainObject.get("webhook").getAsString(), MainConfig.WebhookSettings.class);
+        config.mainConfig.webhook = gson.fromJson(mainObject.getAsJsonObject("webhook").toString(), MainConfig.WebhookSettings.class);
 
         List<String> chatChannels = new ArrayList<>();
         for (JsonElement jsonElement : readList(
