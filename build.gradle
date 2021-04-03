@@ -308,6 +308,8 @@ task publishModrinth (type: TaskModrinthUpload) {
 	addLoader('fabric')
 
 	// 1.17.x
+	addGameVersion('21w13a')
+	addGameVersion('21w11a')
 	addGameVersion('21w10a')
 	addGameVersion('21w08b')
 	addGameVersion('21w08a')
@@ -352,6 +354,7 @@ task publishModrinth (type: TaskModrinthUpload) {
 	addGameVersion('1.16-pre3')
 	addGameVersion('1.16-pre2')
 	addGameVersion('1.16-pre1')
+	addGameVersion('20w22a')
 	addGameVersion('20w21a')
 	addGameVersion('20w20b')
 	addGameVersion('20w20a')
