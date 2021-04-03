@@ -6,11 +6,11 @@ import fr.arthurbambou.fdlink.compat_1_8_9.MinecraftServer1_8_9;
 import fr.arthurbambou.fdlink.versionhelpers.CrossVersionHandler;
 import fr.arthurbambou.fdlink.versionhelpers.minecraft.Message;
 import net.fabricmc.api.DedicatedServerModInitializer;
-import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
-import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.discovery.ModResolutionException;
 import net.fabricmc.loader.gui.FabricGuiEntry;
+import net.legacyfabric.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
+import net.legacyfabric.fabric.api.event.lifecycle.v1.ServerTickEvents;
 
 public class FDLink1_8_9 implements DedicatedServerModInitializer {
     @Override
@@ -25,7 +25,7 @@ public class FDLink1_8_9 implements DedicatedServerModInitializer {
                 server.sendMessageToAll(new MessagePacket1_8_9(literalText));
             });
 
-            if (FabricLoader.getInstance().isModLoaded("fabric")) {
+            if (FabricLoader.getInstance().isModLoaded("legacy-fabric-api")) {
                 ServerTickEvents.START_SERVER_TICK.register(server -> {
                     FDLink.getMessageReceiver().serverTick(new MinecraftServer1_8_9(server));
                 });
@@ -44,7 +44,7 @@ public class FDLink1_8_9 implements DedicatedServerModInitializer {
                 });
             } else {
                 try {
-                    throw new ModResolutionException("Could not find required mod: fdlink requires fabric");
+                    throw new ModResolutionException("Could not find required mod: fdlink requires legacy-fabric-api");
                 } catch (ModResolutionException e) {
                     FabricGuiEntry.displayCriticalError(e, true);
                 }

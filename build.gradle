@@ -49,7 +49,7 @@ class Globals {
 			new MinecraftVersion("1.16.5", "5", "0.11.3", "0.32.0+1.16"),
 			new MinecraftVersion("1.15.2", "17", "0.11.3", "0.28.5+1.15"),
 			new MinecraftVersion("1.12.2", "202103011608", "0.11.3", Origin.LEGACY_FABRIC),
-			new MinecraftVersion("1.8.9", "202103291533", "0.11.1+build.202102220648", "0.10.3", Origin.LEGACY_FABRIC, true),
+			new MinecraftVersion("1.8.9", "202103291533", "0.11.1+build.202102220648", "1.1.0+1.8.9", Origin.LEGACY_FABRIC, true),
 			new MinecraftVersion("1.7.10", "202102271416", "0.11.1+build.202102220648", Origin.LEGACY_FABRIC, true),
 			new MinecraftVersion("1.6.4", "202101280853", "0.11.1+build.202102220648", Origin.LEGACY_FABRIC, true)
 	]
@@ -88,11 +88,14 @@ allprojects {
 		if (projectName != "common") {
 			if (versionInfo.origin == Origin.FABRIC || versionInfo.mcVersion == "1.12.2") {
 				modImplementation "net.fabricmc:fabric-loader:${versionInfo.loaderVersion}"
+				if (versionInfo.origin == Origin.FABRIC) modImplementation "net.fabricmc.fabric-api:fabric-api:${versionInfo.apiVersion}"
 			} else {
 				implementation "com.google.guava:guava:23.5-jre"
 				modImplementation ("net.fabricmc:fabric-loader-1.8.9:${versionInfo.loaderVersion}") {
 					exclude module: "guava"
 				}
+
+				if (!versionInfo.apiVersion.isEmpty()) modImplementation "net.legacyfabric.legacy-fabric-api:legacy-fabric-api:${versionInfo.apiVersion}"
 
 				if (versionInfo.oldLwjgl && System.getProperty("os.name").toLowerCase().contains("mac")) {
 					implementation 'org.lwjgl.lwjgl:lwjgl_util:2.9.4-nightly-20150209'
@@ -107,8 +110,6 @@ allprojects {
 					annotationProcessor "org.apache.logging.log4j:log4j-api:2.13.3"
 				}
 			}
-
-			if (!versionInfo.apiVersion.isEmpty()) modImplementation "net.fabricmc.fabric-api:fabric-api:${versionInfo.apiVersion}"
 		} else {
 			modImplementation "net.fabricmc:fabric-loader:${versionInfo.loaderVersion}"
 		}
