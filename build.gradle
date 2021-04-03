@@ -16,7 +16,7 @@ class MinecraftVersion {
 	Origin origin
 	boolean oldLwjgl
 
-	MinecraftVersion(String mcVersion, String yarnVersion, String loaderVersion, String apiVersion, Origin origin = Origin.FABRICMC, boolean oldLwjgl = false) {
+	MinecraftVersion(String mcVersion, String yarnVersion, String loaderVersion, String apiVersion, Origin origin = Origin.FABRIC, boolean oldLwjgl = false) {
 		this.mcVersion = mcVersion
 		this.yarnVersion = yarnVersion
 		this.loaderVersion = loaderVersion
@@ -25,13 +25,13 @@ class MinecraftVersion {
 		this.oldLwjgl = oldLwjgl
 	}
 
-	MinecraftVersion(String mcVersion, String yarnVersion, String loaderVersion, Origin origin = Origin.FABRICMC, boolean oldLwjgl = false) {
+	MinecraftVersion(String mcVersion, String yarnVersion, String loaderVersion, Origin origin = Origin.FABRIC, boolean oldLwjgl = false) {
 		this(mcVersion, yarnVersion, loaderVersion, "", origin, oldLwjgl)
 	}
 }
 
 enum Origin {
-	FABRICMC,
+	FABRIC,
 	LEGACY_FABRIC("https://maven.legacyfabric.net/net/fabricmc/intermediary/#mcversion/intermediary-#mcversion-v2.jar");
 
 	String customIntermediaryURL
@@ -61,7 +61,8 @@ def getSubprojectVersion() {
 	return Globals.baseVersion
 }
 
-static MinecraftVersion getVersionInfo(project_name) {
+static MinecraftVersion getVersionInfo(String project_name) {
+	project_name = project_name.replace("versions", "").replace("fabric", "").replace("legacy-", "").replace("/", "")
 	def version_info = Globals.versionInfo[0]
 	for (MinecraftVersion minecraftVersion : Globals.versionInfo) {
 		if (minecraftVersion.mcVersion == project_name) version_info = minecraftVersion
@@ -85,7 +86,7 @@ allprojects {
 		minecraft "com.mojang:minecraft:${versionInfo.mcVersion}"
 		mappings "net.fabricmc:yarn:${versionInfo.mcVersion}+build.${versionInfo.yarnVersion}:v2"
 		if (projectName != "common") {
-			if (versionInfo.origin == Origin.FABRICMC || versionInfo.mcVersion == "1.12.2") {
+			if (versionInfo.origin == Origin.FABRIC || versionInfo.mcVersion == "1.12.2") {
 				modImplementation "net.fabricmc:fabric-loader:${versionInfo.loaderVersion}"
 			} else {
 				implementation "com.google.guava:guava:23.5-jre"
