@@ -42,8 +42,8 @@ enum Origin {
 }
 
 class Globals {
-	static def baseVersion = "0.8.15"
-	static def changelog = "Fix crash on startup."
+	static def baseVersion = "0.8.16"
+	static def changelog = "Maybe fix tellraw not working?"
 	static def versionInfo = [
 			new MinecraftVersion("21w11a", "5", "0.11.3", "0.32.4+1.17"),
 			new MinecraftVersion("1.16.5", "5", "0.11.3", "0.32.0+1.16"),
