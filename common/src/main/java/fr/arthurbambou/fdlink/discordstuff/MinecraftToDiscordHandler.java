@@ -58,7 +58,9 @@ public final class MinecraftToDiscordHandler {
                 chatPlayerName = adaptUsernameToDiscord(playerName);
                 logPlayerName = adaptUsernameToDiscord(playerName);
                 for (MainConfig.EmojiEntry emojiEntry : this.config.mainConfig.emojiMap) {
-                    message = message.replaceAll(emojiEntry.name, "<" + emojiEntry.id + ">");
+                    if (!emojiEntry.name.isEmpty()) {
+                        message = message.replaceAll(emojiEntry.name, "<" + emojiEntry.id + ">");
+                    }
                 }
                 if(!this.config.mainConfig.minecraftToDiscord.chatChannels.minecraftToDiscordTag){
                     chatMessage = message;
