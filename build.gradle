@@ -45,8 +45,8 @@ class Globals {
 	static def baseVersion = "0.8.16"
 	static def changelog = "Maybe fix tellraw not working?"
 	static def versionInfo = [
-			new MinecraftVersion("21w11a", "5", "0.11.3", "0.32.4+1.17"),
-			new MinecraftVersion("1.16.5", "5", "0.11.3", "0.32.0+1.16"),
+			new MinecraftVersion("21w14a", "10", "0.11.3", "0.32.7+1.17"),
+			new MinecraftVersion("1.16.5", "6", "0.11.3", "0.32.5+1.16"),
 			new MinecraftVersion("1.15.2", "17", "0.11.3", "0.28.5+1.15"),
 			new MinecraftVersion("1.12.2", "202103011608", "0.11.3", Origin.LEGACY_FABRIC),
 			new MinecraftVersion("1.8.9", "202103291533", "0.11.1+build.202102220648", "1.1.0+1.8.9", Origin.LEGACY_FABRIC, true),
@@ -290,7 +290,7 @@ curseforge {
 
 		// Fabric Legacy
 		gameVersionStrings.add("1.12.2")
-//		gameVersionStrings.add("1.8.9")
+		gameVersionStrings.add("1.8.9")
 		gameVersionStrings.add("1.7.10")
 //		gameVersionStrings.add("1.6.4")
 	}
@@ -311,6 +311,7 @@ task publishModrinth (type: TaskModrinthUpload) {
 	addLoader('fabric')
 
 	// 1.17.x
+	addGameVersion('21w14a')
 	addGameVersion('21w13a')
 	addGameVersion('21w11a')
 	addGameVersion('21w10a')
