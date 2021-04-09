@@ -130,7 +130,10 @@ allprojects {
 	repositories {
 		mavenLocal()
 		mavenCentral()
-		jcenter()
+		maven {
+			name 'm2-dv8tion'
+			url 'https://m2.dv8tion.net/releases'
+		}
 		maven {
 			name = 'Fabric'
 			url = 'http://maven.fabricmc.net/'
