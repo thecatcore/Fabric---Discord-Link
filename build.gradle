@@ -1,9 +1,9 @@
 plugins {
-	id 'java'
+	id 'java-library'
 	id 'eclipse'
 	id 'idea'
-	id 'maven-publish'
-	id 'fabric-loom' version '0.6-SNAPSHOT' apply false
+//	id 'maven-publish'
+	id 'fabric-loom' version '0.7-SNAPSHOT' apply false
 	id 'com.matthewprenger.cursegradle' version "1.4.0"
 	id "com.modrinth.minotaur" version "1.1.0"
 }
@@ -70,9 +70,15 @@ static MinecraftVersion getVersionInfo(String project_name) {
 	return version_info
 }
 
+
+import net.fabricmc.loom.task.RemapJarTask
+import net.fabricmc.loom.task.RemapSourcesJarTask
+
 allprojects {
+
 	def projectName = it.name;
-	apply plugin: 'maven-publish'
+	apply plugin: 'java-library'
+//	apply plugin: 'maven-publish'
 	apply plugin: 'fabric-loom'
 
 	sourceCompatibility = 1.8
@@ -87,11 +93,11 @@ allprojects {
 		mappings "net.fabricmc:yarn:${versionInfo.mcVersion}+build.${versionInfo.yarnVersion}:v2"
 		if (projectName != "common") {
 			if (versionInfo.origin == Origin.FABRIC || versionInfo.mcVersion == "1.12.2") {
-				modImplementation "net.fabricmc:fabric-loader:${versionInfo.loaderVersion}"
+				modApi "net.fabricmc:fabric-loader:${versionInfo.loaderVersion}"
 				if (versionInfo.origin == Origin.FABRIC) modImplementation "net.fabricmc.fabric-api:fabric-api:${versionInfo.apiVersion}"
 			} else {
 				implementation "com.google.guava:guava:23.5-jre"
-				modImplementation ("net.fabricmc:fabric-loader-1.8.9:${versionInfo.loaderVersion}") {
+				modApi ("net.fabricmc:fabric-loader-1.8.9:${versionInfo.loaderVersion}") {
 					exclude module: "guava"
 				}
 
@@ -111,7 +117,7 @@ allprojects {
 				}
 			}
 		} else {
-			modImplementation "net.fabricmc:fabric-loader:${versionInfo.loaderVersion}"
+			modApi "net.fabricmc:fabric-loader:${versionInfo.loaderVersion}"
 		}
 	}
 
@@ -136,18 +142,13 @@ allprojects {
 		}
 		maven {
 			name = 'Fabric'
-			url = 'http://maven.fabricmc.net/'
+			url = 'https://maven.fabricmc.net/'
 		}
 
 		maven {
 			name = 'legacy-fabric'
 			url = 'https://maven.legacyfabric.net/'
 		}
-
-//		maven {
-//			name = 'mojang'
-//			url = 'https://libraries.minecraft.net/'
-//		}
 
 		maven {
 			name = "CurseMaven"
@@ -164,13 +165,13 @@ allprojects {
 	}
 
 	jar {
-		classifier = "dev"
+		archiveClassifier = "dev"
 	}
 
 	afterEvaluate {
 		remapJar {
-			input = file("${project.buildDir}/libs/$archivesBaseName-${version}-dev.jar")
-			archiveName = "${archivesBaseName}-${version}.jar"
+			input = file("${project.buildDir}/libs/$archivesBaseName-${archiveVersion.get()}-dev.jar")
+			archiveFileName = "${archivesBaseName}-${archiveVersion.get()}.jar"
 		}
 
 		artifacts {
@@ -180,14 +181,16 @@ allprojects {
 		processResources {
 			inputs.property "version", project.version
 
-			from(sourceSets.main.resources.srcDirs) {
-				include "fabric.mod.json"
+			filesMatching("fabric.mod.json") {
 				expand "version": project.version
 			}
+		}
+	}
 
-			from(sourceSets.main.resources.srcDirs) {
-				exclude "fabric.mod.json"
-			}
+	if (project.rootProject != project) {
+		project.rootProject.dependencies {
+			api project(path: ":${project.name}", configuration: "dev")
+			include project(":${project.name}")
 		}
 	}
 
@@ -195,56 +198,33 @@ allprojects {
 		classifier = 'sources'
 		from sourceSets.main.allSource
 	}
-}
 
-subprojects {
-
-	dependencies {
-//        testmodCompile sourceSets.main.output
-	}
-
-	task remapMavenJar(type: Copy, dependsOn: remapJar) {
-		afterEvaluate {
-			from("${project.buildDir}/libs/$archivesBaseName-${version}.jar")
-			into("${project.buildDir}/libs/")
-			rename { String fn -> "$archivesBaseName-${version}-maven.jar" }
-		}
-	}
-
-	publishing {
-		publications {
-			mavenJava(MavenPublication) {
-				afterEvaluate {
-					artifact(file("${project.buildDir}/libs/$archivesBaseName-${version}-maven.jar")) {
-						builtBy remapMavenJar
-					}
-					artifact(sourcesJar) {
-						builtBy remapSourcesJar
-					}
-				}
-			}
-		}
+	tasks.withType(AbstractArchiveTask) {
+		preserveFileTimestamps = false
+		reproducibleFileOrder = true
 	}
 }
 
-task remapMavenJar(type: net.fabricmc.loom.task.RemapJarTask, dependsOn: jar) {
+subprojects {}
+
+task remapMavenJar(type: RemapJarTask, dependsOn: jar) {
 	afterEvaluate {
-		input = file("${project.buildDir}/libs/${archivesBaseName}-${version}-dev.jar")
-		archiveName = "${archivesBaseName}-${version}-maven.jar"
+		input = file("${project.buildDir}/libs/${archivesBaseName}-${archiveVersion.get()}-dev.jar")
+		archiveFileName = "${archivesBaseName}-${archiveVersion.get()}-maven.jar"
 		addNestedDependencies = false
 	}
 }
 
 subprojects.each { remapJar.dependsOn("${it.path}:remapJar") }
 
-dependencies {
-	afterEvaluate {
-		subprojects.each {
-			implementation project(path: ":${it.name}", configuration: "dev")
-			include project("${it.name}:")
-		}
-	}
-}
+// dependencies {
+// 	afterEvaluate {
+// 		subprojects.each {
+// 			implementation project(path: ":${it.name}", configuration: "dev")
+// 			include project("${it.name}:")
+// 		}
+// 	}
+// }
 
 curseforge {
 	apiKey = System.getenv('CURSEKEY') ?: "a key"

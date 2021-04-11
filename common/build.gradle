@@ -2,12 +2,12 @@ archivesBaseName = "common"
 version = getSubprojectVersion()
 
 dependencies {
-	compile "com.vdurmont:emoji-java:5.1.1"
-	compile ('net.dv8tion:JDA:4.2.1_255') {
+	implementation "com.vdurmont:emoji-java:5.1.1"
+	implementation ('net.dv8tion:JDA:4.2.1_255') {
 		exclude module: 'opus-java'
 	}
 
-	compile("club.minnced:discord-webhooks:0.5.4")
+	implementation("club.minnced:discord-webhooks:0.5.4")
 
 	include ('net.dv8tion:JDA:4.2.1_255') {
 		exclude module: 'opus-java'
