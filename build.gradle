@@ -2,7 +2,6 @@ plugins {
 	id 'java-library'
 	id 'eclipse'
 	id 'idea'
-//	id 'maven-publish'
 	id 'fabric-loom' version '0.7-SNAPSHOT' apply false
 	id 'com.matthewprenger.cursegradle' version "1.4.0"
 	id "com.modrinth.minotaur" version "1.1.0"
@@ -78,7 +77,6 @@ allprojects {
 
 	def projectName = it.name;
 	apply plugin: 'java-library'
-//	apply plugin: 'maven-publish'
 	apply plugin: 'fabric-loom'
 
 	sourceCompatibility = 1.8
@@ -165,7 +163,7 @@ allprojects {
 	}
 
 	jar {
-		archiveClassifier = "dev"
+		archiveClassifier.set("dev")
 	}
 
 	afterEvaluate {
@@ -211,20 +209,11 @@ task remapMavenJar(type: RemapJarTask, dependsOn: jar) {
 	afterEvaluate {
 		input = file("${project.buildDir}/libs/${archivesBaseName}-${archiveVersion.get()}-dev.jar")
 		archiveFileName = "${archivesBaseName}-${archiveVersion.get()}-maven.jar"
-		addNestedDependencies = false
+		addNestedDependencies.set(false)
 	}
 }
 
 subprojects.each { remapJar.dependsOn("${it.path}:remapJar") }
-
-// dependencies {
-// 	afterEvaluate {
-// 		subprojects.each {
-// 			implementation project(path: ":${it.name}", configuration: "dev")
-// 			include project("${it.name}:")
-// 		}
-// 	}
-// }
 
 curseforge {
 	apiKey = System.getenv('CURSEKEY') ?: "a key"
@@ -415,7 +404,7 @@ task publishModrinth (type: TaskModrinthUpload) {
 
 	// Fabric Legacy
 	addGameVersion("1.12.2")
-//	addGameVersion("1.8.9")
+	addGameVersion("1.8.9")
 	addGameVersion("1.7.10")
 //	addGameVersion("1.6.4")
 }
