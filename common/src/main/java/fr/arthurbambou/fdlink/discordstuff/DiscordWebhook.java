@@ -54,7 +54,7 @@ public class DiscordWebhook implements MessageSender {
             } catch (NullPointerException e) {
                 builder.setUsername("Could not get player username");
             }
-            builder.setAvatarUrl("https://crafatar.com/avatars/" + author.toString() + "?&amp;overlay");
+            builder.setAvatarUrl("https://crafatar.com/avatars/" + author.toString() + "?&overlay");
         }
 
         builder.setContent(message);
