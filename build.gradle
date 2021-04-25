@@ -41,8 +41,8 @@ enum Origin {
 }
 
 class Globals {
-	static def baseVersion = "0.8.18"
-	static def changelog = "Fix an issue occuring when an emoji name is empty."
+	static def baseVersion = "0.8.19"
+	static def changelog = "Fix webhook avatar url being wrong."
 	static def versionInfo = [
 			new MinecraftVersion("21w14a", "10", "0.11.3", "0.32.7+1.17"),
 			new MinecraftVersion("1.16.5", "6", "0.11.3", "0.32.5+1.16"),
@@ -280,6 +280,7 @@ task publishModrinth (type: TaskModrinthUpload) {
 	addLoader('fabric')
 
 	// 1.17.x
+	addGameVersion('21w15a')
 	addGameVersion('21w14a')
 	addGameVersion('21w13a')
 	addGameVersion('21w11a')
