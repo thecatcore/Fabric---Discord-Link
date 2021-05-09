@@ -50,7 +50,7 @@ class Globals {
 			new MinecraftVersion("1.12.2", "202103011608", "0.11.3", Origin.LEGACY_FABRIC),
 			new MinecraftVersion("1.8.9", "202103291533", "0.11.1+build.202102220648", "1.1.0+1.8.9", Origin.LEGACY_FABRIC, true),
 			new MinecraftVersion("1.7.10", "202102271416", "0.11.1+build.202102220648", Origin.LEGACY_FABRIC, true),
-			new MinecraftVersion("1.6.4", "202101280853", "0.11.1+build.202102220648", Origin.LEGACY_FABRIC, true)
+			new MinecraftVersion("1.6.4", "202105082206", "0.11.1+build.202102220648", Origin.LEGACY_FABRIC, true)
 	]
 }
 
