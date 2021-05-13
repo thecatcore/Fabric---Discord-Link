@@ -1,10 +1,9 @@
 package fr.arthurbambou.fdlink;
 
+import fr.arthurbambou.fdlink.api.minecraft.Message;
+import fr.arthurbambou.fdlink.api.minecraft.VersionHelper;
 import fr.arthurbambou.fdlink.compat_1_7_10.Message1_7_10;
 import fr.arthurbambou.fdlink.compat_1_7_10.MessagePacket1_7_10;
-import fr.arthurbambou.fdlink.compat_1_7_10.MinecraftServer1_7_10;
-import fr.arthurbambou.fdlink.versionhelpers.CrossVersionHandler;
-import fr.arthurbambou.fdlink.versionhelpers.minecraft.Message;
 import net.fabricmc.api.DedicatedServerModInitializer;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.discovery.ModResolutionException;
@@ -13,9 +12,9 @@ import net.fabricmc.loader.gui.FabricGuiEntry;
 public class FDLink1_7_10 implements DedicatedServerModInitializer {
     @Override
     public void onInitializeServer() {
-        if (CrossVersionHandler.isVersion("1.7.10")) {
+        if (VersionHelper.isVersion("1.7.10")) {
             FDLink.LOGGER.info("Initializing 1.7.10 Compat module");
-            CrossVersionHandler.registerMessageSender((server, message, style) -> {
+            VersionHelper.registerMessageSender((server, message, style) -> {
                 Message literalText = new Message1_7_10(message);
                 if (style != null) {
                     literalText = literalText.setStyle(style);

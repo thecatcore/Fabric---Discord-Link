@@ -1,9 +1,9 @@
 package fr.arthurbambou.fdlink;
 
+import fr.arthurbambou.fdlink.api.discord.MessageSender;
 import fr.arthurbambou.fdlink.config.manager.ConfigHandler;
 import fr.arthurbambou.fdlink.discordstuff.DiscordBot;
 import fr.arthurbambou.fdlink.discordstuff.DiscordWebhook;
-import fr.arthurbambou.fdlink.discordstuff.MessageSender;
 import net.fabricmc.api.DedicatedServerModInitializer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

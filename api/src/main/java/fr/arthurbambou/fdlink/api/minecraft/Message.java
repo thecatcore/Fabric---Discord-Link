@@ -1,6 +1,6 @@
-package fr.arthurbambou.fdlink.versionhelpers.minecraft;
+package fr.arthurbambou.fdlink.api.minecraft;
 
-import fr.arthurbambou.fdlink.versionhelpers.minecraft.style.Style;
+import fr.arthurbambou.fdlink.api.minecraft.style.Style;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,6 +1,6 @@
 package fr.arthurbambou.fdlink.mixin_1_8_9;
 
-import fr.arthurbambou.fdlink.versionhelpers.CompatText;
+import fr.arthurbambou.fdlink.api.minecraft.CompatText;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;

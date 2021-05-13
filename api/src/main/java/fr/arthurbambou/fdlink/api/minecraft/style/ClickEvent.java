@@ -1,19 +1,19 @@
-package fr.arthurbambou.fdlink.versionhelpers.minecraft.style;
+package fr.arthurbambou.fdlink.api.minecraft.style;
 
 import java.util.Arrays;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 public class ClickEvent {
-    private final ClickEvent.Action action;
+    private final Action action;
     private final String value;
 
-    public ClickEvent(ClickEvent.Action action, String value) {
+    public ClickEvent(Action action, String value) {
         this.action = action;
         this.value = value;
     }
 
-    public ClickEvent.Action getAction() {
+    public Action getAction() {
         return this.action;
     }
 
@@ -62,7 +62,7 @@ public class ClickEvent {
         CHANGE_PAGE("change_page", true),
         COPY_TO_CLIPBOARD("copy_to_clipboard", true);
 
-        private static final Map<String, ClickEvent.Action> BY_NAME = Arrays.stream(values()).collect(Collectors.toMap(ClickEvent.Action::getName, (a) -> a));
+        private static final Map<String, Action> BY_NAME = Arrays.stream(values()).collect(Collectors.toMap(Action::getName, (a) -> a));
         private final boolean userDefinable;
         private final String name;
 
@@ -79,7 +79,7 @@ public class ClickEvent {
             return this.name;
         }
 
-        public static ClickEvent.Action byName(String name) {
+        public static Action byName(String name) {
             return BY_NAME.get(name);
         }
     }

@@ -1,32 +1,30 @@
-package fr.arthurbambou.fdlink.versionhelpers.minecraft.style;
+package fr.arthurbambou.fdlink.api.minecraft.style;
 
-import javax.annotation.Nullable;
 import java.util.Objects;
 
 public class Style {
     public static final Style EMPTY = new Style((TextColor)null, (Boolean)null, (Boolean)null, (Boolean)null, (Boolean)null, (Boolean)null, (ClickEvent)null, (String)null, (String) null);
     public static final String DEFAULT_FONT_ID = "minecraft:default";
 
-    @Nullable
     private final TextColor color;
-    @Nullable
+
     private final Boolean bold;
-    @Nullable
+
     private final Boolean italic;
-    @Nullable
+
     private final Boolean underlined;
-    @Nullable
+
     private final Boolean strikethrough;
-    @Nullable
+
     private final Boolean obfuscated;
-    @Nullable
+
     private final ClickEvent clickEvent;
-    @Nullable
+
     private final String insertion;
-    @Nullable
+
     private final String font;
 
-    private Style(@Nullable TextColor color, @Nullable Boolean bold, @Nullable Boolean italic, @Nullable Boolean underlined, @Nullable Boolean strikethrough, @Nullable Boolean obfuscated, @Nullable ClickEvent clickEvent, @Nullable String insertion, @Nullable String font) {
+    private Style(TextColor color, Boolean bold, Boolean italic, Boolean underlined, Boolean strikethrough, Boolean obfuscated, ClickEvent clickEvent, String insertion, String font) {
         this.color = color;
         this.bold = bold;
         this.italic = italic;
@@ -41,7 +39,6 @@ public class Style {
     /**
      * Returns the color of this style.
      */
-    @Nullable
     public TextColor getColor() {
         return this.color;
     }
@@ -103,7 +100,6 @@ public class Style {
     /**
      * Returns the click event of this style.
      */
-    @Nullable
     public ClickEvent getClickEvent() {
         return this.clickEvent;
     }
@@ -114,7 +110,6 @@ public class Style {
      * <p>An insertion is inserted when a piece of text clicked while shift key
      * is down in the chat HUD.</p>
      */
-    @Nullable
     public String getInsertion() {
         return this.insertion;
     }
@@ -132,7 +127,7 @@ public class Style {
      *
      * @param color the new color
      */
-    public Style withColor(@Nullable TextColor color) {
+    public Style withColor(TextColor color) {
         return new Style(color, this.bold, this.italic, this.underlined, this.strikethrough, this.obfuscated, this.clickEvent, this.insertion, this.font);
     }
 
@@ -142,7 +137,7 @@ public class Style {
      *
      * @param color the new color
      */
-    public Style withColor(@Nullable Formatting color) {
+    public Style withColor(Formatting color) {
         return this.withColor(color != null ? TextColor.fromFormatting(color) : null);
     }
 
@@ -152,7 +147,7 @@ public class Style {
      *
      * @param bold the new bold property
      */
-    public Style withBold(@Nullable Boolean bold) {
+    public Style withBold(Boolean bold) {
         return new Style(this.color, bold, this.italic, this.underlined, this.strikethrough, this.obfuscated, this.clickEvent, this.insertion, this.font);
     }
 
@@ -162,7 +157,7 @@ public class Style {
      *
      * @param italic the new italic property
      */
-    public Style withItalic(@Nullable Boolean italic) {
+    public Style withItalic(Boolean italic) {
         return new Style(this.color, this.bold, italic, this.underlined, this.strikethrough, this.obfuscated, this.clickEvent, this.insertion, this.font);
     }
 
@@ -172,7 +167,7 @@ public class Style {
      *
      * @param clickEvent the new click event
      */
-    public Style withClickEvent(@Nullable ClickEvent clickEvent) {
+    public Style withClickEvent(ClickEvent clickEvent) {
         return new Style(this.color, this.bold, this.italic, this.underlined, this.strikethrough, this.obfuscated, clickEvent, this.insertion, this.font);
     }
 
@@ -182,7 +177,7 @@ public class Style {
      *
      * @param insertion the new insertion string
      */
-    public Style withInsertion(@Nullable String insertion) {
+    public Style withInsertion(String insertion) {
         return new Style(this.color, this.bold, this.italic, this.underlined, this.strikethrough, this.obfuscated, this.clickEvent, insertion, this.font);
     }
 

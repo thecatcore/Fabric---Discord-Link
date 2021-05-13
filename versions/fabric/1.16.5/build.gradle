@@ -2,6 +2,7 @@ archivesBaseName = "1.16.4"
 version = getSubprojectVersion()
 
 dependencies {
+    implementation project(path: ':api')
     implementation project(path: ':common')
 
     modImplementation "curse.maven:fabric-console-382518:3062013"

@@ -1,17 +1,15 @@
-package fr.arthurbambou.fdlink.versionhelpers;
+package fr.arthurbambou.fdlink.api.minecraft;
 
-import fr.arthurbambou.fdlink.versionhelpers.minecraft.MinecraftServer;
-import fr.arthurbambou.fdlink.versionhelpers.minecraft.style.Style;
+import fr.arthurbambou.fdlink.api.minecraft.style.Style;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.SemanticVersion;
-import net.fabricmc.loader.util.version.VersionParsingException;
+import net.fabricmc.loader.api.VersionParsingException;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
-public class CrossVersionHandler {
-
+public class VersionHelper {
     private static final List<MessageSender> MESSAGE_SENDERS = new ArrayList<>();
 
     private static final Pattern RELEASE_PATTERN = Pattern.compile("\\d+\\.\\d+(\\.\\d+)?");

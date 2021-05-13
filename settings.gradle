@@ -15,6 +15,7 @@ pluginManagement {
 
 rootProject.name = "Fabric-Discord-Link"
 
+include 'api'
 include 'common'
 
 def addVersion(String version, String loader) {

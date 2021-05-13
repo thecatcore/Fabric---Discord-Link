@@ -1,0 +1,6 @@
+archivesBaseName = "fdlink-api"
+version = getApiVersion()
+
+dependencies {
+
+}

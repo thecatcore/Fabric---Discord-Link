@@ -1,4 +1,4 @@
-package fr.arthurbambou.fdlink.config;
+package fr.arthurbambou.fdlink.api.config;
 
 public class Config {
 

@@ -41,11 +41,12 @@ enum Origin {
 }
 
 class Globals {
-	static def baseVersion = "0.8.19"
+	static def baseVersion = "0.9.0"
 	static def changelog = "Fix webhook avatar url being wrong."
+	static def apiVersion = "0.1.0"
 	static def versionInfo = [
 			new MinecraftVersion("21w14a", "10", "0.11.3", "0.32.7+1.17"),
-			new MinecraftVersion("1.16.5", "6", "0.11.3", "0.32.5+1.16"),
+			new MinecraftVersion("1.16.5", "9", "0.11.3", "0.34.2+1.16"),
 			new MinecraftVersion("1.15.2", "17", "0.11.3", "0.28.5+1.15"),
 			new MinecraftVersion("1.12.2", "202103011608", "0.11.3", Origin.LEGACY_FABRIC),
 			new MinecraftVersion("1.8.9", "202103291533", "0.11.1+build.202102220648", "1.1.0+1.8.9", Origin.LEGACY_FABRIC, true),
@@ -58,6 +59,10 @@ version = Globals.baseVersion
 
 def getSubprojectVersion() {
 	return Globals.baseVersion
+}
+
+def getApiVersion() {
+	return Globals.apiVersion
 }
 
 static MinecraftVersion getVersionInfo(String project_name) {
@@ -228,11 +233,16 @@ curseforge {
 			}
 		}
 
+		addArtifact(file("api/build/libs/fdlink-api-${Globals.apiVersion}.jar")) {
+			displayName = "Api ${Globals.apiVersion}"
+		}
+
 		gameVersionStrings.clear()
 		gameVersionStrings.add("Fabric")
 
 		// 1.17.x
 		gameVersionStrings.add("1.17")
+		gameVersionStrings.add("1.17-Snapshot")
 
 		// 1.16.x
 		gameVersionStrings.add("1.16.5")
@@ -265,6 +275,7 @@ curseforge {
 	}
 	options {
 		forgeGradleIntegration = false
+		javaVersionAutoDetect = false
 	}
 }
 
@@ -277,9 +288,15 @@ task publishModrinth (type: TaskModrinthUpload) {
 	versionNumber = Globals.baseVersion
 	uploadFile = file("build/libs/${archivesBaseName}-${version}.jar")
 
+	addFile(file("api/build/libs/fdlink-api-${Globals.apiVersion}.jar"))
+
 	addLoader('fabric')
 
 	// 1.17.x
+	addGameVersion('21w19a')
+	addGameVersion('21w18a')
+	addGameVersion('21w17a')
+	addGameVersion('21w16a')
 	addGameVersion('21w15a')
 	addGameVersion('21w14a')
 	addGameVersion('21w13a')

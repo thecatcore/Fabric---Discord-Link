@@ -1,6 +1,6 @@
 package fr.arthurbambou.fdlink.compat_1_8_9;
 
-import fr.arthurbambou.fdlink.versionhelpers.minecraft.PlayerEntity;
+import fr.arthurbambou.fdlink.api.minecraft.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
 
 import java.util.UUID;

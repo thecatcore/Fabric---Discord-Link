@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "id": "fdlink_api",
+  "name": "Fabric <-> Discord Link API",
+  "description": "",
+  "version": "${version}",
+  "environment": "server",
+  "authors": [
+    "arthurbambou (aka. Cat Core)"
+  ],
+  "contributors": [
+    "Thedude7054",
+    "yhr0x43",
+    "BeeFox-sys",
+    "PegasusEpsilon",
+    "v-tron",
+    "MightyKnight",
+    "Ev1dentFir3",
+    "kwvanderlinde",
+    "dkolb",
+    "matthias4217",
+    "Geek202"
+  ],
+  "entrypoints": {},
+  "depends": {},
+  "mixins": []
+}

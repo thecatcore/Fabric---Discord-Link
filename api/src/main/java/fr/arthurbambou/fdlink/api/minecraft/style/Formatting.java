@@ -1,8 +1,7 @@
-package fr.arthurbambou.fdlink.versionhelpers.minecraft.style;
+package fr.arthurbambou.fdlink.api.minecraft.style;
 
 import com.google.common.collect.Lists;
 
-import javax.annotation.Nullable;
 import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -38,14 +37,14 @@ public enum Formatting {
     private final boolean modifier;
     private final String stringValue;
     private final int colorIndex;
-    @Nullable
+
     private final Integer colorValue;
 
     private static String sanitize(String name) {
         return name.toLowerCase(Locale.ROOT).replaceAll("[^a-z]", "");
     }
 
-    private Formatting(String name, char code, int colorIndex, @Nullable Integer colorValue) {
+    private Formatting(String name, char code, int colorIndex, Integer colorValue) {
         this(name, code, false, colorIndex, colorValue);
     }
 
@@ -53,7 +52,7 @@ public enum Formatting {
         this(name, code, modifier, -1, (Integer)null);
     }
 
-    private Formatting(String name, char code, boolean modifier, int colorIndex, @Nullable Integer colorValue) {
+    private Formatting(String name, char code, boolean modifier, int colorIndex, Integer colorValue) {
         this.name = name;
         this.code = code;
         this.modifier = modifier;
@@ -74,7 +73,6 @@ public enum Formatting {
         return !this.modifier && this != RESET;
     }
 
-    @Nullable
     public Integer getColorValue() {
         return this.colorValue;
     }
@@ -87,17 +85,14 @@ public enum Formatting {
         return this.stringValue;
     }
 
-    @Nullable
-    public static String strip(@Nullable String string) {
+    public static String strip(String string) {
         return string == null ? null : FORMATTING_CODE_PATTERN.matcher(string).replaceAll("");
     }
 
-    @Nullable
-    public static Formatting byName(@Nullable String name) {
+    public static Formatting byName(String name) {
         return name == null ? null : BY_NAME.get(sanitize(name));
     }
 
-    @Nullable
     public static Formatting byColorIndex(int colorIndex) {
         if (colorIndex < 0) {
             return RESET;
@@ -112,7 +107,6 @@ public enum Formatting {
         }
     }
 
-    @Nullable
     public static Formatting byCode(char code) {
         char c1 = Character.toString(code).toLowerCase(Locale.ROOT).charAt(0);
 

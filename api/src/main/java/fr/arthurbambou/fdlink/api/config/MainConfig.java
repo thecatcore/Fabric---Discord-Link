@@ -1,4 +1,4 @@
-package fr.arthurbambou.fdlink.config;
+package fr.arthurbambou.fdlink.api.config;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,13 +9,13 @@ public class MainConfig {
     public WebhookSettings webhook = new WebhookSettings();
     public boolean ignoreBots = true;
     public int activityUpdateInterval = 120;
-    public MainConfig.MinecraftToDiscord minecraftToDiscord = new MinecraftToDiscord();
-    public MainConfig.DiscordToMinecraft discordToMinecraft = new DiscordToMinecraft();
-    public List<MainConfig.EmojiEntry> emojiMap = new ArrayList<>();
+    public MinecraftToDiscord minecraftToDiscord = new MinecraftToDiscord();
+    public DiscordToMinecraft discordToMinecraft = new DiscordToMinecraft();
+    public List<EmojiEntry> emojiMap = new ArrayList<>();
 
     public MainConfig() {
-        emojiMap.add(new MainConfig.EmojiEntry("example_name", ":example_id:22222222"));
-        emojiMap.add(new MainConfig.EmojiEntry("example_name2", ":example_id2:22222222"));
+        emojiMap.add(new EmojiEntry("example_name", ":example_id:22222222"));
+        emojiMap.add(new EmojiEntry("example_name2", ":example_id2:22222222"));
     }
 
     public static class EmojiEntry {
@@ -40,9 +40,9 @@ public class MainConfig {
     }
 
     public static class MinecraftToDiscord {
-        public MainConfig.MinecraftToDiscordGeneral general = new MinecraftToDiscordGeneral();
-        public MainConfig.MinecraftToDiscordChatChannel chatChannels = new MinecraftToDiscordChatChannel();
-        public MainConfig.MinecraftToDiscordLogChannel logChannels = new MinecraftToDiscordLogChannel();
+        public MinecraftToDiscordGeneral general = new MinecraftToDiscordGeneral();
+        public MinecraftToDiscordChatChannel chatChannels = new MinecraftToDiscordChatChannel();
+        public MinecraftToDiscordLogChannel logChannels = new MinecraftToDiscordLogChannel();
     }
 
     public static class MinecraftToDiscordGeneral {

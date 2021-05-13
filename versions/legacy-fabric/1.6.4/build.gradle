@@ -2,5 +2,6 @@ archivesBaseName = "1.6.4"
 version = getSubprojectVersion()
 
 dependencies {
+    implementation project(path: ':api')
     implementation project(path: ':common')
 }

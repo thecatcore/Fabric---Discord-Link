@@ -2,13 +2,15 @@ package fr.arthurbambou.fdlink.discordstuff;
 
 import com.vdurmont.emoji.EmojiParser;
 import fr.arthurbambou.fdlink.FDLink;
-import fr.arthurbambou.fdlink.config.Config;
-import fr.arthurbambou.fdlink.config.MainConfig;
+import fr.arthurbambou.fdlink.api.config.Config;
+import fr.arthurbambou.fdlink.api.config.MainConfig;
+import fr.arthurbambou.fdlink.api.discord.MessageSender;
+import fr.arthurbambou.fdlink.api.discord.MinecraftMessage;
+import fr.arthurbambou.fdlink.api.minecraft.MinecraftServer;
+import fr.arthurbambou.fdlink.api.minecraft.VersionHelper;
+import fr.arthurbambou.fdlink.api.minecraft.style.ClickEvent;
+import fr.arthurbambou.fdlink.api.minecraft.style.Style;
 import fr.arthurbambou.fdlink.discord.Commands;
-import fr.arthurbambou.fdlink.versionhelpers.CrossVersionHandler;
-import fr.arthurbambou.fdlink.versionhelpers.minecraft.MinecraftServer;
-import fr.arthurbambou.fdlink.versionhelpers.minecraft.style.ClickEvent;
-import fr.arthurbambou.fdlink.versionhelpers.minecraft.style.Style;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.*;
@@ -203,7 +205,7 @@ public class DiscordBot implements MessageSender {
             } else {
                 this.lastMessageD = this.lastMessageD.replace("%message", string_message);
             }
-            CrossVersionHandler.sendMessageToChat(server, this.lastMessageD, style);
+            VersionHelper.sendMessageToChat(server, this.lastMessageD, style);
             FDLink.MESSAGE_LOGGER.info(this.lastMessageD);
 
             this.hasReceivedMessage = false;
@@ -250,129 +252,30 @@ public class DiscordBot implements MessageSender {
     }
 
     @Override
-    public void sendMessage(fr.arthurbambou.fdlink.versionhelpers.minecraft.Message message) {
+    public void sendMessage(fr.arthurbambou.fdlink.api.minecraft.Message message) {
         if (this.minecraftToDiscordHandler != null && !this.stopping) {
-            MinecraftMessage minecraftMessage = this.minecraftToDiscordHandler.handleTexts(message);
+            MinecraftMessage minecraftMessage = this.minecraftToDiscordHandler.handleText(message);
             if (minecraftMessage != null) {
-                String stringMessage = minecraftMessage.getMessage();
-                String[] stringMessages = minecraftMessage.getMessages();
-                switch (minecraftMessage.getType()) {
-                    case CHAT_COMMAND:
-                        if (this.config.mainConfig.minecraftToDiscord.chatChannels.allowDiscordCommands) {
-                            this.sendToChatChannels(stringMessage);
+                MinecraftMessage.MessageSendability common = minecraftMessage.getCommon();
+                MinecraftMessage.MessageSendability chat = minecraftMessage.getChat();
+                MinecraftMessage.MessageSendability log = minecraftMessage.getLog();
+                if (common != null) {
+                    if (common.canSendChat()) {
+                        this.sendToChatChannels(common.getMessage());
+                    }
+                    if (common.canSendLog()) {
+                        this.sendToLogChannels(common.getMessage());
+                    }
+                } else {
+                    if (chat != null) {
+                        if (chat.canSend()) {
+                            this.sendToChatChannels(chat.getMessage());
                         }
-                        break;
-                    case CHAT:
-                        if (this.config.mainConfig.minecraftToDiscord.chatChannels.playerMessages){
-                            this.sendToChatChannels(stringMessages[0]);
-                        }
-                        if(this.config.mainConfig.minecraftToDiscord.logChannels.playerMessages){
-                            this.sendToLogChannels(stringMessages[1]);
-                        }
-                        break;
-                    case TEAM_CHAT:
-                        if (this.config.mainConfig.minecraftToDiscord.chatChannels.teamPlayerMessages){
-                            this.sendToChatChannels(stringMessages[0]);
-                        }
-                        if(this.config.mainConfig.minecraftToDiscord.logChannels.teamPlayerMessages){
-                            this.sendToLogChannels(stringMessages[1]);
-                        }
-                        break;
-                    case ME:
-                        if (this.config.mainConfig.minecraftToDiscord.chatChannels.sendMeCommand) {
-                            this.sendToChatChannels(stringMessage);
-                        }
-                        if (this.config.mainConfig.minecraftToDiscord.logChannels.sendMeCommand) {
-                            this.sendToLogChannels(stringMessage);
-                        }
-                        break;
-                    case SAY:
-                        if (this.config.mainConfig.minecraftToDiscord.chatChannels.sendSayCommand) {
-                            this.sendToChatChannels(stringMessage);
-                        }
-                        if (this.config.mainConfig.minecraftToDiscord.logChannels.sendSayCommand) {
-                            this.sendToLogChannels(stringMessage);
-                        }
-                        break;
-                    case ADVANCEMENT_TASK:
-                        if (this.config.mainConfig.minecraftToDiscord.chatChannels.advancementMessages) {
-                            this.sendToChatChannels(stringMessage);
-                        }
-                        if (this.config.mainConfig.minecraftToDiscord.logChannels.advancementMessages) {
-                            this.sendToLogChannels(stringMessage);
-                        }
-                        break;
-                    case ADVANCEMENT_CHALLENGE:
-                        if (this.config.mainConfig.minecraftToDiscord.chatChannels.challengeMessages) {
-                            this.sendToChatChannels(stringMessage);
-                        }
-                        if (this.config.mainConfig.minecraftToDiscord.logChannels.challengeMessages) {
-                            this.sendToLogChannels(stringMessage);
-                        }
-                        break;
-                    case ADVANCEMENT_GOAL:
-                        if (this.config.mainConfig.minecraftToDiscord.chatChannels.goalMessages) {
-                            this.sendToChatChannels(stringMessage);
-                        }
-                        if (this.config.mainConfig.minecraftToDiscord.logChannels.goalMessages) {
-                            this.sendToLogChannels(stringMessage);
-                        }
-                        break;
-                    case ADMIN:
-                        if (this.config.mainConfig.minecraftToDiscord.chatChannels.adminMessages) {
-                            this.sendToChatChannels(stringMessage);
-                        }
-                        if (this.config.mainConfig.minecraftToDiscord.logChannels.adminMessages) {
-                            this.sendToLogChannels(stringMessage);
-                        }
-                        break;
-                    case JOIN_RENAMED:
-                    case JOIN:
-                    case LEAVE:
-                        if (this.config.mainConfig.minecraftToDiscord.chatChannels.joinAndLeaveMessages) {
-                            this.sendToChatChannels(stringMessage);
-                        }
-                        if (this.config.mainConfig.minecraftToDiscord.logChannels.joinAndLeaveMessages) {
-                            this.sendToLogChannels(stringMessage);
-                        }
-                        break;
-                    case DEATH:
-                        if (this.config.mainConfig.minecraftToDiscord.chatChannels.deathMessages) {
-                            this.sendToChatChannels(stringMessage);
-                        }
-                        if (this.config.mainConfig.minecraftToDiscord.logChannels.deathMessages) {
-                            this.sendToLogChannels(stringMessage);
-                        }
-                        break;
-                    case TELLRAW:
-                        if (this.config.mainConfig.minecraftToDiscord.chatChannels.atATellRaw) {
-                            this.sendToChatChannels(stringMessage);
-                        }
-                        if (this.config.mainConfig.minecraftToDiscord.logChannels.atATellRaw) {
-                            this.sendToLogChannels(stringMessage);
-                        }
-                        break;
-                    case ACHIEVEMENT:
-                        if (this.config.mainConfig.minecraftToDiscord.chatChannels.achievementMessages) {
-                            this.sendToChatChannels(stringMessage);
-                        }
-                        if (this.config.mainConfig.minecraftToDiscord.logChannels.achievementMessages) {
-                            this.sendToLogChannels(stringMessage);
-                        }
-                        break;
-                    case STRING_OLD:
-                        if (this.config.mainConfig.minecraftToDiscord.chatChannels.playerMessages) {
-                            this.sendToChatChannels(stringMessage);
-                        }
-                        if (this.config.mainConfig.minecraftToDiscord.logChannels.playerMessages) {
-                            this.sendToLogChannels(stringMessage);
-                        }
-                        break;
-                    case CUSTOM:
-                        minecraftMessage.getMessageSender().sendMessage(stringMessage, this, this.config);
-                        break;
-                    default:
-                        break;
+                    }
+
+                    if (log != null) {
+                        if (log.canSend()) this.sendToLogChannels(log.getMessage());
+                    }
                 }
             }
         }

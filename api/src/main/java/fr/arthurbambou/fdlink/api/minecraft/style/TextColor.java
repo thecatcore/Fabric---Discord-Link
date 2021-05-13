@@ -1,8 +1,7 @@
-package fr.arthurbambou.fdlink.versionhelpers.minecraft.style;
+package fr.arthurbambou.fdlink.api.minecraft.style;
 
 import com.google.common.collect.ImmutableMap;
 
-import javax.annotation.Nullable;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Function;
@@ -12,7 +11,6 @@ public class TextColor {
     private static final Map<Formatting, TextColor> FORMATTING_TO_COLOR = Stream.of(Formatting.values()).filter(Formatting::isColor).collect(ImmutableMap.toImmutableMap(Function.identity(), (arg) -> new TextColor(arg.getColorValue(), arg.getName())));
     private static final Map<String, TextColor> BY_NAME = FORMATTING_TO_COLOR.values().stream().collect(ImmutableMap.toImmutableMap((arg) -> arg.name, Function.identity()));
     private final int rgb;
-    @Nullable
     private final String name;
 
     private TextColor(int rgb, String name) {
@@ -70,7 +68,6 @@ public class TextColor {
      *
      * @param formatting the formatting
      */
-    @Nullable
     public static TextColor fromFormatting(Formatting formatting) {
         return FORMATTING_TO_COLOR.get(formatting);
     }
@@ -100,7 +97,6 @@ public class TextColor {
      *
      * @param name the name
      */
-    @Nullable
     public static TextColor parse(String name) {
         if (name.startsWith("#")) {
             try {

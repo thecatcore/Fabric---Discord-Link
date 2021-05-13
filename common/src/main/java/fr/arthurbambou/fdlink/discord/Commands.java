@@ -1,8 +1,9 @@
 package fr.arthurbambou.fdlink.discord;
 
+import fr.arthurbambou.fdlink.api.discord.MessageHandler;
+import fr.arthurbambou.fdlink.api.minecraft.MinecraftServer;
+import fr.arthurbambou.fdlink.api.minecraft.PlayerEntity;
 import fr.arthurbambou.fdlink.discordstuff.MinecraftToDiscordHandler;
-import fr.arthurbambou.fdlink.versionhelpers.minecraft.MinecraftServer;
-import fr.arthurbambou.fdlink.versionhelpers.minecraft.PlayerEntity;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
 public enum Commands {
@@ -15,7 +16,7 @@ public enum Commands {
     playerlist("Show the list of player on the server.",(minecraftServer, messageCreateEvent, startTime) -> {
         StringBuilder playerlist = new StringBuilder();
         for (PlayerEntity playerEntity : minecraftServer.getPlayers()) {
-            playerlist.append(MinecraftToDiscordHandler.adaptUsernameToDiscord(playerEntity.getPlayerName())).append("\n");
+            playerlist.append(MessageHandler.adaptUsername(playerEntity.getPlayerName())).append("\n");
         }
         if (playerlist.toString().endsWith("\n")) {
             int a = playerlist.lastIndexOf("\n");

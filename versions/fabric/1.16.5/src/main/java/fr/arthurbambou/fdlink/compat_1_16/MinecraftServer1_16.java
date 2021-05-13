@@ -1,9 +1,9 @@
 package fr.arthurbambou.fdlink.compat_1_16;
 
-import fr.arthurbambou.fdlink.versionhelpers.minecraft.Message;
-import fr.arthurbambou.fdlink.versionhelpers.minecraft.MessagePacket;
-import fr.arthurbambou.fdlink.versionhelpers.minecraft.MinecraftServer;
-import fr.arthurbambou.fdlink.versionhelpers.minecraft.PlayerEntity;
+import fr.arthurbambou.fdlink.api.minecraft.Message;
+import fr.arthurbambou.fdlink.api.minecraft.MessagePacket;
+import fr.arthurbambou.fdlink.api.minecraft.MinecraftServer;
+import fr.arthurbambou.fdlink.api.minecraft.PlayerEntity;
 import net.minecraft.network.MessageType;
 import net.minecraft.network.packet.s2c.play.GameMessageS2CPacket;
 import net.minecraft.server.ServerMetadata;
@@ -63,7 +63,7 @@ public class MinecraftServer1_16 implements MinecraftServer {
             }
         }
         Style vanillaStyle = Style.EMPTY;
-        fr.arthurbambou.fdlink.versionhelpers.minecraft.style.Style compatStyle = message.getStyle();
+        fr.arthurbambou.fdlink.api.minecraft.style.Style compatStyle = message.getStyle();
         vanillaStyle = vanillaStyle
                 .withBold(compatStyle.isBold())
                 .withInsertion(compatStyle.getInsertion())

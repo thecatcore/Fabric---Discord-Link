@@ -1,9 +1,9 @@
 package fr.arthurbambou.fdlink.config.manager;
 
 import com.google.gson.*;
-import fr.arthurbambou.fdlink.config.Config;
-import fr.arthurbambou.fdlink.config.MainConfig;
-import fr.arthurbambou.fdlink.config.MessageConfig;
+import fr.arthurbambou.fdlink.api.config.Config;
+import fr.arthurbambou.fdlink.api.config.MainConfig;
+import fr.arthurbambou.fdlink.api.config.MessageConfig;
 import net.fabricmc.loader.api.FabricLoader;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -26,7 +26,7 @@ public class ConfigHandler {
     private static File NEW_MAIN_FILE;
     private static File MESSAGE_CONFIG;
 
-    private static Logger LOGGER = LogManager.getLogger("FDLink-ConfigHandler");
+    private static final Logger LOGGER = LogManager.getLogger("FDLink-ConfigHandler");
 
     private static void initPaths() {
         File gameConfig = null;

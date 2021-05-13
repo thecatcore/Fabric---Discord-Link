@@ -1,4 +1,4 @@
-package fr.arthurbambou.fdlink.versionhelpers;
+package fr.arthurbambou.fdlink.api.minecraft;
 
 import com.google.common.collect.Lists;
 

@@ -1,4 +1,4 @@
-package fr.arthurbambou.fdlink.versionhelpers.minecraft;
+package fr.arthurbambou.fdlink.api.minecraft;
 
 import java.io.File;
 import java.util.List;

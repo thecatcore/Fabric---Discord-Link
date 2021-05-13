@@ -1,7 +1,7 @@
 package fr.arthurbambou.fdlink.compat_1_7_10;
 
-import fr.arthurbambou.fdlink.versionhelpers.minecraft.Message;
-import fr.arthurbambou.fdlink.versionhelpers.minecraft.style.Style;
+import fr.arthurbambou.fdlink.api.minecraft.Message;
+import fr.arthurbambou.fdlink.api.minecraft.style.Style;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,7 +1,7 @@
 package fr.arthurbambou.fdlink.compat_1_8_9;
 
-import fr.arthurbambou.fdlink.versionhelpers.minecraft.Message;
-import fr.arthurbambou.fdlink.versionhelpers.minecraft.MessagePacket;
+import fr.arthurbambou.fdlink.api.minecraft.Message;
+import fr.arthurbambou.fdlink.api.minecraft.MessagePacket;
 
 import java.util.UUID;
 

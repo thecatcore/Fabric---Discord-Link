@@ -1,6 +1,6 @@
 package fr.arthurbambou.fdlink.mixin_1_16;
 
-import fr.arthurbambou.fdlink.versionhelpers.CrossVersionHandler;
+import fr.arthurbambou.fdlink.api.minecraft.VersionHelper;
 import net.fabricmc.loader.api.FabricLoader;
 import org.objectweb.asm.tree.ClassNode;
 import org.spongepowered.asm.mixin.extensibility.IMixinConfigPlugin;
@@ -24,12 +24,12 @@ public class MixinPlugin implements IMixinConfigPlugin {
     public boolean shouldApplyMixin(String targetClassName, String mixinClassName) {
         if (mixinClassName.endsWith("FabricConsoleMixinMinecraftDedicatedServer")) return FabricLoader.getInstance().isModLoaded("fabric-console");
         if (mixinClassName.equals("fr.arthurbambou.fdlink.mixin_1_16.MixinMinecraftServer")) {
-            return CrossVersionHandler.compareToMinecraftVersion("1.16-alpha.20.21.a").isMoreRecentOrEqual() && !CrossVersionHandler.isVersion("1.16-20.w.14");
+            return VersionHelper.compareToMinecraftVersion("1.16-alpha.20.21.a").isMoreRecentOrEqual() && !VersionHelper.isVersion("1.16-20.w.14");
         } else if (mixinClassName.equals("fr.arthurbambou.fdlink.mixin_1_16.events.MixinMinecraftServer")) {
-            return CrossVersionHandler.compareToMinecraftVersion("1.16.1").isOlder() &&
-                    CrossVersionHandler.compareToMinecraftVersion("1.16-alpha.20.17.a").isMoreRecentOrEqual() && !CrossVersionHandler.isVersion("1.16-20.w.14");
+            return VersionHelper.compareToMinecraftVersion("1.16.1").isOlder() &&
+                    VersionHelper.compareToMinecraftVersion("1.16-alpha.20.17.a").isMoreRecentOrEqual() && !VersionHelper.isVersion("1.16-20.w.14");
         } else {
-            return CrossVersionHandler.compareToMinecraftVersion("1.14").isMoreRecentOrEqual();
+            return VersionHelper.compareToMinecraftVersion("1.14").isMoreRecentOrEqual();
         }
     }
 

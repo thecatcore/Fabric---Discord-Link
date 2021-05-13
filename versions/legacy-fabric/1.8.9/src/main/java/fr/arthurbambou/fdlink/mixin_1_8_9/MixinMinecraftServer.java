@@ -1,8 +1,8 @@
 package fr.arthurbambou.fdlink.mixin_1_8_9;
 
 import fr.arthurbambou.fdlink.FDLink;
+import fr.arthurbambou.fdlink.api.minecraft.Message;
 import fr.arthurbambou.fdlink.compat_1_8_9.Message1_8_9;
-import fr.arthurbambou.fdlink.versionhelpers.minecraft.Message;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.text.BaseText;
 import net.minecraft.text.Text;

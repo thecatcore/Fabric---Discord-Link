@@ -1,6 +1,6 @@
 package fr.arthurbambou.fdlink.compat_1_16;
 
-import fr.arthurbambou.fdlink.versionhelpers.minecraft.Message;
+import fr.arthurbambou.fdlink.api.minecraft.Message;
 
 public class CommandMessage1_16 implements Message {
 

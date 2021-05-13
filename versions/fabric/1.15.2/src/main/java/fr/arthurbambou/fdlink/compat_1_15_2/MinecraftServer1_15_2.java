@@ -1,10 +1,10 @@
 package fr.arthurbambou.fdlink.compat_1_15_2;
 
-import fr.arthurbambou.fdlink.versionhelpers.minecraft.Message;
-import fr.arthurbambou.fdlink.versionhelpers.minecraft.MessagePacket;
-import fr.arthurbambou.fdlink.versionhelpers.minecraft.MinecraftServer;
-import fr.arthurbambou.fdlink.versionhelpers.minecraft.PlayerEntity;
-import fr.arthurbambou.fdlink.versionhelpers.minecraft.style.TextColor;
+import fr.arthurbambou.fdlink.api.minecraft.Message;
+import fr.arthurbambou.fdlink.api.minecraft.MessagePacket;
+import fr.arthurbambou.fdlink.api.minecraft.MinecraftServer;
+import fr.arthurbambou.fdlink.api.minecraft.PlayerEntity;
+import fr.arthurbambou.fdlink.api.minecraft.style.TextColor;
 import net.minecraft.network.MessageType;
 import net.minecraft.server.ServerMetadata;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -72,7 +72,7 @@ public class MinecraftServer1_15_2 implements MinecraftServer {
             }
         }
         Style vanillaStyle = new Style();
-        fr.arthurbambou.fdlink.versionhelpers.minecraft.style.Style compatStyle = message.getStyle();
+        fr.arthurbambou.fdlink.api.minecraft.style.Style compatStyle = message.getStyle();
         vanillaStyle = vanillaStyle
                 .setBold(compatStyle.isBold())
                 .setColor(Formatting.byName(TextColor.toFormatting(compatStyle.getColor()).getName()))

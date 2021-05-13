@@ -1,11 +1,11 @@
 package fr.arthurbambou.fdlink;
 
+import fr.arthurbambou.fdlink.api.minecraft.Message;
+import fr.arthurbambou.fdlink.api.minecraft.MessagePacket;
+import fr.arthurbambou.fdlink.api.minecraft.VersionHelper;
 import fr.arthurbambou.fdlink.compat_1_16.Message1_16;
 import fr.arthurbambou.fdlink.compat_1_16.MessagePacket1_16;
 import fr.arthurbambou.fdlink.compat_1_16.MinecraftServer1_16;
-import fr.arthurbambou.fdlink.versionhelpers.CrossVersionHandler;
-import fr.arthurbambou.fdlink.versionhelpers.minecraft.Message;
-import fr.arthurbambou.fdlink.versionhelpers.minecraft.MessagePacket;
 import net.fabricmc.api.DedicatedServerModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
@@ -22,10 +22,10 @@ import java.util.UUID;
 public class FDLink1_16 implements DedicatedServerModInitializer {
     @Override
     public void onInitializeServer() {
-        if (CrossVersionHandler.compareToMinecraftVersion("1.16-alpha.20.17.a").isMoreRecentOrEqual() && !CrossVersionHandler.isVersion("1.16-20.w.14")) {
+        if (VersionHelper.compareToMinecraftVersion("1.16-alpha.20.17.a").isMoreRecentOrEqual() && !VersionHelper.isVersion("1.16-20.w.14")) {
             FDLink.LOGGER.info("Initializing 1.16 Compat module");
         }
-        if (CrossVersionHandler.compareToMinecraftVersion("1.16.1").isMoreRecentOrEqual() && !CrossVersionHandler.isVersion("1.16-20.w.14")) {
+        if (VersionHelper.compareToMinecraftVersion("1.16.1").isMoreRecentOrEqual() && !VersionHelper.isVersion("1.16-20.w.14")) {
             if (!FabricLoader.getInstance().isModLoaded("fabric")) {
                 try {
                     throw new ModResolutionException("Could not find required mod: fdlink requires fabric");
@@ -35,8 +35,8 @@ public class FDLink1_16 implements DedicatedServerModInitializer {
             }
             ServerTickEvents.START_SERVER_TICK.register((server -> FDLink.getMessageReceiver().serverTick(new MinecraftServer1_16(server))));
         }
-        if (CrossVersionHandler.compareToMinecraftVersion("1.16-alpha.20.21.a").isMoreRecentOrEqual() && !CrossVersionHandler.isVersion("1.16-20.w.14")) {
-            CrossVersionHandler.registerMessageSender((server, message, style) -> {
+        if (VersionHelper.compareToMinecraftVersion("1.16-alpha.20.21.a").isMoreRecentOrEqual() && !VersionHelper.isVersion("1.16-20.w.14")) {
+            VersionHelper.registerMessageSender((server, message, style) -> {
                 Message literalText = new Message1_16(message);
                 if (style != null) {
                     literalText = literalText.setStyle(style);
@@ -44,10 +44,10 @@ public class FDLink1_16 implements DedicatedServerModInitializer {
                 server.sendMessageToAll(new MessagePacket1_16(literalText, MessagePacket.MessageType.CHAT, UUID.randomUUID()));
             });
         }
-        if (CrossVersionHandler.compareToMinecraftVersion("1.14").isMoreRecentOrEqual()) {
-            if ((CrossVersionHandler.compareToMinecraftVersion("1.16.1").isMoreRecentOrEqual()
-                    || CrossVersionHandler.isVersion("1.15.2") || CrossVersionHandler.isVersion("1.14.4"))
-                    && !CrossVersionHandler.isVersion("1.16-20.w.14")) {
+        if (VersionHelper.compareToMinecraftVersion("1.14").isMoreRecentOrEqual()) {
+            if ((VersionHelper.compareToMinecraftVersion("1.16.1").isMoreRecentOrEqual()
+                    || VersionHelper.isVersion("1.15.2") || VersionHelper.isVersion("1.14.4"))
+                    && !VersionHelper.isVersion("1.16-20.w.14")) {
                 if (!FabricLoader.getInstance().isModLoaded("fabric")) {
                     try {
                         throw new ModResolutionException("Could not find required mod: fdlink requires fabric");

@@ -1,6 +1,6 @@
 package fr.arthurbambou.fdlink.mixin_1_8_9;
 
-import fr.arthurbambou.fdlink.versionhelpers.CrossVersionHandler;
+import fr.arthurbambou.fdlink.api.minecraft.VersionHelper;
 import org.objectweb.asm.tree.ClassNode;
 import org.spongepowered.asm.mixin.extensibility.IMixinConfigPlugin;
 import org.spongepowered.asm.mixin.extensibility.IMixinInfo;
@@ -21,7 +21,7 @@ public class MixinPlugin implements IMixinConfigPlugin {
 
     @Override
     public boolean shouldApplyMixin(String targetClassName, String mixinClassName) {
-        return CrossVersionHandler.isVersion("1.8.9");
+        return VersionHelper.isVersion("1.8.9");
     }
 
     @Override

@@ -1,7 +1,8 @@
 package fr.arthurbambou.fdlink.compat_1_16;
 
-import fr.arthurbambou.fdlink.versionhelpers.minecraft.Message;
-import fr.arthurbambou.fdlink.versionhelpers.minecraft.style.Style;
+
+import fr.arthurbambou.fdlink.api.minecraft.Message;
+import fr.arthurbambou.fdlink.api.minecraft.style.Style;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -32,7 +33,11 @@ public class Message1_16 implements Message {
 
     @Override
     public Message1_16 setAuthorUUID(UUID uuid) {
-        this.authorUUID = uuid;
+        if (UUID.fromString("00000000-0000-0000-0000-000000000000").equals(uuid)) {
+            this.authorUUID = null;
+        } else {
+            this.authorUUID = uuid;
+        }
         return this;
     }
 

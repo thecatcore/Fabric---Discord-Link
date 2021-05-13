@@ -6,10 +6,13 @@ import club.minnced.discord.webhook.receive.ReadonlyMessage;
 import club.minnced.discord.webhook.send.AllowedMentions;
 import club.minnced.discord.webhook.send.WebhookMessageBuilder;
 import fr.arthurbambou.fdlink.FDLink;
-import fr.arthurbambou.fdlink.config.Config;
-import fr.arthurbambou.fdlink.versionhelpers.minecraft.Message;
-import fr.arthurbambou.fdlink.versionhelpers.minecraft.MinecraftServer;
-import fr.arthurbambou.fdlink.versionhelpers.minecraft.PlayerEntity;
+import fr.arthurbambou.fdlink.api.config.Config;
+import fr.arthurbambou.fdlink.api.discord.MessageHandler;
+import fr.arthurbambou.fdlink.api.discord.MessageSender;
+import fr.arthurbambou.fdlink.api.discord.MinecraftMessage;
+import fr.arthurbambou.fdlink.api.minecraft.Message;
+import fr.arthurbambou.fdlink.api.minecraft.MinecraftServer;
+import fr.arthurbambou.fdlink.api.minecraft.PlayerEntity;
 import okhttp3.OkHttpClient;
 import okhttp3.Protocol;
 import org.jetbrains.annotations.NotNull;
@@ -95,90 +98,35 @@ public class DiscordWebhook implements MessageSender {
     public void sendMessage(Message message) {
         if (this.messageReader != null && this.messageReader.minecraftToDiscordHandler != null
                 && this.webhookClient != null && this.config != null) {
-            MinecraftMessage minecraftMessage = this.messageReader.minecraftToDiscordHandler.handleTexts(message);
+            MinecraftMessage minecraftMessage = this.messageReader.minecraftToDiscordHandler.handleText(message);
             if (minecraftMessage != null) {
-                String stringMessage = minecraftMessage.getMessage();
-                String[] stringMessages = minecraftMessage.getMessages();
-                switch (minecraftMessage.getType()) {
-                    case CHAT_COMMAND:
-                        if (this.config.mainConfig.minecraftToDiscord.chatChannels.allowDiscordCommands) {
-                            this.sendMessage(
-                                    message.hasAuthorUUID() ? message.getAuthorUUID() : getPlayerUUIDFromText(message.getArgs()[0]),
-                                    stringMessage);
+                MinecraftMessage.MessageSendability common = minecraftMessage.getCommon();
+                MinecraftMessage.MessageSendability chat = minecraftMessage.getChat();
+
+                if (common != null && common.canSendChat()) {
+                    UUID authorUUID = null;
+                    if (message.hasAuthorUUID()) authorUUID = message.getAuthorUUID();
+                    else if (minecraftMessage.doSearchForAuthor()) {
+                        if (message.getKey() != null && message.getKey().equals("chat.type.team.text")) {
+                            authorUUID = getPlayerUUIDFromText(message.getArgs()[1]);
+                        } else {
+                            authorUUID = getPlayerUUIDFromText(message.getArgs()[0]);
                         }
-                        break;
-                    case CHAT:
-                        if (this.config.mainConfig.minecraftToDiscord.chatChannels.playerMessages){
-                            this.sendMessage(message.hasAuthorUUID() ? message.getAuthorUUID() : getPlayerUUIDFromText(message.getArgs()[0]), stringMessages[0]);
+                    }
+
+                    this.sendMessage(authorUUID, common.getMessage());
+                } else if (chat != null && chat.canSend()) {
+                    UUID authorUUID = null;
+                    if (message.hasAuthorUUID()) authorUUID = message.getAuthorUUID();
+                    else if (minecraftMessage.doSearchForAuthor()) {
+                        if (message.getKey() != null && message.getKey().equals("chat.type.team.text")) {
+                            authorUUID = getPlayerUUIDFromText(message.getArgs()[1]);
+                        } else {
+                            authorUUID = getPlayerUUIDFromText(message.getArgs()[0]);
                         }
-                        break;
-                    case TEAM_CHAT:
-                        if (this.config.mainConfig.minecraftToDiscord.chatChannels.teamPlayerMessages){
-                            this.sendMessage(message.hasAuthorUUID() ? message.getAuthorUUID() : getPlayerUUIDFromText(message.getArgs()[1]), stringMessages[0]);
-                        }
-                        break;
-                    case ME:
-                        if (this.config.mainConfig.minecraftToDiscord.chatChannels.sendMeCommand) {
-                            this.sendMessage(message.hasAuthorUUID() ? message.getAuthorUUID() : getPlayerUUIDFromText(message.getArgs()[0]), stringMessage);
-                        }
-                        break;
-                    case SAY:
-                        if (this.config.mainConfig.minecraftToDiscord.chatChannels.sendSayCommand) {
-                            this.sendMessage(message.hasAuthorUUID() ? message.getAuthorUUID() : getPlayerUUIDFromText(message.getArgs()[0]), stringMessage);
-                        }
-                        break;
-                    case ADVANCEMENT_TASK:
-                        if (this.config.mainConfig.minecraftToDiscord.chatChannels.advancementMessages) {
-                            this.sendMessage(null, stringMessage);
-                        }
-                        break;
-                    case ADVANCEMENT_CHALLENGE:
-                        if (this.config.mainConfig.minecraftToDiscord.chatChannels.challengeMessages) {
-                            this.sendMessage(null, stringMessage);
-                        }
-                        break;
-                    case ADVANCEMENT_GOAL:
-                        if (this.config.mainConfig.minecraftToDiscord.chatChannels.goalMessages) {
-                            this.sendMessage(null, stringMessage);
-                        }
-                        break;
-                    case ADMIN:
-                        if (this.config.mainConfig.minecraftToDiscord.chatChannels.adminMessages) {
-                            this.sendMessage(null, stringMessage);
-                        }
-                        break;
-                    case JOIN_RENAMED:
-                    case JOIN:
-                    case LEAVE:
-                        if (this.config.mainConfig.minecraftToDiscord.chatChannels.joinAndLeaveMessages) {
-                            this.sendMessage(null, stringMessage);
-                        }
-                        break;
-                    case DEATH:
-                        if (this.config.mainConfig.minecraftToDiscord.chatChannels.deathMessages) {
-                            this.sendMessage(null, stringMessage);
-                        }
-                        break;
-                    case TELLRAW:
-                        if (this.config.mainConfig.minecraftToDiscord.chatChannels.atATellRaw) {
-                            this.sendMessage(message.hasAuthorUUID() ? message.getAuthorUUID() : getPlayerUUIDFromText(message.getArgs()[0]), stringMessage);
-                        }
-                        break;
-                    case ACHIEVEMENT:
-                        if (this.config.mainConfig.minecraftToDiscord.chatChannels.achievementMessages) {
-                            this.sendMessage(null, stringMessage);
-                        }
-                        break;
-                    case STRING_OLD:
-                        if (this.config.mainConfig.minecraftToDiscord.chatChannels.playerMessages) {
-                            this.sendMessage(null, stringMessage);
-                        }
-                        break;
-                    case CUSTOM:
-                        minecraftMessage.getMessageSender().sendMessage(stringMessage, this, this.config);
-                        break;
-                    default:
-                        break;
+                    }
+
+                    this.sendMessage(authorUUID, chat.getMessage());
                 }
             }
         }
@@ -196,7 +144,7 @@ public class DiscordWebhook implements MessageSender {
         }
 
         if (playerName.isEmpty()) {
-            playerName = MinecraftToDiscordHandler.getArgAsString(arg);
+            playerName = MessageHandler.getAsString(arg);
         }
         try {
             if (!playerName.isEmpty() && FDLink.getMessageReceiver() != null && FDLink.getMessageReceiver().getServer() != null) {
