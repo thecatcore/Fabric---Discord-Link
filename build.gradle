@@ -2,7 +2,7 @@ plugins {
 	id 'java-library'
 	id 'eclipse'
 	id 'idea'
-	id 'fabric-loom' version '0.7-SNAPSHOT' apply false
+	id 'fabric-loom' version '0.8-SNAPSHOT' apply false
 	id 'com.matthewprenger.cursegradle' version "1.4.0"
 	id "com.modrinth.minotaur" version "1.1.0"
 }
@@ -45,7 +45,7 @@ class Globals {
 	static def changelog = "Fix webhook avatar url being wrong."
 	static def apiVersion = "0.1.0"
 	static def versionInfo = [
-			new MinecraftVersion("21w14a", "10", "0.11.3", "0.32.7+1.17"),
+			new MinecraftVersion("21w20a", "7", "0.11.3", "0.34.5+1.17"),
 			new MinecraftVersion("1.16.5", "9", "0.11.3", "0.34.2+1.16"),
 			new MinecraftVersion("1.15.2", "17", "0.11.3", "0.28.5+1.15"),
 			new MinecraftVersion("1.12.2", "202103011608", "0.11.3", Origin.LEGACY_FABRIC),
@@ -84,8 +84,9 @@ allprojects {
 	apply plugin: 'java-library'
 	apply plugin: 'fabric-loom'
 
-	sourceCompatibility = 1.8
-	targetCompatibility = 1.8
+	tasks.withType(JavaCompile).configureEach {
+		it.options.release = 8
+	}
 
 	group = "fr.catcore"
 
@@ -293,6 +294,7 @@ task publishModrinth (type: TaskModrinthUpload) {
 	addLoader('fabric')
 
 	// 1.17.x
+	addGameVersion('21w20a')
 	addGameVersion('21w19a')
 	addGameVersion('21w18a')
 	addGameVersion('21w17a')
