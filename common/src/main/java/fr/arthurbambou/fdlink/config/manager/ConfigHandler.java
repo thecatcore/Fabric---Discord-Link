@@ -13,6 +13,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 public class ConfigHandler {
 
@@ -210,10 +211,20 @@ public class ConfigHandler {
     private static void saveMainConfig(JsonObject jsonObject) {
         if (!jsonObject.has("token")) jsonObject.addProperty("token", "");
         if (!jsonObject.has("version")) jsonObject.addProperty("version", CONFIG_VERSION);
+        String token = jsonObject.get("token").getAsString();
+
+        JsonObject jsonObject1 = new JsonObject();
+
+        jsonObject1.addProperty("token", token);
+        jsonObject.remove("token");
+
+        for (Map.Entry<String, JsonElement> entry :jsonObject.entrySet()) {
+            jsonObject1.add(entry.getKey(), entry.getValue());
+        }
 
         if (!CONFIG_FOLDER.exists()) CONFIG_FOLDER.mkdirs();
         try (FileWriter fileWriter = new FileWriter(NEW_MAIN_FILE)) {
-            fileWriter.write(gson.toJson(jsonObject));
+            fileWriter.write(gson.toJson(jsonObject1));
         } catch (IOException e) {
             e.printStackTrace();
         }
