@@ -148,8 +148,7 @@ public class ConfigHandler {
             if (jsonElement.isJsonPrimitive()) {
                 JsonPrimitive jsonPrimitive = jsonElement.getAsJsonPrimitive();
 
-                Number number = jsonPrimitive.getAsNumber();
-                chatChannels.add(String.valueOf(number.longValue()));
+                chatChannels.add(parseChannelId(jsonPrimitive));
             }
         }
         config.mainConfig.chatChannels = chatChannels;
@@ -160,8 +159,7 @@ public class ConfigHandler {
             if (jsonElement.isJsonPrimitive()) {
                 JsonPrimitive jsonPrimitive = jsonElement.getAsJsonPrimitive();
 
-                Number number = jsonPrimitive.getAsNumber();
-                logChannels.add(String.valueOf(number.longValue()));
+                logChannels.add(parseChannelId(jsonPrimitive));
             }
         }
         config.mainConfig.logChannels = logChannels;
@@ -195,6 +193,23 @@ public class ConfigHandler {
         String token = mainObject.get("token").getAsString();
 
         return new ConfigHolder(config, token);
+    }
+
+    private static String parseChannelId(JsonPrimitive jsonPrimitive) {
+        String string = "0";
+
+        if (jsonPrimitive.isNumber()) {
+            Number number = jsonPrimitive.getAsNumber();
+            string = String.valueOf(number.longValue());
+        } else if (jsonPrimitive.isString()) {
+            String numberString = jsonPrimitive.getAsString()
+                    .replace("<", "")
+                    .replace(">", "");
+
+            string = String.valueOf(Long.valueOf(numberString));
+        }
+
+        return string;
     }
 
     private static List<JsonElement> readList(JsonArray jsonArray) {
