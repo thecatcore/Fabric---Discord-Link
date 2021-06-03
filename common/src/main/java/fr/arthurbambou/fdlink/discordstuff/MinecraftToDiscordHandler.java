@@ -26,6 +26,8 @@ public final class MinecraftToDiscordHandler implements MessageHandler {
 
         // Chat messages
         MessageHandler.registerHandler(new TextHandler("chat.type.text", (text, config) -> {
+            boolean webhookMode = !config.mainConfig.webhook.url.isEmpty();
+
             Object arg1 = text.getArgs()[0];
             String teamPrefix = "";
             String teamSuffix = "";
@@ -106,12 +108,23 @@ public final class MinecraftToDiscordHandler implements MessageHandler {
                         new MinecraftMessage.MessageSendability(chatCompleteMessage, config.mainConfig.minecraftToDiscord.chatChannels.playerMessages),
                         new MinecraftMessage.MessageSendability(logCompleteMessage, config.mainConfig.minecraftToDiscord.logChannels.playerMessages))
                         .searchForAuthor();
+
+                if (webhookMode) {
+                    minecraftMessage = new MinecraftMessage(
+                            new MinecraftMessage.MessageSendability(chatMessage, config.mainConfig.minecraftToDiscord.chatChannels.playerMessages),
+                            new MinecraftMessage.MessageSendability(logMessage, config.mainConfig.minecraftToDiscord.logChannels.playerMessages))
+                            .searchForAuthor();
+                }
+
                 if (text.hasAuthorUUID()) minecraftMessage.setAuthor(text.getAuthorUUID());
+
                 return minecraftMessage;
             }
         }));
 
         MessageHandler.registerHandler(new TextHandler("chat.type.team.text", (text, config) -> {
+            boolean webhookMode = !config.mainConfig.webhook.url.isEmpty();
+
             String teamName = adaptUsernameToDiscord(getArgAsString(text.getArgs()[0]).replaceAll("§[b0931825467adcfeklmnor]", ""));
             String playerName = adaptUsernameToDiscord(getArgAsString(text.getArgs()[1]).replaceAll("§[b0931825467adcfeklmnor]", ""));
             String message = getArgAsString(text.getArgs()[2]).replaceAll("§[b0931825467adcfeklmnor]", "");
@@ -170,13 +183,24 @@ public final class MinecraftToDiscordHandler implements MessageHandler {
                         new MinecraftMessage.MessageSendability(chatCompleteMessage, config.mainConfig.minecraftToDiscord.chatChannels.teamPlayerMessages),
                         new MinecraftMessage.MessageSendability(logCompleteMessage, config.mainConfig.minecraftToDiscord.logChannels.teamPlayerMessages))
                         .searchForAuthor();
+
+                if (webhookMode) {
+                    minecraftMessage = new MinecraftMessage(
+                            new MinecraftMessage.MessageSendability(chatMessage, config.mainConfig.minecraftToDiscord.chatChannels.teamPlayerMessages),
+                            new MinecraftMessage.MessageSendability(logMessage, config.mainConfig.minecraftToDiscord.logChannels.teamPlayerMessages))
+                            .searchForAuthor();
+                }
+
                 if (text.hasAuthorUUID()) minecraftMessage.setAuthor(text.getAuthorUUID());
+
                 return minecraftMessage;
             }
         }));
 
         // /me command
         MessageHandler.registerHandler(new TextHandler("chat.type.emote", (text, config) -> {
+            boolean webhookMode = !config.mainConfig.webhook.url.isEmpty();
+
             String message = text.getMessage().replaceAll("§[b0931825467adcfeklmnor]", "");
             if (this.config.messageConfig.minecraftToDiscord.meMessage.useCustomMessage) {
                 message = this.config.messageConfig.minecraftToDiscord.meMessage.customMessage
@@ -187,12 +211,23 @@ public final class MinecraftToDiscordHandler implements MessageHandler {
                     config.mainConfig.minecraftToDiscord.chatChannels.sendMeCommand,
                     config.mainConfig.minecraftToDiscord.logChannels.sendMeCommand
                     )).searchForAuthor();
+
+            if (webhookMode) {
+                minecraftMessage = new MinecraftMessage(new MinecraftMessage.MessageSendability(getArgAsString(text.getArgs()[1]),
+                        config.mainConfig.minecraftToDiscord.chatChannels.sendMeCommand,
+                        config.mainConfig.minecraftToDiscord.logChannels.sendMeCommand
+                )).searchForAuthor();
+            }
+
             if (text.hasAuthorUUID()) minecraftMessage.setAuthor(text.getAuthorUUID());
+
             return minecraftMessage;
         }));
 
         // /say command
         MessageHandler.registerHandler(new TextHandler("chat.type.announcement", (text, config) -> {
+            boolean webhookMode = !config.mainConfig.webhook.url.isEmpty();
+
             String message = text.getMessage().replaceAll("§[b0931825467adcfeklmnor]", "");
             if (this.config.messageConfig.minecraftToDiscord.sayMessage.useCustomMessage) {
                 message = this.config.messageConfig.minecraftToDiscord.sayMessage.customMessage
@@ -203,7 +238,16 @@ public final class MinecraftToDiscordHandler implements MessageHandler {
                     config.mainConfig.minecraftToDiscord.chatChannels.sendSayCommand,
                     config.mainConfig.minecraftToDiscord.logChannels.sendSayCommand
                     )).searchForAuthor();
+
+            if (webhookMode) {
+                minecraftMessage = new MinecraftMessage(new MinecraftMessage.MessageSendability(getArgAsString(text.getArgs()[1]),
+                        config.mainConfig.minecraftToDiscord.chatChannels.sendSayCommand,
+                        config.mainConfig.minecraftToDiscord.logChannels.sendSayCommand
+                )).searchForAuthor();
+            }
+
             if (text.hasAuthorUUID()) minecraftMessage.setAuthor(text.getAuthorUUID());
+
             return minecraftMessage;
         }));
 
@@ -318,11 +362,14 @@ public final class MinecraftToDiscordHandler implements MessageHandler {
                     + message
                     + this.config.messageConfig.minecraftToDiscord.deathMsgPostfix,
                     config.mainConfig.minecraftToDiscord.chatChannels.deathMessages,
-                    config.mainConfig.minecraftToDiscord.logChannels.deathMessages));
+                    config.mainConfig.minecraftToDiscord.logChannels.deathMessages
+            ));
             return minecraftMessage;
         }));
 
         MessageHandler.registerHandler(new CommandHandler("tellraw", (text, config) -> {
+            boolean webhookMode = !config.mainConfig.webhook.url.isEmpty();
+
             String message = text.getMessage();
             String source = adaptUsernameToDiscord(text.getSource());
 
@@ -334,7 +381,16 @@ public final class MinecraftToDiscordHandler implements MessageHandler {
                     config.mainConfig.minecraftToDiscord.chatChannels.atATellRaw,
                     config.mainConfig.minecraftToDiscord.logChannels.atATellRaw
                     )).searchForAuthor();
+
+            if (webhookMode) {
+                minecraftMessage = new MinecraftMessage(new MinecraftMessage.MessageSendability(message,
+                        config.mainConfig.minecraftToDiscord.chatChannels.atATellRaw,
+                        config.mainConfig.minecraftToDiscord.logChannels.atATellRaw
+                )).searchForAuthor();
+            }
+
             if (text.hasAuthorUUID()) minecraftMessage.setAuthor(text.getAuthorUUID());
+
             return minecraftMessage;
         }));
 

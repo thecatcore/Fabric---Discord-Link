@@ -23,11 +23,13 @@ public class FDLink implements DedicatedServerModInitializer {
 
 	private static void initialize() {
 		ConfigHandler.ConfigHolder configHolder = ConfigHandler.getConfig();
-		messageReceiver = new DiscordBot(configHolder.getToken(), configHolder.getConfig());
 		if (configHolder.getConfig().mainConfig.webhook.url.isEmpty()) {
-			messageSender = messageReceiver;
+			messageSender = new DiscordBot(configHolder.getToken(), configHolder.getConfig());
 		} else {
 			LOGGER.info("Found a webhook URL, using Webhook instead of Bot to send message.");
+			if (configHolder.getConfig().mainConfig.chatChannels.isEmpty() && configHolder.getConfig().mainConfig.logChannels.isEmpty()) {
+				LOGGER.warn("Unable to find any channel id, only Minecraft->Discord will work, add a channel id to the config if this wasn't intended.");
+			}
 			messageSender = new DiscordWebhook(configHolder.getConfig().mainConfig.webhook.url, configHolder.getConfig(), messageReceiver);
 		}
 		loaded = true;
