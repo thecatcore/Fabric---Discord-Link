@@ -6,7 +6,6 @@
     "MixinMinecraftServer",
     "MixinTellRawCommand",
     "MixinText",
-    "compat.FabricConsoleMixinMinecraftDedicatedServer",
     "events.MixinMinecraftServer"
   ],
   "injectors": {

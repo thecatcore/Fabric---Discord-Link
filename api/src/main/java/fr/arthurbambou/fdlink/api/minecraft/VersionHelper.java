@@ -18,12 +18,16 @@ public class VersionHelper {
         MESSAGE_SENDERS.add(messageSender);
     }
 
-    private static SemanticVersion getMinecraftVersion() {
-        return (SemanticVersion) FabricLoader.getInstance().getModContainer("minecraft").get().getMetadata().getVersion();
+    private static SemanticVersion getModVersion(String modId) {
+        return (SemanticVersion) FabricLoader.getInstance().getModContainer(modId).get().getMetadata().getVersion();
     }
 
     public static VersionComparison compareToMinecraftVersion(String version) {
-        return compareTo(getMinecraftVersion(), version);
+        return compareToModVersion("minecraft", version);
+    }
+
+    public static VersionComparison compareToModVersion(String modId, String version) {
+        return compareTo(getModVersion(modId), version);
     }
 
     public static VersionComparison compareTo(String comparedTo, String compared) {
@@ -58,7 +62,7 @@ public class VersionHelper {
     }
 
     public static boolean isRelease() {
-        return isRelease(getMinecraftVersion().getFriendlyString());
+        return isRelease(getModVersion("minecraft").getFriendlyString());
     }
 
     public static boolean isVersion(String version) {
