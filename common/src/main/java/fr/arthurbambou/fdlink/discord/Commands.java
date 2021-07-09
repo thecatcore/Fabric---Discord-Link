@@ -31,8 +31,8 @@ public enum Commands {
         int totalUptimeSeconds = (int) (System.currentTimeMillis() - startTime) / 1000;
 
         final int uptimeD = totalUptimeSeconds / 86400;
-        final int uptimeH = totalUptimeSeconds / 3600 ;
-        final int uptimeM = (totalUptimeSeconds % 3600) / 60;
+        final int uptimeH = totalUptimeSeconds / 3600) % 24 ;
+        final int uptimeM = (totalUptimeSeconds / 60) % 60;
         final int uptimeS = totalUptimeSeconds % 60;
 
         messageCreateEvent.getChannel().sendMessage(String.format(
