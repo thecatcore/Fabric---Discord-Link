@@ -2,6 +2,7 @@
 
 Fabric-Discord-Link is a lightweight server mod for the fabric mod loader which links your minecraft server and it's chat to a discord server via your very own discord bot.
 
+
 ## Features
 * Configure a Chat channel to chat between your minecraft world and a discord channel
 * Configure a Log channel to show server messages and admin actions
