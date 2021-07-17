@@ -27,7 +27,7 @@ public enum Commands {
                 playerlist.append(MessageHandler.adaptUsername(players.get(i).getPlayerName())).append("\n");
             }
 
-            playerlist.append(MessageHandler.adaptUsername(players.get(players.size() - 1).getPlayerName()));
+            playerlist.append("- ").append(MessageHandler.adaptUsername(players.get(players.size() - 1).getPlayerName()));
         } else {
             playerlist.append("There are no players online.");
         }
