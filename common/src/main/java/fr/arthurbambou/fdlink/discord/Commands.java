@@ -24,7 +24,7 @@ public enum Commands {
             playerlist.append("Players:").append("\n");
 
             for (int i = 0; i < players.size() - 1; i++) {
-                playerlist.append(MessageHandler.adaptUsername(players.get(i).getPlayerName())).append("\n");
+                playerlist.append("- ").append(MessageHandler.adaptUsername(players.get(i).getPlayerName())).append("\n");
             }
 
             playerlist.append("- ").append(MessageHandler.adaptUsername(players.get(players.size() - 1).getPlayerName()));
