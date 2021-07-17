@@ -6,6 +6,8 @@ import fr.arthurbambou.fdlink.api.minecraft.PlayerEntity;
 import fr.arthurbambou.fdlink.discordstuff.MinecraftToDiscordHandler;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
+import java.util.List;
+
 public enum Commands {
     playercount("Show the number of player on the server.",(minecraftServer, messageCreateEvent, startTime) -> {
         int playerNumber = minecraftServer.getPlayerCount();
@@ -15,14 +17,22 @@ public enum Commands {
     }),
     playerlist("Show the list of player on the server.",(minecraftServer, messageCreateEvent, startTime) -> {
         StringBuilder playerlist = new StringBuilder();
-        for (PlayerEntity playerEntity : minecraftServer.getPlayers()) {
-            playerlist.append(MessageHandler.adaptUsername(playerEntity.getPlayerName())).append("\n");
+
+        List<PlayerEntity> players = minecraftServer.getPlayers();
+
+        if (players.size() > 0) {
+            playerlist.append("Players:").append("\n");
+
+            for (int i = 0; i < players.size() - 1; i++) {
+                playerlist.append(MessageHandler.adaptUsername(players.get(i).getPlayerName())).append("\n");
+            }
+
+            playerlist.append(MessageHandler.adaptUsername(players.get(players.size() - 1).getPlayerName()));
+        } else {
+            playerlist.append("There are no players online.");
         }
-        if (playerlist.toString().endsWith("\n")) {
-            int a = playerlist.lastIndexOf("\n");
-            playerlist = new StringBuilder(playerlist.substring(0, a));
-        }
-        messageCreateEvent.getChannel().sendMessage("\n Players: \n" + playerlist).submit();
+
+        messageCreateEvent.getChannel().sendMessage(playerlist).submit();
         return false;
     }),
     status("Show various information about the server.", (minecraftServer, messageCreateEvent, startTime) -> {
