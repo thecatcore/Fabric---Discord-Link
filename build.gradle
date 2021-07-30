@@ -41,13 +41,13 @@ enum Origin {
 }
 
 class Globals {
-	static def baseVersion = "0.9.4"
+	static def baseVersion = "0.9.5"
 	static def changelog = "Mark old versions of fabric console as incompatible."
 	static def apiVersion = "0.1.0"
 	static def versionInfo = [
-			new MinecraftVersion("1.17-pre5", "1", "0.11.3", "0.34.8+1.17"),
-			new MinecraftVersion("1.16.5", "9", "0.11.3", "0.34.2+1.16"),
-			new MinecraftVersion("1.15.2", "17", "0.11.3", "0.28.5+1.15"),
+			new MinecraftVersion("1.17.1", "31", "0.11.6", "0.37.1+1.17"),
+			new MinecraftVersion("1.16.5", "10", "0.11.6", "0.37.1+1.16"),
+			new MinecraftVersion("1.15.2", "17", "0.11.6", "0.28.5+1.15"),
 			new MinecraftVersion("1.12.2", "202103011608", "0.11.3", Origin.LEGACY_FABRIC),
 			new MinecraftVersion("1.8.9", "202103291533", "0.11.1+build.202102220648", "1.1.0+1.8.9", Origin.LEGACY_FABRIC, true),
 			new MinecraftVersion("1.7.10", "202102271416", "0.11.1+build.202102220648", Origin.LEGACY_FABRIC, true),
@@ -242,6 +242,7 @@ curseforge {
 		gameVersionStrings.add("Fabric")
 
 		// 1.17.x
+		gameVersionStrings.add("1.17.1")
 		gameVersionStrings.add("1.17")
 		gameVersionStrings.add("1.17-Snapshot")
 
@@ -294,6 +295,15 @@ task publishModrinth (type: TaskModrinthUpload) {
 	addLoader('fabric')
 
 	// 1.17.x
+	addGameVersion('1.17.1')
+	addGameVersion('1.17.1-rc2')
+	addGameVersion('1.17.1-rc1')
+	addGameVersion('1.17.1-pre3')
+	addGameVersion('1.17.1-pre2')
+	addGameVersion('1.17.1-pre1')
+	addGameVersion('1.17')
+	addGameVersion('1.17-rc2')
+	addGameVersion('1.17-rc1')
 	addGameVersion('1.17-pre5')
 	addGameVersion('1.17-pre4')
 	addGameVersion('1.17-pre3')
