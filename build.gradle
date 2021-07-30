@@ -48,10 +48,10 @@ class Globals {
 			new MinecraftVersion("1.17.1", "31", "0.11.6", "0.37.1+1.17"),
 			new MinecraftVersion("1.16.5", "10", "0.11.6", "0.37.1+1.16"),
 			new MinecraftVersion("1.15.2", "17", "0.11.6", "0.28.5+1.15"),
-			new MinecraftVersion("1.12.2", "202103011608", "0.11.3", Origin.LEGACY_FABRIC),
-			new MinecraftVersion("1.8.9", "202103291533", "0.11.1+build.202102220648", "1.1.0+1.8.9", Origin.LEGACY_FABRIC, true),
-			new MinecraftVersion("1.7.10", "202102271416", "0.11.1+build.202102220648", Origin.LEGACY_FABRIC, true),
-			new MinecraftVersion("1.6.4", "202105082206", "0.11.1+build.202102220648", Origin.LEGACY_FABRIC, true)
+			new MinecraftVersion("1.12.2", "202106280130", "0.11.3", Origin.LEGACY_FABRIC),
+			new MinecraftVersion("1.8.9",  "202107080308", "0.11.1+build.202102220648", "1.1.0+1.8.9", Origin.LEGACY_FABRIC, true),
+			new MinecraftVersion("1.7.10", "202106280130", "0.11.1+build.202102220648", Origin.LEGACY_FABRIC, true),
+			new MinecraftVersion("1.6.4",  "202107020352", "0.11.1+build.202102220648", Origin.LEGACY_FABRIC, true)
 	]
 }
 
