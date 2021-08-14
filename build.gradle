@@ -57,11 +57,11 @@ class Globals {
 
 version = Globals.baseVersion
 
-def getSubprojectVersion() {
+static def getSubprojectVersion() {
 	return Globals.baseVersion
 }
 
-def getApiVersion() {
+static def getApiVersion() {
 	return Globals.apiVersion
 }
 
@@ -74,9 +74,15 @@ static MinecraftVersion getVersionInfo(String project_name) {
 	return version_info
 }
 
-
-import net.fabricmc.loom.task.RemapJarTask
-import net.fabricmc.loom.task.RemapSourcesJarTask
+def moduleDependencies(project) {
+	List<String> depNames = ["api", "common"]
+	def deps = depNames.iterator().collect { project.dependencies.project(path: ":$it", configuration: 'dev') }
+	project.dependencies {
+		deps.each {
+			api it
+		}
+	}
+}
 
 allprojects {
 
@@ -192,15 +198,8 @@ allprojects {
 		}
 	}
 
-	if (project.rootProject != project) {
-		project.rootProject.dependencies {
-			api project(path: ":${project.name}", configuration: "dev")
-			include project(":${project.name}")
-		}
-	}
-
 	task sourcesJar(type: Jar, dependsOn: classes) {
-		classifier = 'sources'
+		archiveClassifier = "sources"
 		from sourceSets.main.allSource
 	}
 
@@ -210,17 +209,16 @@ allprojects {
 	}
 }
 
-subprojects {}
+subprojects.each { remapJar.dependsOn("${it.path}:remapJar") }
 
-task remapMavenJar(type: RemapJarTask, dependsOn: jar) {
+dependencies {
 	afterEvaluate {
-		input = file("${project.buildDir}/libs/${archivesBaseName}-${archiveVersion.get()}-dev.jar")
-		archiveFileName = "${archivesBaseName}-${archiveVersion.get()}-maven.jar"
-		addNestedDependencies.set(false)
+		subprojects.each {
+			api project(path: ":${it.name}", configuration: "dev")
+			include project("${it.name}:")
+		}
 	}
 }
-
-subprojects.each { remapJar.dependsOn("${it.path}:remapJar") }
 
 curseforge {
 	apiKey = System.getenv('CURSEKEY') ?: "a key"
@@ -238,6 +236,10 @@ curseforge {
 
 		addArtifact(file("api/build/libs/fdlink-api-${Globals.apiVersion}.jar")) {
 			displayName = "Api ${Globals.apiVersion}"
+		}
+
+		afterEvaluate {
+			uploadTask.dependsOn("remapJar")
 		}
 
 		gameVersionStrings.clear()
