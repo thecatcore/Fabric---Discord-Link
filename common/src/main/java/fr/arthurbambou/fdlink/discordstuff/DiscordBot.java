@@ -307,13 +307,17 @@ public class DiscordBot implements MessageSender {
         if (this.hasLogChannels && this.api != null) {
             for (String id : this.config.mainConfig.logChannels) {
                 try {
-                    this.api = this.api.awaitReady();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    try {
+                        this.api = this.api.awaitReady();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    TextChannel channel = this.api.getTextChannelById(id);
+                    list.add(channel.sendMessage(message).submit());
+                    lastMessageMs.add(message);
+                } catch (InsufficientPermissionException e) {
+                    FDLink.LOGGER.error("Unable to send message in log channel due to lack of permission: " + e.fillInStackTrace());
                 }
-                TextChannel channel = this.api.getTextChannelById(id);
-                list.add(channel.sendMessage(message).submit());
-                lastMessageMs.add(message);
             }
         }
         return list;
@@ -323,16 +327,20 @@ public class DiscordBot implements MessageSender {
         if (this.hasChatChannels && this.api != null) {
             for (String id : this.config.mainConfig.chatChannels) {
                 try {
-                    this.api = this.api.awaitReady();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    try {
+                        this.api = this.api.awaitReady();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    TextChannel channel = this.api.getTextChannelById(id);
+                    while (channel == null) {
+                        channel = this.api.getTextChannelById(id);
+                    }
+                    list.add(channel.sendMessage(message).submit());
+                    lastMessageMs.add(message);
+                } catch (InsufficientPermissionException e) {
+                    FDLink.LOGGER.error("Unable to send message in chat channel due to lack of permission: " + e.fillInStackTrace());
                 }
-                TextChannel channel = this.api.getTextChannelById(id);
-                while (channel == null) {
-                    channel = this.api.getTextChannelById(id);
-                }
-                list.add(channel.sendMessage(message).submit());
-                lastMessageMs.add(message);
             }
         }
         return list;
