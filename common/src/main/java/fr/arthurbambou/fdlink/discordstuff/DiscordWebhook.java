@@ -26,15 +26,18 @@ public class DiscordWebhook implements MessageSender {
     protected final Config config;
     protected WebhookClient webhookClient;
     protected DiscordBot messageReader;
+    private final AllowedMentions allowedMentions;
 
     public DiscordWebhook(String webhookURL, Config config, DiscordBot messageReader) {
         this.config = config;
+
+        this.allowedMentions = AllowedMentions.none()
+                .withParseEveryone(config.mainConfig.webhook.mentions.everyone)
+                .withParseRoles(config.mainConfig.webhook.mentions.roles)
+                .withParseUsers(config.mainConfig.webhook.mentions.users);
+
         WebhookClientBuilder builder = new WebhookClientBuilder(webhookURL)
-                .setAllowedMentions(AllowedMentions.none()
-                        .withParseEveryone(config.mainConfig.webhook.mentions.everyone)
-                        .withParseRoles(config.mainConfig.webhook.mentions.roles)
-                        .withParseUsers(config.mainConfig.webhook.mentions.users)
-                )
+                .setAllowedMentions(this.allowedMentions)
                 // Fix found by Tom_The_Geek (Geek202), creator of TomsServerUtils.
                 .setHttpClient(new OkHttpClient.Builder()
                     .protocols(Collections.singletonList(Protocol.HTTP_1_1))
@@ -45,6 +48,7 @@ public class DiscordWebhook implements MessageSender {
 
     public @NotNull CompletableFuture<ReadonlyMessage> sendMessage(UUID author, String message) {
         WebhookMessageBuilder builder = new WebhookMessageBuilder();
+        builder.setAllowedMentions(this.allowedMentions);
 
         if (author != null) {
             try {
