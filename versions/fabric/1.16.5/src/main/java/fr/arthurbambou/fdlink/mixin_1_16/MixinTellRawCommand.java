@@ -48,11 +48,17 @@ public class MixinTellRawCommand {
             int i = 0;
 
             if (commandContext.getInput().replace("/tellraw ", "").startsWith("@a")) {
-                ServerCommandSource source = commandContext.getSource();
-                Text message = TextArgumentType.getTextArgument(commandContext, "message").copy();
-                Text author = source.getDisplayName();
+                try {
+                    ServerCommandSource source = commandContext.getSource();
+                    Text message = TextArgumentType.getTextArgument(commandContext, "message");
+                    Text author = source.getDisplayName();
 
-                FDLink.getMessageSender().sendMessage(new CommandMessage1_16(author.getString(), message.getString(), "tellraw"));
+                    Text text = Texts.parse(source, message, null, 0);
+
+                    FDLink.getMessageSender().sendMessage(new CommandMessage1_16(author.getString(), text.getString(), "tellraw"));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
 
             for(Iterator var2 = EntityArgumentType.getPlayers(commandContext, "targets").iterator(); var2.hasNext(); ++i) {
