@@ -44,7 +44,7 @@ public class FDLink1_8_9 implements DedicatedServerModInitializer {
                 });
             } else {
                 try {
-                    throw new ModResolutionException("Could not find required mod: fdlink requires legacy-fabric-api");
+                    throw new ModResolutionException("Could not find required mod: fdlink requires legacy-fabric-api (https://www.curseforge.com/minecraft/mc-mods/legacy-fabric-api)");
                 } catch (ModResolutionException e) {
                     FabricGuiEntry.displayCriticalError(e, true);
                 }
