@@ -41,17 +41,85 @@ enum Origin {
 }
 
 class Globals {
-	static def baseVersion = "0.9.6"
-	static def changelog = "Fix some issues."
+	static def baseVersion = "0.9.7"
+	static def changelog = "Upgrade dependencies."
 	static def apiVersion = "0.1.0"
 	static def versionInfo = [
-			new MinecraftVersion("1.17.1", "38", "0.11.6", "0.37.2+1.17"),
-			new MinecraftVersion("1.16.5", "10", "0.11.6", "0.37.2+1.16"),
+			new MinecraftVersion("1.17.1", "52", "0.11.6", "0.40.0+1.17"),
+			new MinecraftVersion("1.16.5", "10", "0.11.6", "0.40.0+1.16"),
 			new MinecraftVersion("1.15.2", "17", "0.11.6", "0.28.5+1.15"),
 			new MinecraftVersion("1.12.2", "202106280130", "0.11.6", "1.1.1+1.12.2", Origin.LEGACY_FABRIC),
 			new MinecraftVersion("1.8.9",  "202107080308", "0.11.1+build.202106271747", "1.1.0+1.8.9", Origin.LEGACY_FABRIC, true),
 			new MinecraftVersion("1.7.10", "202106280130", "0.11.1+build.202106271747", Origin.LEGACY_FABRIC, true),
 			new MinecraftVersion("1.6.4",  "202107020352", "0.11.1+build.202106271747", Origin.LEGACY_FABRIC, true)
+	]
+	static def supportedVersions = [
+	        "1.17.1", "1.17", // 1.17.x
+			"1.16.5", "1.16.4", "1.16.3", "1.16.2", "1.16.1", "1.16", // 1.16.x
+			"1.15.2", "1.15.1", "1.15", // 1.15.x
+			"1.14.4", "1.14.3", "1.14.2", "1.14.1", "1.14", // 1.14.x
+			"1.12.2", "1.8.9", "1.7.10"/*, "1.6.4"*/ // Legacy Fabric
+	]
+	static def supportedVersionsCurseforge = [
+	        "1.18-Snapshot",
+			"1.17-Snapshot",
+			"1.16-Snapshot",
+			"1.15-Snapshot",
+			"1.14-Snapshot"
+	]
+	static def supportedVersionsModrinth = [
+			// 1.17.x
+			'1.17.1-rc2', '1.17.1-rc1',
+			'1.17.1-pre3', '1.17.1-pre2', '1.17.1-pre1',
+
+			'1.17-rc2', '1.17-rc1',
+			'1.17-pre5', '1.17-pre4', '1.17-pre3', '1.17-pre2', '1.17-pre1',
+
+			'21w20a', '21w19a', '21w18a', '21w17a', '21w16a', '21w15a', '21w14a', '21w13a', '21w11a', '21w10a',
+			'21w08b', '21w08a', '21w07a', '21w06a', '21w05b', '21w05a', '21w03a', '20w51a', '20w49a', '20w48a',
+			'20w46a', '20w45a',
+
+
+			// 1.16.x
+			'1.16.5-rc1',
+
+			'1.16.4-rc1',
+			'1.16.4-pre2', '1.16.4-pre1',
+
+			'1.16.3-rc1',
+
+			'1.16.2-rc2', '1.16.2-rc1',
+			'1.16.2-pre3', '1.16.2-pre2', '1.16.2-pre1',
+
+			'20w30a', '20w29a', '20w28a', '20w27a',
+
+			'1.16-rc1',
+			'1.16-pre8', '1.16-pre7', '1.16-pre6', '1.16-pre5', '1.16-pre4', '1.16-pre3', '1.16-pre2', '1.16-pre1',
+
+			'20w22a', '20w21a', '20w20b', '20w20a', '20w19a', '20w18a', '20w17a', '20w16a', '20w15a', '20w14a',
+			'20w14infinite', '20w13b', '20w13a', '20w12a', '20w11a', '20w10a', '20w09a', '20w08a', '20w07a',
+			'20w06a',
+
+
+			// 1.15.x
+			'1.15.2-pre2', '1.15.2-pre1',
+
+			'1.15.1-pre1',
+
+			'1.15-pre7', '1.15-pre6', '1.15-pre5', '1.15-pre4', '1.15-pre3', '1.15-pre2', '1.15-pre1',
+
+			'19w46b', '19w46a', '19w45b', '19w45a', '19w44a', '19w42a', '19w41a', '19w40a', '19w39a', '19w38b',
+			'19w38a', '19w37a', '19w36a', '19w35a', '19w34a',
+
+
+			// 1.14.x
+			'1.14.4-pre7', '1.14.4-pre6', '1.14.4-pre5', '1.14.4-pre4', '1.14.4-pre3', '1.14.4-pre2', '1.14.4-pre1',
+
+			'1.14.3-pre4', '1.14.3-pre3', '1.14.3-pre2', '1.14.3-pre1',
+
+			'1.14.2-pre4', '1.14.2-pre3', '1.14.2-pre2', '1.14.2-pre1',
+
+			'1.14.1-pre2', '1.14.1-pre1'
 	]
 }
 
@@ -245,40 +313,15 @@ curseforge {
 		gameVersionStrings.clear()
 		gameVersionStrings.add("Fabric")
 
-		// 1.17.x
-		gameVersionStrings.add("1.17.1")
-		gameVersionStrings.add("1.17")
-		gameVersionStrings.add("1.17-Snapshot")
+		for (String version : Globals.supportedVersions) {
+			gameVersionStrings.add(version)
+		}
+		for (String version : Globals.supportedVersionsCurseforge) {
+			gameVersionStrings.add(version)
+		}
 
-		// 1.16.x
-		gameVersionStrings.add("1.16.5")
-		gameVersionStrings.add("1.16.4")
-		gameVersionStrings.add("1.16.3")
-		gameVersionStrings.add("1.16.2")
-		gameVersionStrings.add("1.16.1")
-		gameVersionStrings.add("1.16")
-		gameVersionStrings.add("1.16-Snapshot")
-
-		// 1.15.x
-		gameVersionStrings.add("1.15.2")
-		gameVersionStrings.add("1.15.1")
-		gameVersionStrings.add("1.15")
-		gameVersionStrings.add("1.15-Snapshot")
-
-		// 1.14.x
-		gameVersionStrings.add("1.14.4")
-		gameVersionStrings.add("1.14.3")
-		gameVersionStrings.add("1.14.2")
-		gameVersionStrings.add("1.14.1")
-		gameVersionStrings.add("1.14")
-		gameVersionStrings.add("1.14-Snapshot")
-
-		// Fabric Legacy
-		gameVersionStrings.add("1.12.2")
-		gameVersionStrings.add("1.8.9")
-		gameVersionStrings.add("1.7.10")
-//		gameVersionStrings.add("1.6.4")
 	}
+
 	options {
 		forgeGradleIntegration = false
 		javaVersionAutoDetect = false
@@ -298,152 +341,10 @@ task publishModrinth (type: TaskModrinthUpload) {
 
 	addLoader('fabric')
 
-	// 1.17.x
-	addGameVersion('1.17.1')
-	addGameVersion('1.17.1-rc2')
-	addGameVersion('1.17.1-rc1')
-	addGameVersion('1.17.1-pre3')
-	addGameVersion('1.17.1-pre2')
-	addGameVersion('1.17.1-pre1')
-	addGameVersion('1.17')
-	addGameVersion('1.17-rc2')
-	addGameVersion('1.17-rc1')
-	addGameVersion('1.17-pre5')
-	addGameVersion('1.17-pre4')
-	addGameVersion('1.17-pre3')
-	addGameVersion('1.17-pre2')
-	addGameVersion('1.17-pre1')
-	addGameVersion('21w20a')
-	addGameVersion('21w19a')
-	addGameVersion('21w18a')
-	addGameVersion('21w17a')
-	addGameVersion('21w16a')
-	addGameVersion('21w15a')
-	addGameVersion('21w14a')
-	addGameVersion('21w13a')
-	addGameVersion('21w11a')
-	addGameVersion('21w10a')
-	addGameVersion('21w08b')
-	addGameVersion('21w08a')
-	addGameVersion('21w07a')
-	addGameVersion('21w06a')
-	addGameVersion('21w05b')
-	addGameVersion('21w05a')
-	addGameVersion('21w03a')
-	addGameVersion('20w51a')
-	addGameVersion('20w49a')
-	addGameVersion('20w48a')
-	addGameVersion('20w46a')
-	addGameVersion('20w45a')
-
-	// 1.16.x
-	addGameVersion('1.16.5')
-	addGameVersion('1.16.5-rc1')
-	addGameVersion('1.16.4')
-	addGameVersion('1.16.4-rc1')
-	addGameVersion('1.16.4-pre2')
-	addGameVersion('1.16.4-pre1')
-	addGameVersion('1.16.3')
-	addGameVersion('1.16.3-rc1')
-	addGameVersion('1.16.2')
-	addGameVersion('1.16.2-rc2')
-	addGameVersion('1.16.2-rc1')
-	addGameVersion('1.16.2-pre3')
-	addGameVersion('1.16.2-pre2')
-	addGameVersion('1.16.2-pre1')
-	addGameVersion('20w30a')
-	addGameVersion('20w29a')
-	addGameVersion('20w28a')
-	addGameVersion('20w27a')
-	addGameVersion('1.16.1')
-	addGameVersion('1.16')
-	addGameVersion('1.16-rc1')
-	addGameVersion('1.16-pre8')
-	addGameVersion('1.16-pre7')
-	addGameVersion('1.16-pre6')
-	addGameVersion('1.16-pre5')
-	addGameVersion('1.16-pre4')
-	addGameVersion('1.16-pre3')
-	addGameVersion('1.16-pre2')
-	addGameVersion('1.16-pre1')
-	addGameVersion('20w22a')
-	addGameVersion('20w21a')
-	addGameVersion('20w20b')
-	addGameVersion('20w20a')
-	addGameVersion('20w19a')
-	addGameVersion('20w18a')
-	addGameVersion('20w17a')
-	addGameVersion('20w16a')
-	addGameVersion('20w15a')
-	addGameVersion('20w14a')
-	addGameVersion('20w14infinite')
-	addGameVersion('20w13b')
-	addGameVersion('20w13a')
-	addGameVersion('20w12a')
-	addGameVersion('20w11a')
-	addGameVersion('20w10a')
-	addGameVersion('20w09a')
-	addGameVersion('20w08a')
-	addGameVersion('20w07a')
-	addGameVersion('20w06a')
-
-	// 1.15.x
-	addGameVersion('1.15.2')
-	addGameVersion('1.15.2-pre2')
-	addGameVersion('1.15.2-pre1')
-	addGameVersion('1.15.1')
-	addGameVersion('1.15.1-pre1')
-	addGameVersion('1.15')
-	addGameVersion('1.15-pre7')
-	addGameVersion('1.15-pre6')
-	addGameVersion('1.15-pre5')
-	addGameVersion('1.15-pre4')
-	addGameVersion('1.15-pre3')
-	addGameVersion('1.15-pre2')
-	addGameVersion('1.15-pre1')
-	addGameVersion('19w46b')
-	addGameVersion('19w46a')
-	addGameVersion('19w45b')
-	addGameVersion('19w45a')
-	addGameVersion('19w44a')
-	addGameVersion('19w42a')
-	addGameVersion('19w41a')
-	addGameVersion('19w40a')
-	addGameVersion('19w39a')
-	addGameVersion('19w38b')
-	addGameVersion('19w38a')
-	addGameVersion('19w37a')
-	addGameVersion('19w36a')
-	addGameVersion('19w35a')
-	addGameVersion('19w34a')
-
-	// 1.14.x
-	addGameVersion('1.14.4')
-	addGameVersion('1.14.4-pre7')
-	addGameVersion('1.14.4-pre6')
-	addGameVersion('1.14.4-pre5')
-	addGameVersion('1.14.4-pre4')
-	addGameVersion('1.14.4-pre3')
-	addGameVersion('1.14.4-pre2')
-	addGameVersion('1.14.4-pre1')
-	addGameVersion('1.14.3')
-	addGameVersion('1.14.3-pre4')
-	addGameVersion('1.14.3-pre3')
-	addGameVersion('1.14.3-pre2')
-	addGameVersion('1.14.3-pre1')
-	addGameVersion('1.14.2')
-	addGameVersion('1.14.2-pre4')
-	addGameVersion('1.14.2-pre3')
-	addGameVersion('1.14.2-pre2')
-	addGameVersion('1.14.2-pre1')
-	addGameVersion('1.14.1')
-	addGameVersion('1.14.1-pre2')
-	addGameVersion('1.14.1-pre1')
-	addGameVersion('1.14')
-
-	// Fabric Legacy
-	addGameVersion("1.12.2")
-	addGameVersion("1.8.9")
-	addGameVersion("1.7.10")
-//	addGameVersion("1.6.4")
+	for (String version : Globals.supportedVersions) {
+		addGameVersion(version)
+	}
+	for (String version : Globals.supportedVersionsModrinth) {
+		addGameVersion(version)
+	}
 }
