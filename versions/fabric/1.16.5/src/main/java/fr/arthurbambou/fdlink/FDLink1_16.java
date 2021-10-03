@@ -27,21 +27,13 @@ public class FDLink1_16 implements DedicatedServerModInitializer {
 
             if (FabricLoader.getInstance().isModLoaded("fabric-console")
                 && VersionHelper.compareToModVersion("fabric-console", "1.0.3").isOlderOrEqual()) {
-                try {
-                    throw new ModResolutionException("Fabric-Discord Link is incompatible with version 1.0.3 or older of Fabric-Console, please upgrade your version of Fabric-Console to at least 1.0.4");
-                } catch (ModResolutionException e) {
-                    FabricGuiEntry.displayCriticalError(e, true);
-                }
+                VersionHelper.throwModResolution("Fabric-Discord Link is incompatible with version 1.0.3 or older of Fabric-Console, please upgrade your version of Fabric-Console to at least 1.0.4");
             }
         }
 
         if (VersionHelper.compareToMinecraftVersion("1.16.1").isMoreRecentOrEqual() && !VersionHelper.isVersion("1.16-20.w.14")) {
             if (!FabricLoader.getInstance().isModLoaded("fabric")) {
-                try {
-                    throw new ModResolutionException("Could not find required mod: fdlink requires fabric");
-                } catch (ModResolutionException e) {
-                    FabricGuiEntry.displayCriticalError(e, true);
-                }
+                VersionHelper.throwModResolution("Could not find required mod: fdlink requires fabric");
             }
 
             ServerTickEvents.START_SERVER_TICK.register((server -> FDLink.getMessageReceiver().serverTick(new MinecraftServer1_16(server))));
@@ -63,11 +55,7 @@ public class FDLink1_16 implements DedicatedServerModInitializer {
                     && !VersionHelper.isVersion("1.16-20.w.14")) {
 
                 if (!FabricLoader.getInstance().isModLoaded("fabric")) {
-                    try {
-                        throw new ModResolutionException("Could not find required mod: fdlink requires fabric");
-                    } catch (ModResolutionException e) {
-                        FabricGuiEntry.displayCriticalError(e, true);
-                    }
+                    VersionHelper.throwModResolution("Could not find required mod: fdlink requires fabric");
                 }
                 ServerLifecycleEvents.SERVER_STARTING.register(minecraftServer -> FDLink.getMessageSender().serverStarting());
                 ServerLifecycleEvents.SERVER_STARTED.register((server -> FDLink.getMessageSender().serverStarted()));

@@ -16,11 +16,7 @@ public class FDLink1_15_2 implements DedicatedServerModInitializer {
     public void onInitializeServer() {
         if (VersionHelper.isVersion("1.15.2") || VersionHelper.isVersion("1.14.4")) {
             if (!FabricLoader.getInstance().isModLoaded("fabric")) {
-                try {
-                    throw new ModResolutionException("Could not find required mod: fdlink requires fabric");
-                } catch (ModResolutionException e) {
-                    FabricGuiEntry.displayCriticalError(e, true);
-                }
+                VersionHelper.throwModResolution("Could not find required mod: fdlink requires fabric");
             }
             ServerTickEvents.START_SERVER_TICK.register((server -> FDLink.getMessageReceiver().serverTick(new MinecraftServer1_15_2(server))));
         }

@@ -43,11 +43,7 @@ public class FDLink1_12_2 implements DedicatedServerModInitializer {
                     FDLink.getMessageSender().serverStopped();
                 });
             } else {
-                try {
-                    throw new ModResolutionException("Could not find required mod: fdlink requires legacy-fabric-api (https://maven.legacyfabric.net/net/legacyfabric/legacy-fabric-api/legacy-fabric-api/1.1.1+1.12.2/legacy-fabric-api-1.1.1+1.12.2.jar)");
-                } catch (ModResolutionException e) {
-                    FabricGuiEntry.displayCriticalError(e, true);
-                }
+                VersionHelper.throwModResolution("Could not find required mod: fdlink requires legacy-fabric-api (https://maven.legacyfabric.net/net/legacyfabric/legacy-fabric-api/legacy-fabric-api/1.1.1+1.12.2/legacy-fabric-api-1.1.1+1.12.2.jar)");
             }
         }
     }

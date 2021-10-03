@@ -5,6 +5,8 @@ import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.SemanticVersion;
 import net.fabricmc.loader.api.VersionParsingException;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -67,6 +69,29 @@ public class VersionHelper {
 
     public static boolean isVersion(String version) {
         return compareToMinecraftVersion(version).isEqual();
+    }
+
+    public static void throwModResolution(String message) {
+        String exceptionName;
+        String guiName;
+        if (compareToModVersion("fabricloader", "0.12.0").isMoreRecentOrEqual()) {
+            exceptionName = "net.fabricmc.loader.impl.discovery.ModResolutionException";
+            guiName = "net.fabricmc.loader.impl.gui.FabricGuiEntry";
+        } else {
+            exceptionName = "net.fabricmc.loader.discovery.ModResolutionException";
+            guiName = "net.fabricmc.loader.gui.FabricGuiEntry";
+        }
+        try {
+            Constructor<?> constructor = Class.forName(exceptionName).getDeclaredConstructor(String.class);
+            throw (Throwable) constructor.newInstance(message);
+        } catch (Throwable e) {
+            try {
+                Method method = Class.forName(guiName).getMethod("displayCriticalError", Throwable.class, boolean.class);
+                method.invoke(null, e, true);
+            } catch (Throwable ex) {
+                ex.printStackTrace();
+            }
+        }
     }
 
     public static class VersionComparison {
