@@ -2,7 +2,7 @@ plugins {
 	id 'java-library'
 	id 'eclipse'
 	id 'idea'
-	id 'fabric-loom' version '0.8-SNAPSHOT' apply false
+	id 'fabric-loom' version '0.10-SNAPSHOT' apply false
 	id 'com.matthewprenger.cursegradle' version "1.4.0"
 	id "com.modrinth.minotaur" version "1.1.0"
 }
@@ -31,7 +31,7 @@ class MinecraftVersion {
 
 enum Origin {
 	FABRIC,
-	LEGACY_FABRIC("https://maven.legacyfabric.net/net/fabricmc/intermediary/#mcversion/intermediary-#mcversion-v2.jar");
+	LEGACY_FABRIC('https://maven.legacyfabric.net/net/fabricmc/intermediary/%1$s/intermediary-%1$s-v2.jar');
 
 	String customIntermediaryURL
 
@@ -153,7 +153,7 @@ static MinecraftVersion getVersionInfo(String project_name) {
 
 def moduleDependencies(project) {
 	List<String> depNames = ["api", "common"]
-	def deps = depNames.iterator().collect { project.dependencies.project(path: ":$it", configuration: 'dev') }
+	def deps = depNames.iterator().collect { project.dependencies.project(path: ":$it", configuration: 'namedElements') }
 	project.dependencies {
 		deps.each {
 			api it
@@ -201,16 +201,10 @@ allprojects {
 		}
 	}
 
-	minecraft {
+	loom {
 		if (!versionInfo.origin.customIntermediaryURL.isEmpty()) {
-			intermediaryUrl = {
-				return versionInfo.origin.customIntermediaryURL.replaceAll("#mcversion", versionInfo.mcVersion)
-			}
+			setIntermediaryUrl(versionInfo.origin.customIntermediaryURL)
 		}
-	}
-
-	configurations {
-		dev
 	}
 
 	repositories {
@@ -244,29 +238,6 @@ allprojects {
 		}
 	}
 
-	jar {
-		archiveClassifier.set("dev")
-	}
-
-	afterEvaluate {
-		remapJar {
-			input = file("${project.buildDir}/libs/$archivesBaseName-${archiveVersion.get()}-dev.jar")
-			archiveFileName = "${archivesBaseName}-${archiveVersion.get()}.jar"
-		}
-
-		artifacts {
-			dev file: file("${project.buildDir}/libs/$archivesBaseName-${version}-dev.jar"), type: "jar", builtBy: jar
-		}
-
-		processResources {
-			inputs.property "version", project.version
-
-			filesMatching("fabric.mod.json") {
-				expand "version": project.version
-			}
-		}
-	}
-
 	task sourcesJar(type: Jar, dependsOn: classes) {
 		archiveClassifier = "sources"
 		from sourceSets.main.allSource
@@ -276,6 +247,10 @@ allprojects {
 		preserveFileTimestamps = false
 		reproducibleFileOrder = true
 	}
+
+	tasks.withType(GenerateModuleMetadata) {
+		enabled = false
+	}
 }
 
 subprojects.each { remapJar.dependsOn("${it.path}:remapJar") }
@@ -283,7 +258,8 @@ subprojects.each { remapJar.dependsOn("${it.path}:remapJar") }
 dependencies {
 	afterEvaluate {
 		subprojects.each {
-			api project(path: ":${it.name}", configuration: "dev")
+			api project(path: ":${it.name}", configuration: "namedElements")
+
 			include project("${it.name}:")
 		}
 	}
@@ -295,7 +271,7 @@ curseforge {
 		id = "318315"
 		releaseType = "release"
 		changelog = Globals.changelog
-		mainArtifact(file("build/libs/${archivesBaseName}-${version}.jar")) {
+		mainArtifact(remapJar) {
 			displayName = Globals.baseVersion
 			relations {
 				requiredDependency "fabric-api"
@@ -329,14 +305,12 @@ curseforge {
 	}
 }
 
-import com.modrinth.minotaur.TaskModrinthUpload
-
-task publishModrinth (type: TaskModrinthUpload) {
+task publishModrinth (type: com.modrinth.minotaur.TaskModrinthUpload, dependsOn: remapJar) {
 
 	token = System.getenv('MODRINTHKEY') ?: "a key"
 	projectId = 'FCmig1C9'
 	versionNumber = Globals.baseVersion
-	uploadFile = file("build/libs/${archivesBaseName}-${version}.jar")
+	uploadFile = remapJar
 
 //	addFile(file("api/build/libs/fdlink-api-${Globals.apiVersion}.jar"))
 

@@ -2,7 +2,7 @@ archivesBaseName = "common"
 version = getSubprojectVersion()
 
 dependencies {
-	implementation project(path: ':api')
+	api project(path: ':api', configuration: "namedElements")
 
 	implementation "com.vdurmont:emoji-java:5.1.1"
 	implementation ('net.dv8tion:JDA:4.3.0_323') {
