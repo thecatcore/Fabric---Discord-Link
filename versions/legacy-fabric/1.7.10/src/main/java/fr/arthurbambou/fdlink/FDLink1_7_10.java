@@ -5,9 +5,6 @@ import fr.arthurbambou.fdlink.api.minecraft.VersionHelper;
 import fr.arthurbambou.fdlink.compat_1_7_10.Message1_7_10;
 import fr.arthurbambou.fdlink.compat_1_7_10.MessagePacket1_7_10;
 import net.fabricmc.api.DedicatedServerModInitializer;
-import net.fabricmc.loader.api.FabricLoader;
-import net.fabricmc.loader.discovery.ModResolutionException;
-import net.fabricmc.loader.gui.FabricGuiEntry;
 
 public class FDLink1_7_10 implements DedicatedServerModInitializer {
     @Override

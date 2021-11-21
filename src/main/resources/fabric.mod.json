@@ -23,6 +23,7 @@
   ],
   "entrypoints": {},
   "depends": {
+    "fabricloader": ">=0.12"
   },
   "mixins": [
   ]

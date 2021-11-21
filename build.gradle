@@ -41,17 +41,17 @@ enum Origin {
 }
 
 class Globals {
-	static def baseVersion = "0.9.8"
-	static def changelog = "Fix incompatibility with fabric loader 0.12.0."
+	static def baseVersion = "0.10.0"
+	static def changelog = "Require fabric loader 0.12+ to run."
 	static def apiVersion = "0.1.1"
 	static def versionInfo = [
-			new MinecraftVersion("1.17.1", "61", "0.11.7", "0.40.1+1.17"),
-			new MinecraftVersion("1.16.5", "10", "0.11.7", "0.40.1+1.16"),
-			new MinecraftVersion("1.15.2", "17", "0.11.7", "0.28.5+1.15"),
-			new MinecraftVersion("1.12.2", "202106280130", "0.11.7", "1.1.1+1.12.2", Origin.LEGACY_FABRIC),
-			new MinecraftVersion("1.8.9",  "202107080308", "0.11.1+build.202106271747", "1.1.0+1.8.9", Origin.LEGACY_FABRIC, true),
-			new MinecraftVersion("1.7.10", "202106280130", "0.11.1+build.202106271747", Origin.LEGACY_FABRIC, true),
-			new MinecraftVersion("1.6.4",  "202107020352", "0.11.1+build.202106271747", Origin.LEGACY_FABRIC, true)
+			new MinecraftVersion("1.17.1", "64", "0.12.5", "0.42.1+1.17"),
+			new MinecraftVersion("1.16.5", "10", "0.12.5", "0.42.0+1.16"),
+			new MinecraftVersion("1.15.2", "17", "0.12.5", "0.28.5+1.15"),
+			new MinecraftVersion("1.12.2", "202110021304", "0.12.5", "1.1.1+1.12.2", Origin.LEGACY_FABRIC),
+			new MinecraftVersion("1.8.9",  "202110221052", "0.12.5", "1.1.0+1.8.9", Origin.LEGACY_FABRIC, true),
+			new MinecraftVersion("1.7.10", "202110221330", "0.12.5", Origin.LEGACY_FABRIC, true),
+			new MinecraftVersion("1.6.4",  "202107020352", "0.12.5", Origin.LEGACY_FABRIC, true)
 	]
 	static def supportedVersions = [
 	        "1.17.1", "1.17", // 1.17.x
@@ -69,7 +69,13 @@ class Globals {
 	]
 	static def supportedVersionsModrinth = [
 			// 1.18.x
-			'21w39a', '21w38a', '21w37a',
+			'1.18-pre5', '1.18-pre4', '1.18-pre3', '1.18-pre2', '1.18-pre1',
+
+			'21w44a', '21w43a', '21w42a', '21w41a', '21w40a', '21w39a', '21w38a', '21w37a',
+
+			'1.18_experimental-snapshot-7', '1.18_experimental-snapshot-6', '1.18_experimental-snapshot-5',
+			'1.18_experimental-snapshot-4', '1.18_experimental-snapshot-3', '1.18_experimental-snapshot-2',
+			'1.18_experimental-snapshot-1',
 
 			// 1.17.x
 			'1.17.1-rc2', '1.17.1-rc1',
@@ -172,17 +178,11 @@ allprojects {
 	dependencies {
 		minecraft "com.mojang:minecraft:${versionInfo.mcVersion}"
 		mappings "net.fabricmc:yarn:${versionInfo.mcVersion}+build.${versionInfo.yarnVersion}:v2"
+		modApi "net.fabricmc:fabric-loader:${versionInfo.loaderVersion}"
 		if (projectName != "common" && projectName != "api") {
-			if (versionInfo.origin == Origin.FABRIC || versionInfo.mcVersion == "1.12.2") {
-				modApi "net.fabricmc:fabric-loader:${versionInfo.loaderVersion}"
-				if (versionInfo.origin == Origin.FABRIC) modImplementation "net.fabricmc.fabric-api:fabric-api:${versionInfo.apiVersion}"
-				else modImplementation "net.legacyfabric.legacy-fabric-api:legacy-fabric-api:${versionInfo.apiVersion}"
+			if (versionInfo.origin == Origin.FABRIC) {
+				modImplementation "net.fabricmc.fabric-api:fabric-api:${versionInfo.apiVersion}"
 			} else {
-				implementation "com.google.guava:guava:23.5-jre"
-				modApi ("net.fabricmc:fabric-loader-1.8.9:${versionInfo.loaderVersion}") {
-					exclude module: "guava"
-				}
-
 				if (!versionInfo.apiVersion.isEmpty()) modImplementation "net.legacyfabric.legacy-fabric-api:legacy-fabric-api:${versionInfo.apiVersion}"
 
 				if (versionInfo.oldLwjgl && System.getProperty("os.name").toLowerCase().contains("mac")) {
@@ -198,8 +198,6 @@ allprojects {
 					annotationProcessor "org.apache.logging.log4j:log4j-api:2.13.3"
 				}
 			}
-		} else {
-			modApi "net.fabricmc:fabric-loader:${versionInfo.loaderVersion}"
 		}
 	}
 
@@ -340,7 +338,7 @@ task publishModrinth (type: TaskModrinthUpload) {
 	versionNumber = Globals.baseVersion
 	uploadFile = file("build/libs/${archivesBaseName}-${version}.jar")
 
-	addFile(file("api/build/libs/fdlink-api-${Globals.apiVersion}.jar"))
+//	addFile(file("api/build/libs/fdlink-api-${Globals.apiVersion}.jar"))
 
 	addLoader('fabric')
 

@@ -7,8 +7,6 @@ import fr.arthurbambou.fdlink.compat_1_12_2.MessagePacket1_12_2;
 import fr.arthurbambou.fdlink.compat_1_12_2.MinecraftServer1_12_2;
 import net.fabricmc.api.DedicatedServerModInitializer;
 import net.fabricmc.loader.api.FabricLoader;
-import net.fabricmc.loader.discovery.ModResolutionException;
-import net.fabricmc.loader.gui.FabricGuiEntry;
 import net.legacyfabric.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.legacyfabric.fabric.api.event.lifecycle.v1.ServerTickEvents;
 

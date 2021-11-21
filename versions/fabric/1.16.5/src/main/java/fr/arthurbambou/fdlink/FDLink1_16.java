@@ -10,8 +10,6 @@ import net.fabricmc.api.DedicatedServerModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.loader.api.FabricLoader;
-import net.fabricmc.loader.discovery.ModResolutionException;
-import net.fabricmc.loader.gui.FabricGuiEntry;
 import net.minecraft.text.BaseText;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;

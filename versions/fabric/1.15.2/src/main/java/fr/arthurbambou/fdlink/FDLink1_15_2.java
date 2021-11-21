@@ -8,8 +8,6 @@ import fr.arthurbambou.fdlink.compat_1_15_2.MinecraftServer1_15_2;
 import net.fabricmc.api.DedicatedServerModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.loader.api.FabricLoader;
-import net.fabricmc.loader.discovery.ModResolutionException;
-import net.fabricmc.loader.gui.FabricGuiEntry;
 
 public class FDLink1_15_2 implements DedicatedServerModInitializer {
     @Override
