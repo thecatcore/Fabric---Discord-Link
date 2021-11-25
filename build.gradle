@@ -45,9 +45,11 @@ class Globals {
 	static def changelog = "Require fabric loader 0.12+ to run."
 	static def apiVersion = "0.1.1"
 	static def versionInfo = [
-			new MinecraftVersion("1.17.1", "64", "0.12.5", "0.42.1+1.17"),
+			new MinecraftVersion("1.18-rc1", "1", "0.12.5", "0.43.1+1.18"),
+			new MinecraftVersion("1.17.1", "64", "0.12.5", "0.43.1+1.17"),
 			new MinecraftVersion("1.16.5", "10", "0.12.5", "0.42.0+1.16"),
 			new MinecraftVersion("1.15.2", "17", "0.12.5", "0.28.5+1.15"),
+			new MinecraftVersion("1.13.2", "202111040140", "0.12.5", Origin.LEGACY_FABRIC),
 			new MinecraftVersion("1.12.2", "202110021304", "0.12.5", "1.1.1+1.12.2", Origin.LEGACY_FABRIC),
 			new MinecraftVersion("1.8.9",  "202110221052", "0.12.5", "1.1.0+1.8.9", Origin.LEGACY_FABRIC, true),
 			new MinecraftVersion("1.7.10", "202110221330", "0.12.5", Origin.LEGACY_FABRIC, true),
@@ -69,6 +71,8 @@ class Globals {
 	]
 	static def supportedVersionsModrinth = [
 			// 1.18.x
+			'1.18-rc1',
+			'1.18-pre8', '1.18-pre7', '1.18-pre6',
 			'1.18-pre5', '1.18-pre4', '1.18-pre3', '1.18-pre2', '1.18-pre1',
 
 			'21w44a', '21w43a', '21w42a', '21w41a', '21w40a', '21w39a', '21w38a', '21w37a',
@@ -238,9 +242,8 @@ allprojects {
 		}
 	}
 
-	task sourcesJar(type: Jar, dependsOn: classes) {
-		archiveClassifier = "sources"
-		from sourceSets.main.allSource
+	java {
+		withSourcesJar()
 	}
 
 	tasks.withType(AbstractArchiveTask) {
