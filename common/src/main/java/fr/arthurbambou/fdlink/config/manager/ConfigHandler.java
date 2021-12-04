@@ -80,8 +80,8 @@ public class ConfigHandler {
                             }
                         } else {
                             JsonObject messageConfig = (JsonObject) gson.toJsonTree(new MessageConfig());
-                            try (FileWriter fileWriter = new FileWriter(MESSAGE_CONFIG)) {
-                                fileWriter.write(gson.toJson(messageConfig));
+                            try (OutputStreamWriter messageFileWriter = new OutputStreamWriter(new FileOutputStream(MESSAGE_CONFIG), StandardCharsets.UTF_8)) {
+                                messageFileWriter.write(gson.toJson(messageConfig));
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
@@ -238,8 +238,8 @@ public class ConfigHandler {
         }
 
         if (!CONFIG_FOLDER.exists()) CONFIG_FOLDER.mkdirs();
-        try (FileWriter fileWriter = new FileWriter(NEW_MAIN_FILE)) {
-            fileWriter.write(gson.toJson(jsonObject1));
+        try (OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(NEW_MAIN_FILE), StandardCharsets.UTF_8)) {
+            writer.write(gson.toJson(jsonObject1));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -248,8 +248,8 @@ public class ConfigHandler {
     private static void saveMessageConfig(JsonObject jsonObject) {
         if (!CONFIG_FOLDER.exists()) CONFIG_FOLDER.mkdirs();
 
-        try (FileWriter fileWriter = new FileWriter(MESSAGE_CONFIG)) {
-            fileWriter.write(gson.toJson(jsonObject));
+        try (OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(MESSAGE_CONFIG), StandardCharsets.UTF_8)) {
+            writer.write(gson.toJson(jsonObject));
         } catch (IOException e) {
             e.printStackTrace();
         }
