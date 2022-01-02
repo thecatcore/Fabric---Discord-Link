@@ -73,7 +73,7 @@ public class MinecraftServer1_8_9 implements MinecraftServer {
         fr.arthurbambou.fdlink.api.minecraft.style.Style compatStyle = message.getStyle();
         vanillaStyle = vanillaStyle
                 .setBold(compatStyle.isBold())
-                .setColor(Formatting.byName(TextColor.toFormatting(compatStyle.getColor()).getName()))
+                .setFormatting(Formatting.byName(TextColor.toFormatting(compatStyle.getColor()).getName()))
                 .setInsertion(compatStyle.getInsertion())
                 .setItalic(compatStyle.isItalic())
                 .setUnderline(compatStyle.isUnderlined())

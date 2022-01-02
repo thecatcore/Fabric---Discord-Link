@@ -1,7 +1,7 @@
-package fr.arthurbambou.fdlink.mixin_1_7_10.events;
+package fr.arthurbambou.fdlink.mixin_1_8_9.events;
 
 import fr.arthurbambou.fdlink.FDLink;
-import fr.arthurbambou.fdlink.compat_1_7_10.MinecraftServer1_7_10;
+import fr.arthurbambou.fdlink.compat_1_8_9.MinecraftServer1_8_9;
 import net.minecraft.server.MinecraftServer;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -58,6 +58,6 @@ public class MixinMinecraftServer {
             method = {"run"}
     )
     private void onStartTick(CallbackInfo ci) {
-        FDLink.getMessageReceiver().serverTick(new MinecraftServer1_7_10((MinecraftServer)(Object) this));
+        FDLink.getMessageReceiver().serverTick(new MinecraftServer1_8_9((MinecraftServer)(Object) this));
     }
 }

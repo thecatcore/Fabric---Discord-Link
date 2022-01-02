@@ -23,7 +23,7 @@ public class MixinMinecraftServer {
      * @param text
      * @param ci
      */
-    @Inject(at = @At("HEAD"), method = "sendSystemMessage")
+    @Inject(at = @At("HEAD"), method = "sendMessage")
     public void sendMessage(Text text, CallbackInfo ci) {
         if (text instanceof BaseText) FDLink.getMessageSender().sendMessage(getMessageFromText((BaseText) text));
         else FDLink.getMessageSender().sendMessage(new Message1_12_2(text.asString()));

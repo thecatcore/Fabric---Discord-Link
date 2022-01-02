@@ -29,7 +29,7 @@ public class MinecraftServer1_12_2 implements MinecraftServer {
 
     @Override
     public int getPlayerCount() {
-        return this.minecraftServer.getPlayerManager().getPlayerList().size();
+        return this.minecraftServer.getPlayerManager().getPlayers().size();
     }
 
     @Override
@@ -40,7 +40,7 @@ public class MinecraftServer1_12_2 implements MinecraftServer {
     @Override
     public List<PlayerEntity> getPlayers() {
         List<PlayerEntity> list = new ArrayList<>();
-        for (ServerPlayerEntity playerEntity : this.minecraftServer.getPlayerManager().getPlayerList()) {
+        for (ServerPlayerEntity playerEntity : this.minecraftServer.getPlayerManager().getPlayers()) {
             list.add(new PlayerEntity1_12_2(playerEntity));
         }
         return list;
@@ -53,7 +53,7 @@ public class MinecraftServer1_12_2 implements MinecraftServer {
 
     @Override
     public String getUsernameFromUUID(UUID uuid) {
-        return this.minecraftServer.getPlayerManager().getPlayer(uuid).getName();
+        return this.minecraftServer.getPlayerManager().getPlayer(uuid).getCustomName();
     }
 
     @Override
@@ -73,7 +73,7 @@ public class MinecraftServer1_12_2 implements MinecraftServer {
         fr.arthurbambou.fdlink.api.minecraft.style.Style compatStyle = message.getStyle();
         vanillaStyle = vanillaStyle
                 .setBold(compatStyle.isBold())
-                .setColor(Formatting.byName(TextColor.toFormatting(compatStyle.getColor()).getName()))
+                .setFormatting(Formatting.byName(TextColor.toFormatting(compatStyle.getColor()).getName()))
                 .setInsertion(compatStyle.getInsertion())
                 .setItalic(compatStyle.isItalic())
                 .setUnderline(compatStyle.isUnderlined())
@@ -93,6 +93,6 @@ public class MinecraftServer1_12_2 implements MinecraftServer {
 
     @Override
     public File getIcon() {
-        return this.minecraftServer.getLevelStorage().getFile(this.minecraftServer.getLevelName(), "icon.png");
+        return this.minecraftServer.getFile("icon.png");
     }
 }

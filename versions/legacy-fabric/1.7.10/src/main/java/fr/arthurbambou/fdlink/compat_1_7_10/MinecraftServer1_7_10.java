@@ -5,8 +5,8 @@ import fr.arthurbambou.fdlink.api.minecraft.MessagePacket;
 import fr.arthurbambou.fdlink.api.minecraft.MinecraftServer;
 import fr.arthurbambou.fdlink.api.minecraft.PlayerEntity;
 import fr.arthurbambou.fdlink.api.minecraft.style.TextColor;
-import net.minecraft.class_2432;
-import net.minecraft.network.packet.s2c.play.GameMessageS2CPacket;
+import net.minecraft.class_1981;
+import net.minecraft.network.packet.s2c.play.ChatMessageS2CPacket;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.*;
 import net.minecraft.util.Formatting;
@@ -50,7 +50,7 @@ public class MinecraftServer1_7_10 implements MinecraftServer {
 
     @Override
     public PlayerEntity getPlayerFromUsername(String username) {
-        return new PlayerEntity1_7_10(this.minecraftServer.getPlayerManager().method_10419(username));
+        return new PlayerEntity1_7_10(this.minecraftServer.getPlayerManager().getPlayer(username));
     }
 
     @Override
@@ -82,16 +82,16 @@ public class MinecraftServer1_7_10 implements MinecraftServer {
         fr.arthurbambou.fdlink.api.minecraft.style.Style compatStyle = message.getStyle();
         vanillaStyle = vanillaStyle
                 .setBold(compatStyle.isBold())
-                .setColor(Formatting.byName(TextColor.toFormatting(compatStyle.getColor()).getName()))
+                .setFormatting(Formatting.byName(TextColor.toFormatting(compatStyle.getColor()).getName()))
                 .setItalic(compatStyle.isItalic())
                 .setUnderline(compatStyle.isUnderlined())
                 .setObfuscated(compatStyle.isObfuscated())
                 .setStrikethrough(compatStyle.isStrikethrough());
         if (compatStyle.getClickEvent() != null) {
-            vanillaStyle.setClickEvent(new ClickEvent(class_2432.method_9892(compatStyle.getClickEvent().getAction().getName()),
+            vanillaStyle.setClickEvent(new ClickEvent(class_1981.method_7464(compatStyle.getClickEvent().getAction().getName()),
                     compatStyle.getClickEvent().getValue()));
         }
-        this.minecraftServer.getPlayerManager().sendToAll(new GameMessageS2CPacket(text));
+        this.minecraftServer.getPlayerManager().sendToAll(new ChatMessageS2CPacket(text));
     }
 
     @Override

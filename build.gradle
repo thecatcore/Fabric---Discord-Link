@@ -41,22 +41,22 @@ enum Origin {
 }
 
 class Globals {
-	static def baseVersion = "0.10.2"
-	static def changelog = "Bump verions"
+	static def baseVersion = "0.10.3"
+	static def changelog = "Use new mappings for legacy fabric + fix modrinth publishing."
 	static def apiVersion = "0.1.1"
 	static def versionInfo = [
-			new MinecraftVersion("1.18.1", "7",  "0.12.12", "0.44.0+1.18"),
-			new MinecraftVersion("1.17.1", "65", "0.12.12", "0.44.0+1.17"),
+			new MinecraftVersion("1.18.1", "17",  "0.12.12", "0.45.1+1.18"),
+			new MinecraftVersion("1.17.1", "65", "0.12.12", "0.45.1+1.17"),
 			new MinecraftVersion("1.16.5", "10", "0.12.12", "0.42.0+1.16"),
 			new MinecraftVersion("1.15.2", "17", "0.12.12", "0.28.5+1.15"),
-			new MinecraftVersion("1.13.2", "202112161959",  "0.12.12", Origin.LEGACY_FABRIC),
-			new MinecraftVersion("1.12.2", "202112040518",  "0.12.12", "1.1.1+1.12.2", Origin.LEGACY_FABRIC),
-			new MinecraftVersion("1.8.9",  "202110221052",  "0.12.12", "1.1.0+1.8.9", Origin.LEGACY_FABRIC, true),
-			new MinecraftVersion("1.7.10", "202110221330",  "0.12.12", Origin.LEGACY_FABRIC, true),
-			new MinecraftVersion("1.6.4",  "202107020352",  "0.12.12", Origin.LEGACY_FABRIC, true)
+			new MinecraftVersion("1.13.2", "202112231748",  "0.12.12", Origin.LEGACY_FABRIC),
+			new MinecraftVersion("1.12.2", "202112231748",  "0.12.12", /*"1.1.1+1.12.2",*/ Origin.LEGACY_FABRIC),
+			new MinecraftVersion("1.8.9",  "202112231748",  "0.12.12", /*"1.1.0+1.8.9",*/ Origin.LEGACY_FABRIC, true),
+			new MinecraftVersion("1.7.10", "202112231748",  "0.12.12", Origin.LEGACY_FABRIC, true),
+			new MinecraftVersion("1.6.4",  "202112231748",  "0.12.12", Origin.LEGACY_FABRIC, true)
 	]
 	static def supportedVersions = [
-		"1.18.1", "1.18", // 1.18.x
+			"1.18.1", "1.18", // 1.18.x
 	        "1.17.1", "1.17", // 1.17.x
 			"1.16.5", "1.16.4", "1.16.3", "1.16.2", "1.16.1", "1.16", // 1.16.x
 			"1.15.2", "1.15.1", "1.15", // 1.15.x
@@ -79,9 +79,9 @@ class Globals {
 
 			'21w44a', '21w43a', '21w42a', '21w41a', '21w40a', '21w39a', '21w38a', '21w37a',
 
-			'1.18_experimental-snapshot-7', '1.18_experimental-snapshot-6', '1.18_experimental-snapshot-5',
-			'1.18_experimental-snapshot-4', '1.18_experimental-snapshot-3', '1.18_experimental-snapshot-2',
-			'1.18_experimental-snapshot-1',
+//			'1.18_experimental-snapshot-7', '1.18_experimental-snapshot-6', '1.18_experimental-snapshot-5',
+//			'1.18_experimental-snapshot-4', '1.18_experimental-snapshot-3', '1.18_experimental-snapshot-2',
+//			'1.18_experimental-snapshot-1',
 
 			// 1.17.x
 			'1.17.1-rc2', '1.17.1-rc1',
