@@ -41,19 +41,19 @@ enum Origin {
 }
 
 class Globals {
-	static def baseVersion = "0.10.3"
-	static def changelog = "Use new mappings for legacy fabric + fix modrinth publishing."
+	static def baseVersion = "0.10.4"
+	static def changelog = "Update JDA to 4.4 and webhook to 0.7.2."
 	static def apiVersion = "0.1.1"
 	static def versionInfo = [
-			new MinecraftVersion("1.18.1", "17",  "0.12.12", "0.45.1+1.18"),
-			new MinecraftVersion("1.17.1", "65", "0.12.12", "0.45.1+1.17"),
+			new MinecraftVersion("22w03a", "4",  "0.12.12", "0.46.2+1.18"),
+			new MinecraftVersion("1.17.1", "65", "0.12.12", "0.46.1+1.17"),
 			new MinecraftVersion("1.16.5", "10", "0.12.12", "0.42.0+1.16"),
 			new MinecraftVersion("1.15.2", "17", "0.12.12", "0.28.5+1.15"),
-			new MinecraftVersion("1.13.2", "202112231748",  "0.12.12", Origin.LEGACY_FABRIC),
-			new MinecraftVersion("1.12.2", "202112231748",  "0.12.12", /*"1.1.1+1.12.2",*/ Origin.LEGACY_FABRIC),
-			new MinecraftVersion("1.8.9",  "202112231748",  "0.12.12", /*"1.1.0+1.8.9",*/ Origin.LEGACY_FABRIC, true),
-			new MinecraftVersion("1.7.10", "202112231748",  "0.12.12", Origin.LEGACY_FABRIC, true),
-			new MinecraftVersion("1.6.4",  "202112231748",  "0.12.12", Origin.LEGACY_FABRIC, true)
+			new MinecraftVersion("1.13.2", "202201182041",  "0.12.12", Origin.LEGACY_FABRIC),
+			new MinecraftVersion("1.12.2", "202201182040",  "0.12.12", /*"1.1.1+1.12.2",*/ Origin.LEGACY_FABRIC),
+			new MinecraftVersion("1.8.9",  "202201182040",  "0.12.12", /*"1.1.0+1.8.9",*/ Origin.LEGACY_FABRIC, true),
+			new MinecraftVersion("1.7.10", "202201182040",  "0.12.12", Origin.LEGACY_FABRIC, true),
+			new MinecraftVersion("1.6.4",  "202201182040",  "0.12.12", Origin.LEGACY_FABRIC, true)
 	]
 	static def supportedVersions = [
 			"1.18.1", "1.18", // 1.18.x
@@ -72,6 +72,8 @@ class Globals {
 	]
 	static def supportedVersionsModrinth = [
 			// 1.18.x
+			'22w03a',
+
 			'1.18.1-rc3', '1.18.1-rc2', '1.18.1-rc1', '1.18.1-pre1',
 			'1.18-rc4', '1.18-rc3', '1.18-rc2', '1.18-rc1',
 			'1.18-pre8', '1.18-pre7', '1.18-pre6',
@@ -241,6 +243,14 @@ allprojects {
 		maven {
 			name = "Jitpack"
 			url = "https://jitpack.io/"
+		}
+	}
+
+	processResources {
+		inputs.property "version", project.version
+
+		filesMatching("fabric.mod.json") {
+			expand "version": project.version
 		}
 	}
 

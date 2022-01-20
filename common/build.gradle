@@ -1,19 +1,19 @@
 archivesBaseName = "common"
 version = getSubprojectVersion()
 
+def emoji_version = "5.1.1"
+def jda_version = "4.4.0_352"
+def webhook_version = "0.7.2"
+
 dependencies {
 	api project(path: ':api', configuration: "namedElements")
 
-	implementation "com.vdurmont:emoji-java:5.1.1"
-	implementation ('net.dv8tion:JDA:4.3.0_323') {
+	implementation include ("com.vdurmont:emoji-java:${emoji_version}")
+	implementation include ("net.dv8tion:JDA:${jda_version}") {
 		exclude module: 'opus-java'
 	}
+	implementation include("club.minnced:discord-webhooks:${webhook_version}")
 
-	implementation("club.minnced:discord-webhooks:0.5.8")
-
-	include ('net.dv8tion:JDA:4.3.0_323') {
-		exclude module: 'opus-java'
-	}
 	include "net.sf.trove4j:trove4j:3.0.3"
 	include 'org.slf4j:slf4j-nop:1.7.25'
 	include 'org.slf4j:slf4j-api:1.7.25'
@@ -25,8 +25,4 @@ dependencies {
 	include 'com.fasterxml.jackson.core:jackson-annotations:2.10.1'
 	include 'com.fasterxml.jackson.core:jackson-core:2.10.1'
 	include "org.json:json:20210307"
-
-	include("club.minnced:discord-webhooks:0.5.8")
-
-	include "com.vdurmont:emoji-java:5.1.1"
 }
