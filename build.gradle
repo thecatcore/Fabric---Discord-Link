@@ -2,7 +2,7 @@ plugins {
 	id 'java-library'
 	id 'eclipse'
 	id 'idea'
-	id 'fabric-loom' version '0.10-SNAPSHOT' apply false
+	id 'fabric-loom' version '0.11-SNAPSHOT' apply false
 	id 'com.matthewprenger.cursegradle' version "1.4.0"
 	id "com.modrinth.minotaur" version "1.1.0"
 }
@@ -10,22 +10,20 @@ plugins {
 class MinecraftVersion {
 	String mcVersion
 	String yarnVersion
-	String loaderVersion
 	String apiVersion
 	Origin origin
 	boolean oldLwjgl
 
-	MinecraftVersion(String mcVersion, String yarnVersion, String loaderVersion, String apiVersion, Origin origin = Origin.FABRIC, boolean oldLwjgl = false) {
+	MinecraftVersion(String mcVersion, String yarnVersion, String apiVersion, Origin origin = Origin.FABRIC, boolean oldLwjgl = false) {
 		this.mcVersion = mcVersion
 		this.yarnVersion = yarnVersion
-		this.loaderVersion = loaderVersion
 		this.apiVersion = apiVersion
 		this.origin = origin
 		this.oldLwjgl = oldLwjgl
 	}
 
-	MinecraftVersion(String mcVersion, String yarnVersion, String loaderVersion, Origin origin = Origin.FABRIC, boolean oldLwjgl = false) {
-		this(mcVersion, yarnVersion, loaderVersion, "", origin, oldLwjgl)
+	MinecraftVersion(String mcVersion, String yarnVersion, Origin origin = Origin.FABRIC, boolean oldLwjgl = false) {
+		this(mcVersion, yarnVersion, "", origin, oldLwjgl)
 	}
 }
 
@@ -44,16 +42,17 @@ class Globals {
 	static def baseVersion = "0.10.4"
 	static def changelog = "Update JDA to 4.4 and webhook to 0.7.2."
 	static def apiVersion = "0.1.1"
+	static def loaderVersion = "0.12.12"
 	static def versionInfo = [
-			new MinecraftVersion("22w03a", "4",  "0.12.12", "0.46.2+1.18"),
-			new MinecraftVersion("1.17.1", "65", "0.12.12", "0.46.1+1.17"),
-			new MinecraftVersion("1.16.5", "10", "0.12.12", "0.42.0+1.16"),
-			new MinecraftVersion("1.15.2", "17", "0.12.12", "0.28.5+1.15"),
-			new MinecraftVersion("1.13.2", "202201182041",  "0.12.12", Origin.LEGACY_FABRIC),
-			new MinecraftVersion("1.12.2", "202201182040",  "0.12.12", /*"1.1.1+1.12.2",*/ Origin.LEGACY_FABRIC),
-			new MinecraftVersion("1.8.9",  "202201182040",  "0.12.12", /*"1.1.0+1.8.9",*/ Origin.LEGACY_FABRIC, true),
-			new MinecraftVersion("1.7.10", "202201182040",  "0.12.12", Origin.LEGACY_FABRIC, true),
-			new MinecraftVersion("1.6.4",  "202201182040",  "0.12.12", Origin.LEGACY_FABRIC, true)
+			new MinecraftVersion("22w03a", "4", "0.46.2+1.18"),
+			new MinecraftVersion("1.17.1", "65", "0.46.1+1.17"),
+			new MinecraftVersion("1.16.5", "10", "0.42.0+1.16"),
+			new MinecraftVersion("1.15.2", "17", "0.28.5+1.15"),
+			new MinecraftVersion("1.13.2", "202201182041", Origin.LEGACY_FABRIC),
+			new MinecraftVersion("1.12.2", "202201182040", /*"1.1.1+1.12.2",*/ Origin.LEGACY_FABRIC),
+			new MinecraftVersion("1.8.9",  "202201182040", /*"1.1.0+1.8.9",*/ Origin.LEGACY_FABRIC, true),
+			new MinecraftVersion("1.7.10", "202201182040", Origin.LEGACY_FABRIC, true),
+			new MinecraftVersion("1.6.4",  "202201182040", Origin.LEGACY_FABRIC, true)
 	]
 	static def supportedVersions = [
 			"1.18.1", "1.18", // 1.18.x
@@ -186,7 +185,7 @@ allprojects {
 	dependencies {
 		minecraft "com.mojang:minecraft:${versionInfo.mcVersion}"
 		mappings "net.fabricmc:yarn:${versionInfo.mcVersion}+build.${versionInfo.yarnVersion}:v2"
-		modApi "net.fabricmc:fabric-loader:${versionInfo.loaderVersion}"
+		modApi "net.fabricmc:fabric-loader:${Globals.loaderVersion}"
 		if (projectName != "common" && projectName != "api") {
 			if (versionInfo.origin == Origin.FABRIC) {
 				modImplementation "net.fabricmc.fabric-api:fabric-api:${versionInfo.apiVersion}"
