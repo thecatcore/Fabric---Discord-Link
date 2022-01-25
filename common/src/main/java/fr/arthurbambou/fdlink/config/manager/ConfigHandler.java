@@ -4,9 +4,9 @@ import com.google.gson.*;
 import fr.arthurbambou.fdlink.api.config.Config;
 import fr.arthurbambou.fdlink.api.config.MainConfig;
 import fr.arthurbambou.fdlink.api.config.MessageConfig;
+import fr.arthurbambou.fdlink.api.util.LogManager;
+import fr.arthurbambou.fdlink.api.util.Logger;
 import net.fabricmc.loader.api.FabricLoader;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;

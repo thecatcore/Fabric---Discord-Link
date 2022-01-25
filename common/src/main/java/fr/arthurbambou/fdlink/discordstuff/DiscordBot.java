@@ -24,7 +24,6 @@ import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
 public class DiscordBot implements MessageSender {
-    public static final Logger LOGGER = LogManager.getLogger();
     private MessageReceivedListener messageCreateListener;
     protected MinecraftToDiscordHandler minecraftToDiscordHandler = null;
 
@@ -55,7 +54,7 @@ public class DiscordBot implements MessageSender {
         }
 
         if (token.isEmpty()) {
-            LOGGER.error("[FDLink] Please add a bot token to the config file!");
+            FDLink.LOGGER.error("[FDLink] Please add a bot token to the config file!");
             return;
         }
         this.startTime = System.currentTimeMillis();
@@ -127,7 +126,7 @@ public class DiscordBot implements MessageSender {
 
             for (CompletableFuture<Message> request : requests){
                 while (!request.isDone()) {
-                    if (this.config.mainConfig.minecraftToDiscord.general.enableDebugLogs) LOGGER.info("Request is not done yet!");
+                    if (this.config.mainConfig.minecraftToDiscord.general.enableDebugLogs) FDLink.LOGGER.info("Request is not done yet!");
                 }
             }
         }
@@ -246,7 +245,7 @@ public class DiscordBot implements MessageSender {
                 channel.getManager().setTopic(topic).queue();
             }
             catch (InsufficientPermissionException e) {
-                LOGGER.error(String.format("Failed to set the channel topic for channel %s. Check that the bot has the <Manage Channels> permission, or else disable custom channel descriptions.", channelId), e);
+                FDLink.LOGGER.error(String.format("Failed to set the channel topic for channel %s. Check that the bot has the <Manage Channels> permission, or else disable custom channel descriptions.", channelId), e);
             }
         }
     }

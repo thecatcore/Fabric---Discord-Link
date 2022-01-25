@@ -39,8 +39,8 @@ enum Origin {
 }
 
 class Globals {
-	static def baseVersion = "0.10.4"
-	static def changelog = "Update JDA to 4.4 and webhook to 0.7.2."
+	static def baseVersion = "0.10.5"
+	static def changelog = "Fix issues related to logger."
 	static def apiVersion = "0.1.1"
 	static def loaderVersion = "0.12.12"
 	static def versionInfo = [
@@ -191,19 +191,6 @@ allprojects {
 				modImplementation "net.fabricmc.fabric-api:fabric-api:${versionInfo.apiVersion}"
 			} else {
 				if (!versionInfo.apiVersion.isEmpty()) modImplementation "net.legacyfabric.legacy-fabric-api:legacy-fabric-api:${versionInfo.apiVersion}"
-
-				if (versionInfo.oldLwjgl && System.getProperty("os.name").toLowerCase().contains("mac")) {
-					implementation 'org.lwjgl.lwjgl:lwjgl_util:2.9.4-nightly-20150209'
-					implementation 'org.lwjgl.lwjgl:lwjgl:2.9.4-nightly-20150209'
-					implementation 'org.lwjgl.lwjgl:lwjgl-platform:2.9.4-nightly-20150209'
-				}
-
-				if (versionInfo.mcVersion == "1.6.4") {
-					implementation "org.apache.logging.log4j:log4j-core:2.13.3"
-					implementation "org.apache.logging.log4j:log4j-api:2.13.3"
-					annotationProcessor "org.apache.logging.log4j:log4j-core:2.13.3"
-					annotationProcessor "org.apache.logging.log4j:log4j-api:2.13.3"
-				}
 			}
 		}
 	}

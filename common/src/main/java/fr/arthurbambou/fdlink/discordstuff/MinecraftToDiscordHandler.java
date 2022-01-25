@@ -1,5 +1,6 @@
 package fr.arthurbambou.fdlink.discordstuff;
 
+import fr.arthurbambou.fdlink.FDLink;
 import fr.arthurbambou.fdlink.api.config.Config;
 import fr.arthurbambou.fdlink.api.config.MainConfig;
 import fr.arthurbambou.fdlink.api.discord.MessageHandler;
@@ -433,9 +434,9 @@ public final class MinecraftToDiscordHandler implements MessageHandler {
         }
         if (this.config.mainConfig.minecraftToDiscord.general.enableDebugLogs) {
             if (text.getTextType() == Message.TextType.TRANSLATABLE) {
-                DiscordBot.LOGGER.error("[FDLink] Unhandled text \"{}\":{}", text.getKey(), text.getMessage());
+                FDLink.LOGGER.error("[FDLink] Unhandled text \"{}\":{}", text.getKey(), text.getMessage());
             } else {
-                DiscordBot.LOGGER.error("[FDLink] Unhandled text \"{}\"", text.getMessage());
+                FDLink.LOGGER.error("[FDLink] Unhandled text \"{}\"", text.getMessage());
             }
         }
         return null;

@@ -1,12 +1,12 @@
 package fr.arthurbambou.fdlink;
 
 import fr.arthurbambou.fdlink.api.discord.MessageSender;
+import fr.arthurbambou.fdlink.api.util.LogManager;
+import fr.arthurbambou.fdlink.api.util.Logger;
 import fr.arthurbambou.fdlink.config.manager.ConfigHandler;
 import fr.arthurbambou.fdlink.discordstuff.DiscordBot;
 import fr.arthurbambou.fdlink.discordstuff.DiscordWebhook;
 import net.fabricmc.api.DedicatedServerModInitializer;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 public class FDLink implements DedicatedServerModInitializer {
 
