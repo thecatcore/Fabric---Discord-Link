@@ -39,8 +39,8 @@ enum Origin {
 }
 
 class Globals {
-	static def baseVersion = "0.10.5"
-	static def changelog = "Fix issues related to logger."
+	static def baseVersion = "0.10.6"
+	static def changelog = "Fix issues related to logger (again).\nAdd back 1.6.4 module."
 	static def apiVersion = "0.1.1"
 	static def loaderVersion = "0.12.12"
 	static def versionInfo = [

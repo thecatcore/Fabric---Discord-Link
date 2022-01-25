@@ -15,8 +15,6 @@ dependencies {
 	implementation include("club.minnced:discord-webhooks:${webhook_version}")
 
 	include "net.sf.trove4j:trove4j:3.0.3"
-	include 'org.slf4j:slf4j-nop:1.7.25'
-	include 'org.slf4j:slf4j-api:1.7.25'
 	include 'org.apache.commons:commons-collections4:4.1'
 	include 'com.neovisionaries:nv-websocket-client:2.14'
 	include 'com.squareup.okhttp3:okhttp:3.14.9'
