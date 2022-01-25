@@ -1,11 +1,10 @@
 package fr.arthurbambou.fdlink.compat_1_6_4;
 
-import fr.arthurbambou.fdlink.versionhelpers.minecraft.Message;
-import fr.arthurbambou.fdlink.versionhelpers.minecraft.MessagePacket;
-import fr.arthurbambou.fdlink.versionhelpers.minecraft.MinecraftServer;
-import fr.arthurbambou.fdlink.versionhelpers.minecraft.PlayerEntity;
-import net.minecraft.class_2828;
-import net.minecraft.class_2838;
+import fr.arthurbambou.fdlink.api.minecraft.Message;
+import fr.arthurbambou.fdlink.api.minecraft.MessagePacket;
+import fr.arthurbambou.fdlink.api.minecraft.MinecraftServer;
+import fr.arthurbambou.fdlink.api.minecraft.PlayerEntity;
+import net.minecraft.class_1687;
 import net.minecraft.server.network.ServerPlayerEntity;
 
 import java.io.File;
@@ -39,7 +38,7 @@ public class MinecraftServer1_6_4 implements MinecraftServer {
     @Override
     public List<PlayerEntity> getPlayers() {
         List<PlayerEntity> list = new ArrayList<>();
-        for (Object playerEntity : this.minecraftServer.getPlayerManager().field_11304) {
+        for (Object playerEntity : this.minecraftServer.getPlayerManager().players) {
             list.add(new PlayerEntity1_6_4((ServerPlayerEntity) playerEntity));
         }
         return list;
@@ -47,7 +46,7 @@ public class MinecraftServer1_6_4 implements MinecraftServer {
 
     @Override
     public PlayerEntity getPlayerFromUsername(String username) {
-        return new PlayerEntity1_6_4(this.minecraftServer.getPlayerManager().method_10419(username));
+        return new PlayerEntity1_6_4(this.minecraftServer.getPlayerManager().getPlayer(username));
     }
 
     @Override
@@ -65,14 +64,14 @@ public class MinecraftServer1_6_4 implements MinecraftServer {
     @Override
     public void sendMessageToAll(MessagePacket messagePacket) {
         Message message = messagePacket.getMessage();
-        class_2828 text = null;
+        class_1687 text = null;
         if (message.getType() == Message.MessageObjectType.STRING) {
-            text = class_2828.method_11702(message.getMessage());
+            text = class_1687.method_6026(message.getMessage());
         } else {
             if (message.getTextType() == Message.TextType.LITERAL) {
-                text = class_2828.method_11702(message.getMessage());
+                text = class_1687.method_6026(message.getMessage());
             } else if (message.getTextType() == Message.TextType.TRANSLATABLE) {
-                text = class_2828.method_11696(message.getKey(), message.getArgs());
+                text = class_1687.method_6020(message.getKey(), message.getArgs());
             }
         }
 //        Style vanillaStyle = new Style();
@@ -88,7 +87,7 @@ public class MinecraftServer1_6_4 implements MinecraftServer {
 //            vanillaStyle.setClickEvent(new ClickEvent(class_2432.method_9892(compatStyle.getClickEvent().getAction().getName()),
 //                    compatStyle.getClickEvent().getValue()));
 //        }
-        if (text != null) this.minecraftServer.getPlayerManager().method_10417(new class_2838(text));
+        if (text != null) this.minecraftServer.getPlayerManager().method_6061(text);
     }
 
     @Override

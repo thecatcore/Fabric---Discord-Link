@@ -1,6 +1,6 @@
 package fr.arthurbambou.fdlink.compat_1_6_4;
 
-import fr.arthurbambou.fdlink.versionhelpers.minecraft.PlayerEntity;
+import fr.arthurbambou.fdlink.api.minecraft.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
 
 import java.util.UUID;
@@ -15,7 +15,7 @@ public class PlayerEntity1_6_4 implements PlayerEntity {
 
     @Override
     public String getPlayerName() {
-        return this.playerEntity.getName();
+        return this.playerEntity.method_3334();
     }
 
     @Override

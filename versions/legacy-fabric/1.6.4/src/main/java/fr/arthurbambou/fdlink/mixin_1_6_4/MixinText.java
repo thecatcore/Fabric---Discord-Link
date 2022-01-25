@@ -1,19 +1,18 @@
 package fr.arthurbambou.fdlink.mixin_1_6_4;
 
-import fr.arthurbambou.fdlink.versionhelpers.CompatText;
-import net.minecraft.class_2828;
+import fr.arthurbambou.fdlink.api.minecraft.CompatText;
+import net.minecraft.class_1687;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.gen.Accessor;
 
 import java.util.List;
 
-@Mixin(class_2828.class)
+@Mixin(class_1687.class)
 public abstract class MixinText implements CompatText {
 
-    @Shadow private String field_12739;
+    @Shadow private String field_6701;
 
-    @Shadow private List field_12740;
+    @Shadow private List field_6702;
 
     @Shadow public abstract String toString();
 
@@ -23,10 +22,10 @@ public abstract class MixinText implements CompatText {
     }
 
     public String getTranslationKey() {
-        return this.field_12739;
+        return this.field_6701;
     }
 
     public List getArgs(){
-        return this.field_12740;
+        return this.field_6702;
     }
 }

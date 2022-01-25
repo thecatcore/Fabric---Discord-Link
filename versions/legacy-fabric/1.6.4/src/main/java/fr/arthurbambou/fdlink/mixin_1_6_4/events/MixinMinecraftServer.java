@@ -36,7 +36,7 @@ public class MixinMinecraftServer {
 
     @Inject(
             at = {@At("HEAD")},
-            method = {"shutdown"}
+            method = {"stopServer"}
     )
     private void beforeShutdownServer(CallbackInfo info) {
         FDLink.getMessageSender().serverStopping();
@@ -44,7 +44,7 @@ public class MixinMinecraftServer {
 
     @Inject(
             at = {@At("RETURN")},
-            method = {"shutdown"}
+            method = {"stopServer"}
     )
     private void afterShutdownServer(CallbackInfo info) {
         FDLink.getMessageSender().serverStopped();
@@ -53,7 +53,7 @@ public class MixinMinecraftServer {
     @Inject(
             at = {@At(
                     value = "INVOKE",
-                    target = "Lnet/minecraft/class_2571;method_10373()Z"
+                    target = "Lnet/minecraft/server/world/ServerWorld;isReady()Z"
             )},
             method = {"run"}
     )

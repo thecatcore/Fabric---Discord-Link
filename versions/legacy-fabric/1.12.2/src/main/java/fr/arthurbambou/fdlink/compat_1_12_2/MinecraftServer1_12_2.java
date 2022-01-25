@@ -29,12 +29,12 @@ public class MinecraftServer1_12_2 implements MinecraftServer {
 
     @Override
     public int getPlayerCount() {
-        return this.minecraftServer.getPlayerManager().getPlayers().size();
+        return this.minecraftServer.getCurrentPlayerCount();
     }
 
     @Override
     public int getMaxPlayerCount() {
-        return this.minecraftServer.getPlayerManager().getMaxPlayerCount();
+        return this.minecraftServer.getMaxPlayerCount();
     }
 
     @Override
@@ -53,7 +53,14 @@ public class MinecraftServer1_12_2 implements MinecraftServer {
 
     @Override
     public String getUsernameFromUUID(UUID uuid) {
-        return this.minecraftServer.getPlayerManager().getPlayer(uuid).getCustomName();
+        String username = "";
+        for (PlayerEntity playerEntity : this.getPlayers()) {
+            if (playerEntity.getUUID().equals(uuid)) {
+                username = playerEntity.getPlayerName();
+                break;
+            }
+        }
+        return username;
     }
 
     @Override

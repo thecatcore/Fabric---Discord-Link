@@ -1,7 +1,7 @@
 package fr.arthurbambou.fdlink.compat_1_6_4;
 
-import fr.arthurbambou.fdlink.versionhelpers.minecraft.Message;
-import fr.arthurbambou.fdlink.versionhelpers.minecraft.style.Style;
+import fr.arthurbambou.fdlink.api.minecraft.Message;
+import fr.arthurbambou.fdlink.api.minecraft.style.Style;
 
 public class Message1_6_4 implements Message {
 

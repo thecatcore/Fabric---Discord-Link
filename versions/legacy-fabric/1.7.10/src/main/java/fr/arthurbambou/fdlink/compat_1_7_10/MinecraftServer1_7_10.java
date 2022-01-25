@@ -57,7 +57,7 @@ public class MinecraftServer1_7_10 implements MinecraftServer {
     public String getUsernameFromUUID(UUID uuid) {
         String username = "";
         for (PlayerEntity playerEntity : this.getPlayers()) {
-            if (playerEntity.getUUID() == uuid) {
+            if (playerEntity.getUUID().equals(uuid)) {
                 username = playerEntity.getPlayerName();
                 break;
             }
@@ -91,7 +91,7 @@ public class MinecraftServer1_7_10 implements MinecraftServer {
             vanillaStyle.setClickEvent(new ClickEvent(class_1981.method_7464(compatStyle.getClickEvent().getAction().getName()),
                     compatStyle.getClickEvent().getValue()));
         }
-        this.minecraftServer.getPlayerManager().sendToAll(new ChatMessageS2CPacket(text));
+        this.minecraftServer.getPlayerManager().sendToAll(text);
     }
 
     @Override

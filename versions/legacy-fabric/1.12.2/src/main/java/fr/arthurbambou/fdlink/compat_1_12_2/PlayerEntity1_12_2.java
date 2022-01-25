@@ -15,7 +15,7 @@ public class PlayerEntity1_12_2 implements PlayerEntity {
 
     @Override
     public String getPlayerName() {
-        return this.playerEntity.getCustomName();
+        return this.playerEntity.getGameProfile().getName();
     }
 
     @Override
