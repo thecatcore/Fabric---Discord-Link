@@ -47,7 +47,7 @@ public class MixinTellRawCommand {
         })).then(CommandManager.argument("targets", EntityArgumentType.players()).then(CommandManager.argument("message", TextArgumentType.text()).executes((commandContext) -> {
             int i = 0;
 
-            if (commandContext.getInput().replace("/tellraw ", "").startsWith("@a")) {
+            if (commandContext.getInput().replace("/tellraw ", "").startsWith("@a") || commandContext.getInput().replace("tellraw ", "").startsWith("@a")) {
                 try {
                     ServerCommandSource source = commandContext.getSource();
                     Text message = TextArgumentType.getTextArgument(commandContext, "message");
