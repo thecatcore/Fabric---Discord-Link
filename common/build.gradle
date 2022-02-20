@@ -23,4 +23,6 @@ dependencies {
 	include 'com.fasterxml.jackson.core:jackson-annotations:2.10.1'
 	include 'com.fasterxml.jackson.core:jackson-core:2.10.1'
 	include "org.json:json:20210307"
+
+	include "or.slf4j:slf4j-api:1.8.0-beta4"
 }
