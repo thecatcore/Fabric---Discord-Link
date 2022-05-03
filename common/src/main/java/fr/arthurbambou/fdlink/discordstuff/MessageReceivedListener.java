@@ -20,7 +20,7 @@ public class MessageReceivedListener extends ListenerAdapter {
                 || this.discordBot.api.getSelfUser().getId().equals(event.getAuthor().getId())) return;
         if (!this.discordBot.hasChatChannels) return;
         if (!this.discordBot.config.mainConfig.chatChannels.contains(event.getChannel().getId())) return;
-        if (event.getMessage().getType() != MessageType.DEFAULT) return;
+        if ((event.getMessage().getType() != MessageType.DEFAULT) && (event.getMessage().getType() != MessageType.INLINE_REPLY)) return;
         if (!DiscordBot.lastMessageMs.isEmpty()) {
             if (event.getMessage().getContentRaw().equals(DiscordBot.lastMessageMs.get(0))) {
                 DiscordBot.lastMessageMs.remove(0);
