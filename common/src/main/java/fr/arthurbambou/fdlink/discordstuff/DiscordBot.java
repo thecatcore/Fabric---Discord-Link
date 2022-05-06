@@ -16,8 +16,6 @@ import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.exceptions.InsufficientPermissionException;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import javax.security.auth.login.LoginException;
 import java.util.*;
@@ -164,6 +162,7 @@ public class DiscordBot implements MessageSender {
             }
         }
         if (this.hasReceivedMessage) {
+            Message replyMessage = this.messageCreateEvent.getMessage().getReferencedMessage();
             for (Commands command : Commands.values()) {
                 if (this.messageCreateEvent.getMessage().getContentRaw().toLowerCase().equals(this.config.messageConfig.discord.commandPrefix + command.name().toLowerCase())) {
                     this.hasReceivedMessage = command.execute(server, this.messageCreateEvent, this.startTime);
@@ -176,16 +175,43 @@ public class DiscordBot implements MessageSender {
             if(messageCreateEvent.getMember() != null && messageCreateEvent.getMember().getNickname() != null) {
                 playerName = messageCreateEvent.getMember().getNickname();
             }
-            this.lastMessageD = this.config.messageConfig.discordToMinecraft.message
-                    .replace("%player", playerName);
+
+            // Detect replay
+            if (replyMessage != null) {
+                this.lastMessageD = this.config.messageConfig.discordToMinecraft.reply
+                        .replace("%player", playerName);
+                String replyPlayerName = replyMessage.getAuthor().getName();
+                if(replyMessage.getMember() != null && replyMessage.getMember().getNickname() != null) {
+                    replyPlayerName = replyMessage.getMember().getNickname();
+                }
+                this.lastMessageD = this.lastMessageD.replace("%replyPlayer", replyPlayerName);
+                String replyString_message = EmojiParser.parseToAliases(replyMessage.getContentRaw());
+                for (MainConfig.EmojiEntry emojiEntry : this.config.mainConfig.emojiMap) {
+                    replyString_message = replyString_message.replace("<" + emojiEntry.id + ">", emojiEntry.name);
+                }
+                if (this.config.mainConfig.minecraftToDiscord.chatChannels.minecraftToDiscordTag || this.config.mainConfig.minecraftToDiscord.logChannels.minecraftToDiscordTag) {
+                    for (User user : this.api.getUserCache()) {
+                        String string_discriminator = "";
+                        if (this.config.mainConfig.minecraftToDiscord.chatChannels.minecraftToDiscordDiscriminator || this.config.mainConfig.minecraftToDiscord.logChannels.minecraftToDiscordDiscriminator){
+                            string_discriminator = "#" + user.getDiscriminator();
+                        }
+                        replyString_message = replyString_message.replace("<@!" + user.getId() + ">", "@" + user.getName() + string_discriminator);
+                    }
+                }
+                this.lastMessageD = this.lastMessageD.replace("%replyMessage", replyMessage.getContentRaw());
+            } else {
+                this.lastMessageD = this.config.messageConfig.discordToMinecraft.message
+                        .replace("%player", playerName);
+            }
+
             String string_message = EmojiParser.parseToAliases(this.messageCreateEvent.getMessage().getContentRaw());
             for (MainConfig.EmojiEntry emojiEntry : this.config.mainConfig.emojiMap) {
                 string_message = string_message.replace("<" + emojiEntry.id + ">", emojiEntry.name);
             }
             if (this.config.mainConfig.minecraftToDiscord.chatChannels.minecraftToDiscordTag || this.config.mainConfig.minecraftToDiscord.logChannels.minecraftToDiscordTag) {
-               for (User user : this.api.getUserCache()) {
-                    TextChannel serverChannel = (TextChannel) this.api.getTextChannels().toArray()[0];
-                    Guild discordServer = serverChannel.getGuild();
+                for (User user : this.api.getUserCache()) {
+//                    TextChannel serverChannel = (TextChannel) this.api.getTextChannels().toArray()[0];
+//                    Guild discordServer = serverChannel.getGuild();
                     String string_discriminator = "";
                     if (this.config.mainConfig.minecraftToDiscord.chatChannels.minecraftToDiscordDiscriminator || this.config.mainConfig.minecraftToDiscord.logChannels.minecraftToDiscordDiscriminator){
                         string_discriminator = "#" + user.getDiscriminator();

@@ -45,6 +45,7 @@ public class MessageConfig {
 
     public static class DiscordToMinecraft {
         public String message = "[%player] %message";
+        public String reply = "[%player] %message Reply to: [%replyPlayer] %replyMessage";
     }
 
     public static class DiscordOnly {
