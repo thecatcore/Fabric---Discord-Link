@@ -4,7 +4,7 @@ plugins {
 	id 'idea'
 	id 'fabric-loom' version '0.11-SNAPSHOT' apply false
 	id 'com.matthewprenger.cursegradle' version "1.4.0"
-	id "com.modrinth.minotaur" version "1.1.0"
+	id "com.modrinth.minotaur" version "2.+"
 }
 
 class MinecraftVersion {
@@ -39,8 +39,8 @@ enum Origin {
 }
 
 class Globals {
-	static def baseVersion = "0.10.7"
-	static def changelog = "Fix crash on versions that don't have slf4j. Fix tellraw."
+	static def baseVersion = "0.10.8"
+	static def changelog = "Fix reply not being sent to minecraft."
 	static def apiVersion = "0.1.2"
 	static def loaderVersion = "0.12.12"
 	static def versionInfo = [
@@ -55,15 +55,15 @@ class Globals {
 			new MinecraftVersion("1.6.4",  "202201182040", Origin.LEGACY_FABRIC, true)
 	]
 	static def supportedVersions = [
-			"1.18.1", "1.18", // 1.18.x
-	        "1.17.1", "1.17", // 1.17.x
+			"1.18.2", "1.18.1", "1.18", // 1.18.x
+	        	"1.17.1", "1.17", // 1.17.x
 			"1.16.5", "1.16.4", "1.16.3", "1.16.2", "1.16.1", "1.16", // 1.16.x
 			"1.15.2", "1.15.1", "1.15", // 1.15.x
 			"1.14.4", "1.14.3", "1.14.2", "1.14.1", "1.14", // 1.14.x
 			"1.12.2", "1.8.9", "1.7.10", "1.6.4" // Legacy Fabric
 	]
 	static def supportedVersionsCurseforge = [
-	        "1.18-Snapshot",
+	        	"1.18-Snapshot",
 			"1.17-Snapshot",
 			"1.16-Snapshot",
 			"1.15-Snapshot",
@@ -306,21 +306,24 @@ curseforge {
 	}
 }
 
-task publishModrinth (type: com.modrinth.minotaur.TaskModrinthUpload, dependsOn: remapJar) {
-
-	token = System.getenv('MODRINTHKEY') ?: "a key"
-	projectId = 'FCmig1C9'
-	versionNumber = Globals.baseVersion
-	uploadFile = remapJar
-
-//	addFile(file("api/build/libs/fdlink-api-${Globals.apiVersion}.jar"))
-
-	addLoader('fabric')
-
+import com.modrinth.minotaur.dependencies.ModDependency
+modrinth {
+	token = System.getenv("MODRINTHKEY") ?: "a key" // This is the default. Remember to have the MODRINTH_TOKEN environment variable set or else this will fail, or set it to whatever you want - just make sure it stays private!
+	projectId = "FCmig1C9"
+	versionNumber = Globals.baseVersion // You don't need to set this manually. Will fail if Modrinth has this version already
+	versionType = "release" // This is the default
+	uploadFile = remapJar // With Fabric Loom or Architectury Loom, this MUST be set to `remapJar` instead of `jar`!
+	
+	def modrinthVersions = []
 	for (String version : Globals.supportedVersions) {
-		addGameVersion(version)
+		modrinthVersions.add(version)
 	}
 	for (String version : Globals.supportedVersionsModrinth) {
-		addGameVersion(version)
+		modrinthVersions.add(version)
 	}
+    
+	gameVersions = modrinthVersions // Must be an array, even with only one version
+	dependencies = [ // Yet another array. Create a new `ModDependency` or `VersionDependency` with two strings - the ID and the scope
+	    new ModDependency("P7dR8mSH", "required") // Creates a new required dependency on Fabric API
+	]
 }
