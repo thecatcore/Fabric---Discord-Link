@@ -12,6 +12,7 @@ repositories {
 	// Loom adds the essential maven repositories to download Minecraft and libraries from automatically.
 	// See https://docs.gradle.org/current/userguide/declaring_repositories.html
 	// for more information about repositories.
+	mavenCentral()
 }
 
 dependencies {
@@ -22,6 +23,18 @@ dependencies {
 
 	// Fabric API. This is technically optional, but you probably want it anyway.
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+
+	implementation include ("net.dv8tion:JDA:${project.jda_version}") {
+		exclude module: 'opus-java'
+	}
+
+	include 'org.apache.commons:commons-collections4:4.4'
+	include 'com.neovisionaries:nv-websocket-client:2.14'
+	include 'com.squareup.okhttp3:okhttp:4.10.0'
+	include 'com.squareup.okio:okio-jvm:3.0.0'
+	include 'com.fasterxml.jackson.core:jackson-databind:2.14.1'
+	include 'com.fasterxml.jackson.core:jackson-core:2.14.1'
+	include "net.sf.trove4j:trove4j:3.0.3"
 
 	// Uncomment the following line to enable the deprecated Fabric API modules. 
 	// These are included in the Fabric API production distribution and allow you to update your mod to the latest modules at a later more convenient time.
@@ -52,8 +65,8 @@ java {
 	// If you remove this line, sources will not be generated.
 	withSourcesJar()
 
-	sourceCompatibility = JavaVersion.VERSION_8
-	targetCompatibility = JavaVersion.VERSION_8
+//	sourceCompatibility = JavaVersion.VERSION_1_8
+//	targetCompatibility = JavaVersion.VERSION_1_8
 }
 
 jar {
