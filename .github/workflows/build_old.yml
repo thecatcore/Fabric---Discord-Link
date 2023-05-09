@@ -16,8 +16,6 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 17
-#      - name: Clean Gradle
-#        run: ./gradlew clean --refresh-dependencies --stacktrace
       - name: Build
         run: ./gradlew clean build
       - name: Publish to Curseforge
