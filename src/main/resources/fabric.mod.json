@@ -1,38 +1,55 @@
 {
   "schemaVersion": 1,
-  "id": "modid",
+  "id": "fdlink",
   "version": "${version}",
 
-  "name": "Example Mod",
-  "description": "This is an example description! Tell everyone what your mod is about!",
-  "authors": [
-    "Me!"
-  ],
+  "name": "Fabric <-> Discord Link",
+  "description": "A mod to link Minecraft and Discord chats for Fabric.",
   "contact": {
-    "homepage": "https://fabricmc.net/",
-    "sources": "https://github.com/FabricMC/fabric-example-mod"
+    "homepage": "https://modrinth.com/mod/fabric-discord-link",
+    "sources": "https://github.com/arthurbambou/Fabric---Discord-Link",
+    "issues": "https://github.com/arthurbambou/Fabric---Discord-Link/issues",
+    "discord": "https://discord.gg/xTvWwzV"
   },
 
-  "license": "CC0-1.0",
+  "license": "MIT",
   "icon": "assets/modid/icon.png",
 
-  "environment": "*",
+  "environment": "server",
   "entrypoints": {
     "main": [
-      "net.fabricmc.example.ExampleMod"
+      
     ]
   },
   "mixins": [
-    "modid.mixins.json"
   ],
 
   "depends": {
     "fabricloader": ">=0.14.19",
     "fabric-api": "*",
     "minecraft": "~1.19.4",
-    "java": ">=17"
+    "java": ">=8"
   },
-  "suggests": {
-    "another-mod": "*"
-  }
+
+  "authors": [
+    {
+      "name": "Cat Core (aka arthurbambou)",
+      "contact":{
+        "email": "arthur.roussel@free.fr"
+      }
+    }
+  ],
+  "contributors": [
+    "Special Thanks to AlanFoster",
+    "Thedude7054",
+    "yhr0x43",
+    "BeeFox-sys",
+    "PegasusEpsilon",
+    "v-tron",
+    "MightyKnight",
+    "Ev1dentFir3",
+    "kwvanderlinde",
+    "dkolb",
+    "matthias4217"
+  ]
 }
