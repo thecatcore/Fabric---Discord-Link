@@ -25,9 +25,9 @@
   ],
 
   "depends": {
-    "fabricloader": ">=0.14.19",
+    "fabricloader": ">=0.14.21",
     "fabric-api": "*",
-    "minecraft": "~1.19.4",
+    "minecraft": ">=1.20",
     "java": ">=8"
   },
 
@@ -35,7 +35,7 @@
     {
       "name": "Cat Core (aka arthurbambou)",
       "contact":{
-        "email": "arthur.roussel@free.fr"
+        "email": "arthur.koalas@free.fr"
       }
     }
   ],
